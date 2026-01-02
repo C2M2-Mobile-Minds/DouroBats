@@ -17,7 +17,6 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
                         jvmTarget.set(JvmTarget.JVM_11)
                     }
                 }
-
                 listOf(
                     iosArm64(),
                     iosSimulatorArm64()
