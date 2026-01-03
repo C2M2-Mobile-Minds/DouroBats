@@ -1450,10 +1450,56 @@ Enhance the user experience with quality-of-life features that make the app more
 
 ---
 
+### DB050: Google OAuth Configuration (Android Focus)
+**Story Points:** 8
+
+**As a** developer
+**I need** Google OAuth credentials configured
+**So that** Android users can authenticate and the shared auth logic can be verified.
+
+**Technical Details:**
+- Register the project in the Google Cloud Console.
+- Generate OAuth 2.0 Client IDs for Android (using the app's package name and SHA-1 certificate).
+- Set up the OAuth Consent Screen (Internal/External for 500 users).
+- Document credentials in a secure location (e.g., .env or Vault).
+- Note: iOS client ID can be generated here too as it's free, but integration will be mocked.
+
+
+**Acceptance Criteria:**
+- [ ] Google Cloud project is active.
+- [ ] Android Client ID is generated and functional.
+- [ ] Authentication works on an Android device/emulator.
+- [ ] Development and production Google Client IDs are separated.
+
+---
+
+### DB051: Apple Sign-In Configuration (iOS Focus)
+**Story Points:** 8
+
+**As a** developer
+**I need** Apple Developer Portal credentials and capabilities configured
+**So that** iOS users can use native "Sign in with Apple" for the booking system.
+
+**Technical Details:**
+- Enable the "Sign in with Apple" capability in the Apple Developer Program (requires $99 membership).
+- Create an App ID and a Services ID for the association.
+- Configure the Redirect URLs for Apple’s authentication callback.
+- Generate and document the Client Secret (Key ID and Team ID).
+- Replace the "Fake/Mock" implementation in the KMP iosMain source set with real credentials.
+
+**Acceptance Criteria:**
+- [ ] Apple Developer Program membership is active.
+- [ ] Sign-in with Apple capability is linked to the app's Bundle ID.
+- [ ] iOS users can successfully authenticate via the native Apple prompt.
+- [ ] Credentials and Private Keys are stored securely.
+
+---
+
+
 ## Summary
 
-**Total User Stories:** 49
-**Total Story Points:** 221
+**Total User Stories:** 51
+**Total Story Points:** 236
 
 ### Key Points:
 - **Localization:** All 5 languages (en, pt-PT, pt-BR, es-ES, en-GB) already set up
