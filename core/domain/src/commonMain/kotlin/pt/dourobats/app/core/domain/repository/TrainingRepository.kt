@@ -1,7 +1,8 @@
 package pt.dourobats.app.core.domain.repository
 
 import kotlinx.coroutines.flow.Flow
-import pt.dourobats.app.core.domain.model.TrainingSession
+import pt.dourobats.app.core.domain.model.Session
+
 
 /**
  * Repository interface for training session operations
@@ -11,15 +12,15 @@ interface TrainingRepository {
     /**
      * Get all training sessions as a Flow
      */
-    fun getTrainingSessions(): Flow<List<TrainingSession>>
+    fun getTrainingSessions(): Flow<List<Session>>
 
     /**
      * Get a specific training session by ID
      */
-    suspend fun getTrainingSessionById(id: String): TrainingSession?
+    suspend fun getTrainingSessionById(id: String): Session?
 
     /**
      * Save a new training session
      */
-    suspend fun saveTrainingSession(session: TrainingSession)
+    suspend fun saveTrainingSession(session: Session)
 }
