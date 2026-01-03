@@ -396,7 +396,7 @@ Build the core user experience for browsing and booking training sessions. This 
 
 Establish the foundational business logic and data architecture. This epic defines domain models, repository interfaces, and patterns that all other features will build upon. A well-designed domain layer ensures consistency and maintainability across the entire application.
 
-<!-- EPIC:DATA #15 #16 #17 #18 -->
+<!-- EPIC:DATA #15 #16 #52 #17 #18 -->
 
 **Notes:** Some domain infrastructure already exists (TrainingSession, repositories, Koin DI).
 
@@ -451,6 +451,43 @@ Establish the foundational business logic and data architecture. This epic defin
 
 ---
 
+### DB052: Create Result Wrapper for Async Operations
+**Story Points:** 3
+
+**As a** developer
+**I need** a standardized Result wrapper for async operations
+**So that** repositories can handle success/error/loading states consistently
+
+**Technical Details:**
+- Create `Result<T>` sealed class in `core/domain/src/commonMain/kotlin/.../common`
+- Three states:
+  - `data class Success<T>(val data: T) : Result<T>()`
+  - `data class Error<T>(val exception: Throwable, val message: String? = null) : Result<T>()`
+  - `class Loading<T> : Result<T>()`
+- Add helper functions:
+  - `isSuccess()`: Boolean
+  - `isError()`: Boolean
+  - `isLoading()`: Boolean
+  - `getOrNull()`: T?
+  - `getOrThrow()`: T
+  - `onSuccess(action: (T) -> Unit)`: Result<T>
+  - `onError(action: (Throwable) -> Unit)`: Result<T>
+- Include comprehensive KDoc with usage examples
+- Add unit tests demonstrating all states and helper functions
+- Location: `core/domain/src/commonMain/kotlin/.../common`
+
+**Acceptance Criteria:**
+- [ ] Result sealed class defined with all three states
+- [ ] All helper functions implemented and tested
+- [ ] Comprehensive KDoc documentation with code examples
+- [ ] Unit tests cover all states and helper functions
+- [ ] Located in core/domain/common package
+- [ ] No external dependencies (pure Kotlin)
+
+**Notes:** This is foundational infrastructure that will be used by DB017, DB018, and all future repository interfaces.
+
+---
+
 ### DB017: Session Repository Interface
 **Story Points:** 3
 
@@ -458,9 +495,11 @@ Establish the foundational business logic and data architecture. This epic defin
 **I need** session repository interface
 **So that** data layer is decoupled from UI
 
+**Dependencies:** DB052 (Result wrapper must exist first)
+
 **Technical Details:**
 - Create `SessionRepository` interface (similar to existing `SettingsRepository` pattern)
-- Create `Result<T>` sealed class (Success, Error, Loading) in `core/domain/common`
+- Use `Result<T>` sealed class from DB052
 - Methods:
   - `suspend fun getUpcomingSessions(sportId: String?): Result<List<Session>>`
   - `suspend fun getSessionById(id: String): Result<Session>`
@@ -472,7 +511,7 @@ Establish the foundational business logic and data architecture. This epic defin
 **Acceptance Criteria:**
 - [ ] Repository interface defined
 - [ ] All methods use suspend functions
-- [ ] Result wrapper handles success/error/loading
+- [ ] Uses Result<T> wrapper from core/domain/common (DB052)
 - [ ] Methods documented with expected behavior
 - [ ] Interfaces don't leak implementation details
 
@@ -1498,8 +1537,8 @@ Enhance the user experience with quality-of-life features that make the app more
 
 ## Summary
 
-**Total User Stories:** 51
-**Total Story Points:** 236
+**Total User Stories:** 52
+**Total Story Points:** 238
 
 ### Key Points:
 - **Localization:** All 5 languages (en, pt-PT, pt-BR, es-ES, en-GB) already set up
