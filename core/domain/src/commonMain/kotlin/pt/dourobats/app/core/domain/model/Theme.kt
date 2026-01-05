@@ -4,14 +4,10 @@ package pt.dourobats.app.core.domain.model
  * Represents application theme options.
  *
  * @property displayName Human-readable name for the theme
- *
- * Note: SYSTEM theme is kept for backward compatibility but is deprecated.
- * The UI only exposes LIGHT and DARK options.
  */
 enum class Theme(val displayName: String) {
     LIGHT("Light"),
-    DARK("Dark"),
-    SYSTEM("System Default");  // Deprecated - kept for backward compatibility
+    DARK("Dark");
 
     companion object {
         /**
