@@ -231,7 +231,7 @@ class SettingsRepositoryImplTest {
     }
 
     @Test
-    fun `themeFlow is SYSTEM when no preference set`() = runTest(testDispatcher) {
+    fun `themeFlow is LIGHT when no preference set`() = runTest(testDispatcher) {
         // Arrange
         val collectorJob = launch {
             repository.themeFlow.collect {}
@@ -242,7 +242,7 @@ class SettingsRepositoryImplTest {
         val theme = repository.themeFlow.first()
 
         // Assert
-        assertEquals(Theme.SYSTEM, theme)
+        assertEquals(Theme.LIGHT, theme)
         collectorJob.cancel()
     }
 

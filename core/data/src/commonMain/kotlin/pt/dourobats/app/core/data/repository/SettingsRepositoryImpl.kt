@@ -47,7 +47,7 @@ class SettingsRepositoryImpl(
         if (themeValue != null) {
             Theme.fromValue(themeValue)
         } else {
-            Theme.SYSTEM
+            Theme.LIGHT
         }
     }
 
