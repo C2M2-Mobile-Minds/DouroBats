@@ -222,7 +222,7 @@ User profile management, app settings, booking history, and committee administra
 
 ```
 ┌─────────────────────────────────────┐
-│  Profile                            │
+│                                     │
 │  ┌─────────────────────────────┐   │
 │  │      [Avatar Image]          │   │
 │  │                              │   │
