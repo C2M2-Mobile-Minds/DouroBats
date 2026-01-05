@@ -1,11 +1,14 @@
 package pt.dourobats.app.core.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 
 private val lightScheme = lightColorScheme(
@@ -258,10 +261,20 @@ fun AppTheme(
       else -> lightScheme
   }
 
-  MaterialTheme(
-    colorScheme = colorScheme,
-    typography = AppTypography(),
-    content = content
-  )
+  // Use BoxWithConstraints to get screen width for responsive spacing
+  BoxWithConstraints {
+      // Create responsive spacing based on available width
+      val spacing = remember(maxWidth) {
+          createResponsiveSpacing(maxWidth)
+      }
+
+      CompositionLocalProvider(LocalSpacing provides spacing) {
+          MaterialTheme(
+            colorScheme = colorScheme,
+            typography = AppTypography(),
+            content = content
+          )
+      }
+  }
 }
 
