@@ -11,6 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import dourobats.features.settings.generated.resources.Res
+import dourobats.features.settings.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 
 /**
@@ -38,15 +41,15 @@ fun BookingStatsCard(modifier: Modifier = Modifier) {
     ) {
         StatItem(
             number = "12",
-            label = "Attended"
+            label = stringResource(Res.string.settings_booking_attended)
         )
         StatItem(
             number = "2",
-            label = "Canceled"
+            label = stringResource(Res.string.settings_booking_canceled)
         )
         StatItem(
             number = "3",
-            label = "Upcoming"
+            label = stringResource(Res.string.settings_booking_upcoming)
         )
     }
 }
