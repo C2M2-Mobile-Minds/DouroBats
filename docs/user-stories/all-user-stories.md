@@ -140,29 +140,42 @@ Transform the navigation system to be truly multi-sport by replacing volleyball-
 
 ---
 
-### DB006: Rename Navigation Labels
-**Story Points:** 2
+### DB006: Implement MVP Navigation Structure
+**Story Points:** 3
 
 **As a** user
-**I want** clear navigation labels
-**So that** I understand what each section does
+**I want** clear and intuitive bottom navigation
+**So that** I can easily access all main features
 
 **Technical Details:**
-- Update Screen enum labels:
-  - "Training" → "Sessions"
-  - "Home" → Keep or change to "Sports"
-- Update stringResource references
-- Update all screen titles to match navigation labels
-- **Add new strings to all 5 existing localization files**
+- Implement 3-tab bottom navigation structure (see `docs/architecture/mvp-navigation-structure.md`)
+- Update Screen enum with new navigation:
+  - **Home** - Personalized dashboard with upcoming sessions
+  - **Calendar** (or "Sessions") - Browse and book sessions
+  - **Profile** - User settings and committee tools
+- Remove unused navigation items from existing implementation
+- Update stringResource references for all navigation labels
+- Implement role-based progressive disclosure (committee features only show if user has privileges)
+- **Add all navigation strings to all 5 existing localization files**
+
+**Navigation Labels:**
+- Tab 1: "Home"
+- Tab 2: "Calendar"
+- Tab 3: "Profile"
 
 **Acceptance Criteria:**
-- [ ] All navigation labels use new sport-agnostic terminology
+- [ ] Bottom navigation shows exactly 3 tabs for all users
+- [ ] Navigation labels are clear and properly localized
+- [ ] Active tab is visually indicated
+- [ ] Tab state persists during session
+- [ ] Default landing tab is Home
 - [ ] String keys are properly referenced (no hardcoded strings)
-- [ ] Screen headers match their navigation labels
-- [ ] Labels are clear and descriptive
 - [ ] Strings added to all 5 language files (en, pt-PT, pt-BR, es-ES, en-GB)
+- [ ] Committee features hidden for regular users (progressive disclosure)
 
 **Existing Code:** Screen enum in App.kt, existing localization in core/ui/composeResources.
+
+**Documentation:** See `docs/architecture/mvp-navigation-structure.md` for complete navigation specification.
 
 ---
 
@@ -448,43 +461,6 @@ Establish the foundational business logic and data architecture. This epic defin
 - [ ] All entities documented
 
 **Existing Code:** UserProfile model already exists.
-
----
-
-### DB052: Create Result Wrapper for Async Operations
-**Story Points:** 3
-
-**As a** developer
-**I need** a standardized Result wrapper for async operations
-**So that** repositories can handle success/error/loading states consistently
-
-**Technical Details:**
-- Create `Result<T>` sealed class in `core/domain/src/commonMain/kotlin/.../common`
-- Three states:
-  - `data class Success<T>(val data: T) : Result<T>()`
-  - `data class Error<T>(val exception: Throwable, val message: String? = null) : Result<T>()`
-  - `class Loading<T> : Result<T>()`
-- Add helper functions:
-  - `isSuccess()`: Boolean
-  - `isError()`: Boolean
-  - `isLoading()`: Boolean
-  - `getOrNull()`: T?
-  - `getOrThrow()`: T
-  - `onSuccess(action: (T) -> Unit)`: Result<T>
-  - `onError(action: (Throwable) -> Unit)`: Result<T>
-- Include comprehensive KDoc with usage examples
-- Add unit tests demonstrating all states and helper functions
-- Location: `core/domain/src/commonMain/kotlin/.../common`
-
-**Acceptance Criteria:**
-- [ ] Result sealed class defined with all three states
-- [ ] All helper functions implemented and tested
-- [ ] Comprehensive KDoc documentation with code examples
-- [ ] Unit tests cover all states and helper functions
-- [ ] Located in core/domain/common package
-- [ ] No external dependencies (pure Kotlin)
-
-**Notes:** This is foundational infrastructure that will be used by DB017, DB018, and all future repository interfaces.
 
 ---
 
@@ -1534,11 +1510,442 @@ Enhance the user experience with quality-of-life features that make the app more
 
 ---
 
+### DB052: Create Result Wrapper for Async Operations
+**Story Points:** 3
+
+**As a** developer
+**I need** a standardized Result wrapper for async operations
+**So that** repositories can handle success/error/loading states consistently
+
+**Technical Details:**
+- Create `Result<T>` sealed class in `core/domain/src/commonMain/kotlin/.../common`
+- Three states:
+    - `data class Success<T>(val data: T) : Result<T>()`
+    - `data class Error<T>(val exception: Throwable, val message: String? = null) : Result<T>()`
+    - `class Loading<T> : Result<T>()`
+- Add helper functions:
+    - `isSuccess()`: Boolean
+    - `isError()`: Boolean
+    - `isLoading()`: Boolean
+    - `getOrNull()`: T?
+    - `getOrThrow()`: T
+    - `onSuccess(action: (T) -> Unit)`: Result<T>
+    - `onError(action: (Throwable) -> Unit)`: Result<T>
+- Include comprehensive KDoc with usage examples
+- Add unit tests demonstrating all states and helper functions
+- Location: `core/domain/src/commonMain/kotlin/.../common`
+
+**Acceptance Criteria:**
+- [ ] Result sealed class defined with all three states
+- [ ] All helper functions implemented and tested
+- [ ] Comprehensive KDoc documentation with code examples
+- [ ] Unit tests cover all states and helper functions
+- [ ] Located in core/domain/common package
+- [ ] No external dependencies (pure Kotlin)
+
+**Notes:** This is foundational infrastructure that will be used by DB017, DB018, and all future repository interfaces.
+
+---
+
+## Epic 14: Home Screen & Personalization
+
+Build the personalized landing experience that serves as the app's engagement hub. This epic delivers the Home screen with upcoming sessions, announcements, and role-based quick actions for committee members.
+
+<!-- EPIC:DATA #53 #54 #55 #56 -->
+
+### DB053: Home Screen UI Implementation
+**Story Points:** 5
+
+**As a** user
+**I want** a personalized home screen
+**So that** I can quickly see my upcoming sessions and relevant updates
+
+**Dependencies:** DB006 (Navigation structure), DB022 (Auth ViewModel)
+
+**Technical Details:**
+- Implement Home tab as default landing screen (see `docs/architecture/mvp-navigation-structure.md`)
+- Create HomeScreen composable with sections:
+  - Hero widget: Next session card (tappable)
+  - My Upcoming Sessions list (2-3 items with "See all" link)
+  - Announcements section (optional for MVP - can show placeholder)
+  - Committee Quick Actions card (conditional on user privileges)
+- Use SessionRepository (fake implementation) to fetch user's bookings
+- Implement empty states for no upcoming sessions
+- Handle navigation to session details
+- **Add all strings to existing 5 localization files**
+
+**UI Components:**
+- NextSessionCard: Large card showing next booked session
+- UpcomingSessionsList: Compact list of next 2-3 sessions
+- AnnouncementsCard: Pinned announcements (can be placeholder for MVP)
+- CommitteeQuickActions: Quick access to Create Session, Analytics, Unlock Calendar
+
+**Acceptance Criteria:**
+- [ ] Home screen displays as default landing tab
+- [ ] Next session card shows correct data (sport, time, venue)
+- [ ] Upcoming sessions list shows next 2-3 bookings
+- [ ] "See all" link navigates to Profile > Booking History
+- [ ] Empty state shown when no bookings exist
+- [ ] Committee Quick Actions only visible to privileged users
+- [ ] Tapping session card navigates to session details
+- [ ] All strings localized in 5 languages
+- [ ] Works on both Android and iOS
+
+**Existing Code:** Will use existing SessionRepository pattern, follow ScheduleScreen structure.
+
+---
+
+### DB054: Profile Screen with Settings
+**Story Points:** 5
+
+**As a** user
+**I want** to manage my profile and app settings
+**So that** I can customize my experience
+
+**Dependencies:** DB006 (Navigation structure), DB022 (Auth ViewModel)
+
+**Technical Details:**
+- Implement Profile tab (see `docs/architecture/mvp-navigation-structure.md`)
+- Create ProfileScreen composable with sections:
+  - Profile card (avatar, name, email, edit button)
+  - My Booking History (collapsible with count)
+  - Preferences (Notifications, Language, Theme)
+  - Committee Tools (conditional on privileges)
+  - About/Legal links
+  - Logout button
+- Integrate with existing Settings system (DataStore for preferences)
+- Integrate with existing Theme and Language settings
+- **Add all strings to existing 5 localization files**
+
+**UI Sections:**
+- ProfileCard: User info with avatar and edit action
+- BookingHistorySection: Collapsible section linking to full history
+- PreferencesSection: Notifications, Language, Theme toggles
+- CommitteeToolsSection: Only visible if user has any privilege
+- LogoutButton: Clears auth state and navigates to login
+
+**Acceptance Criteria:**
+- [ ] Profile screen accessible from bottom navigation
+- [ ] Profile card displays user info correctly
+- [ ] Edit Profile button navigates to edit screen
+- [ ] Booking History section shows total count
+- [ ] Tapping Booking History navigates to full history screen
+- [ ] Language setting works (existing 5 languages)
+- [ ] Theme setting works (existing dark/light mode)
+- [ ] Committee Tools section only visible if privileged
+- [ ] Logout button clears session and returns to login
+- [ ] All strings localized in 5 languages
+- [ ] Works on both Android and iOS
+
+**Existing Code:** Integrate with existing SettingsScreen, Theme, Language, DataStore systems.
+
+---
+
+### DB055: Booking History Screen
+**Story Points:** 3
+
+**As a** user
+**I want** to view my full booking history
+**So that** I can track my attendance
+
+**Dependencies:** DB054 (Profile Screen), DB019 (Fake Session Repository)
+
+**Technical Details:**
+- Create BookingHistoryScreen accessible from Profile
+- Display two sections:
+  - Upcoming Bookings (with cancel button)
+  - Past Sessions (completed/cancelled)
+- Use SessionRepository to fetch user's bookings
+- Implement filters: All/Upcoming/Past
+- Add search functionality (optional for MVP)
+- Show booking status (Confirmed, Cancelled, Completed)
+- **Add all strings to existing 5 localization files**
+
+**UI Components:**
+- BookingsList: Scrollable list of sessions
+- BookingCard: Compact session card with status badge
+- CancelButton: For upcoming sessions only
+- FilterChips: All/Upcoming/Past toggle
+
+**Acceptance Criteria:**
+- [ ] History screen shows all user bookings
+- [ ] Upcoming and past sessions are separated
+- [ ] Can cancel upcoming bookings
+- [ ] Past sessions show attendance confirmation
+- [ ] Cancelled sessions are marked clearly
+- [ ] Empty state when no booking history
+- [ ] Filter works correctly
+- [ ] All strings localized in 5 languages
+- [ ] Works on both Android and iOS
+
+**Existing Code:** Follow SessionRepository pattern, similar to ScheduleScreen structure.
+
+---
+
+### DB056: Committee Quick Actions Implementation
+**Story Points:** 3
+
+**As a** committee member
+**I want** quick access to common admin tasks
+**So that** I can efficiently manage sessions
+
+**Dependencies:** DB053 (Home Screen), DB045 (RBAC Setup)
+
+**Technical Details:**
+- Implement Committee Quick Actions card in Home screen
+- Show only if user has any committee privilege
+- Three quick action buttons:
+  - Create Session (if Manage Sessions privilege)
+  - View Analytics (if View Analytics privilege)
+  - Unlock Calendar (if Manage Calendar privilege)
+- Each button navigates to respective feature
+- Card should be visually distinct from regular content
+- **Add all strings to existing 5 localization files**
+
+**UI Components:**
+- QuickActionsCard: Container with title and button grid
+- QuickActionButton: Icon + label button for each action
+
+**Acceptance Criteria:**
+- [ ] Quick Actions card only visible to committee members
+- [ ] Card shows only actions user has privilege for
+- [ ] Create Session button opens create session flow
+- [ ] View Analytics button navigates to analytics
+- [ ] Unlock Calendar button navigates to calendar control
+- [ ] Card is not visible to regular users
+- [ ] Visual design distinguishes it from regular content
+- [ ] All strings localized in 5 languages
+- [ ] Works on both Android and iOS
+
+**Notes:** This provides discoverable access to committee features that are also available in their primary locations.
+
+---
+
+## Epic 15: Design System & Visual Polish
+
+Establish a comprehensive design system with spacing tokens, responsive layouts, and consistent visual patterns. This epic ensures a modern, professional UI that scales across different screen sizes and maintains visual consistency throughout the app.
+
+<!-- EPIC:DATA #57 #58 -->
+
+### DB057: Design Tokens System Implementation
+**Story Points:** 5
+
+**As a** developer
+**I need** a centralized design tokens system
+**So that** spacing, colors, and typography are consistent across the app
+
+**Technical Details:**
+- Create design tokens system in `core/ui/src/commonMain/kotlin/.../theme/`
+- Implement spacing scale based on 8dp grid:
+  - `extraSmall = 4.dp`
+  - `small = 8.dp`
+  - `medium = 12.dp`
+  - `standard = 16.dp` (base screen margin)
+  - `large = 24.dp`
+  - `extraLarge = 32.dp`
+  - `huge = 48.dp`
+- Create `AppSpacing` data class with semantic naming:
+  - `screenHorizontal` (default 16.dp)
+  - `cardPadding` (default 16.dp)
+  - `itemSpacing` (default 8.dp)
+  - `sectionSpacing` (default 24.dp)
+- Implement responsive spacing:
+  - Small phones (<360dp): 12.dp horizontal margins
+  - Normal phones (360-599dp): 16.dp horizontal margins
+  - Large phones/Small tablets (600-839dp): 20.dp horizontal margins
+  - Tablets (840dp+): 24.dp horizontal margins
+- Create `LocalSpacing` CompositionLocal
+- Integrate with existing `AppTheme`
+- Add extension properties for common use cases
+
+**Implementation:**
+```kotlin
+// Spacing.kt
+data class AppSpacing(
+    val extraSmall: Dp = 4.dp,
+    val small: Dp = 8.dp,
+    val medium: Dp = 12.dp,
+    val standard: Dp = 16.dp,
+    val large: Dp = 24.dp,
+    val extraLarge: Dp = 32.dp,
+    val huge: Dp = 48.dp,
+    val screenHorizontal: Dp = 16.dp,
+    val cardPadding: Dp = 16.dp,
+    val itemSpacing: Dp = 8.dp,
+    val sectionSpacing: Dp = 24.dp
+)
+
+val LocalSpacing = compositionLocalOf { AppSpacing() }
+
+// KMP-compatible: Uses Dp parameter instead of platform-specific LocalConfiguration
+fun createResponsiveSpacing(screenWidthDp: Dp): AppSpacing {
+    return when {
+        screenWidthDp < 360.dp -> AppSpacing(
+            screenHorizontal = 12.dp,
+            cardPadding = 12.dp,
+            sectionSpacing = 20.dp
+        )
+        screenWidthDp < 600.dp -> AppSpacing() // Default 16.dp
+        screenWidthDp < 840.dp -> AppSpacing(
+            screenHorizontal = 20.dp,
+            cardPadding = 20.dp,
+            sectionSpacing = 28.dp
+        )
+        else -> AppSpacing(
+            screenHorizontal = 24.dp,
+            cardPadding = 24.dp,
+            sectionSpacing = 32.dp,
+            extraLarge = 40.dp,
+            huge = 56.dp
+        )
+    }
+}
+
+// Extension properties for common patterns
+val AppSpacing.verticalItemSpacing: Dp
+    get() = itemSpacing
+
+val AppSpacing.horizontalScreenPadding: Dp
+    get() = screenHorizontal
+```
+
+```kotlin
+// Theme.kt integration (KMP-compatible using BoxWithConstraints)
+@Composable
+fun AppTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable() () -> Unit
+) {
+    val colorScheme = when {
+        darkTheme -> darkScheme
+        else -> lightScheme
+    }
+
+    // Use BoxWithConstraints to get screen width for responsive spacing
+    BoxWithConstraints {
+        val spacing = remember(maxWidth) {
+            createResponsiveSpacing(maxWidth)
+        }
+
+        CompositionLocalProvider(LocalSpacing provides spacing) {
+            MaterialTheme(
+                colorScheme = colorScheme,
+                typography = AppTypography(),
+                content = content
+            )
+        }
+    }
+}
+```
+
+**Acceptance Criteria:**
+- [x] AppSpacing data class defined with all spacing values
+- [x] LocalSpacing CompositionLocal created
+- [x] Responsive spacing function implemented (KMP-compatible with BoxWithConstraints)
+- [x] Integrated into AppTheme composable
+- [x] Available globally via `LocalSpacing.current`
+- [x] Spacing adapts to screen width correctly
+- [x] Documentation added explaining the spacing scale (comprehensive KDoc in Spacing.kt)
+- [x] Works on both Android and iOS (Android verified, iOS requires Xcode configuration)
+- [x] No breaking changes to existing theme
+
+**Usage Example:**
+```kotlin
+val spacing = LocalSpacing.current
+Column(
+    modifier = Modifier.padding(horizontal = spacing.screenHorizontal)
+) {
+    // Content uses consistent spacing
+}
+```
+
+**Existing Code:** Integrate with existing AppTheme in core/ui module.
+
+---
+
+### DB058: Apply Design Tokens to Existing Screens
+**Story Points:** 3
+
+**As a** developer
+**I want** existing screens to use the new design tokens
+**So that** the app has consistent spacing throughout
+
+**Dependencies:** DB057 (Design Tokens System must exist first)
+
+**Technical Details:**
+- Refactor existing screens to use `LocalSpacing.current`:
+  - SettingsScreen
+  - ScheduleScreen (TrainingScreen)
+  - Any other implemented screens
+- Replace hardcoded padding values (e.g., `16.dp`) with semantic tokens:
+  - `Modifier.padding(16.dp)` → `Modifier.padding(spacing.screenHorizontal)`
+  - `Modifier.padding(8.dp)` → `Modifier.padding(spacing.itemSpacing)`
+  - `Spacer(modifier = Modifier.height(24.dp))` → `Spacer(modifier = Modifier.height(spacing.sectionSpacing))`
+- Ensure responsive spacing works on different screen sizes
+- Test on small phones (360dp), normal phones (411dp), and tablets (600dp+)
+- Visual QA to ensure spacing looks good on all sizes
+
+**Screens to Update:**
+1. SettingsScreen
+   - Screen padding
+   - Section spacing
+   - List item padding
+2. ScheduleScreen (if implemented)
+   - Screen padding
+   - Calendar widget spacing
+   - Session list item spacing
+3. Any other existing screens
+
+**Refactoring Pattern:**
+```kotlin
+// Before
+Column(
+    modifier = Modifier.padding(horizontal = 16.dp)
+) {
+    Text("Title")
+    Spacer(modifier = Modifier.height(24.dp))
+    // Content
+}
+
+// After
+val spacing = LocalSpacing.current
+Column(
+    modifier = Modifier.padding(horizontal = spacing.screenHorizontal)
+) {
+    Text("Title")
+    Spacer(modifier = Modifier.height(spacing.sectionSpacing))
+    // Content
+}
+```
+
+**Acceptance Criteria:**
+- [ ] All existing screens use `LocalSpacing.current`
+- [ ] No hardcoded spacing values remain (16.dp, 8.dp, etc.)
+- [ ] Screens adapt to different screen sizes
+- [ ] Visual consistency across all screens
+- [ ] No visual regressions (before/after comparison)
+- [ ] Settings screen spacing looks good
+- [ ] Schedule screen spacing looks good (if implemented)
+- [ ] Works on both Android and iOS
+- [ ] Tested on small, medium, and large screens
+
+**Notes:**
+- This story prepares the codebase for future UI implementation
+- All new screens (DB053-DB056) should use design tokens from the start
+- Focus on existing implemented screens only (don't create new screens in this story)
+
+**Testing:**
+- Visual regression testing on 3 screen sizes (small, medium, large)
+- Manual QA on Android emulator and iOS simulator
+- Verify spacing looks balanced and professional
+
+---
+
 
 ## Summary
 
-**Total User Stories:** 52
-**Total Story Points:** 238
+**Total User Stories:** 58
+**Total Story Points:** 262
 
 ### Key Points:
 - **Localization:** All 5 languages (en, pt-PT, pt-BR, es-ES, en-GB) already set up
