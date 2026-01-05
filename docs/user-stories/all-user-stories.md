@@ -159,9 +159,9 @@ Transform the navigation system to be truly multi-sport by replacing volleyball-
 - **Add all navigation strings to all 5 existing localization files**
 
 **Navigation Labels:**
-- Tab 1: "Home" (home, início, inicio)
-- Tab 2: "Calendar" or "Sessions" (calendário/calendario, sessões/sesiones)
-- Tab 3: "Profile" or "Settings" (perfil, configurações/ajustes)
+- Tab 1: "Home"
+- Tab 2: "Calendar"
+- Tab 3: "Profile"
 
 **Acceptance Criteria:**
 - [ ] Bottom navigation shows exactly 3 tabs for all users
@@ -461,43 +461,6 @@ Establish the foundational business logic and data architecture. This epic defin
 - [ ] All entities documented
 
 **Existing Code:** UserProfile model already exists.
-
----
-
-### DB052: Create Result Wrapper for Async Operations
-**Story Points:** 3
-
-**As a** developer
-**I need** a standardized Result wrapper for async operations
-**So that** repositories can handle success/error/loading states consistently
-
-**Technical Details:**
-- Create `Result<T>` sealed class in `core/domain/src/commonMain/kotlin/.../common`
-- Three states:
-  - `data class Success<T>(val data: T) : Result<T>()`
-  - `data class Error<T>(val exception: Throwable, val message: String? = null) : Result<T>()`
-  - `class Loading<T> : Result<T>()`
-- Add helper functions:
-  - `isSuccess()`: Boolean
-  - `isError()`: Boolean
-  - `isLoading()`: Boolean
-  - `getOrNull()`: T?
-  - `getOrThrow()`: T
-  - `onSuccess(action: (T) -> Unit)`: Result<T>
-  - `onError(action: (Throwable) -> Unit)`: Result<T>
-- Include comprehensive KDoc with usage examples
-- Add unit tests demonstrating all states and helper functions
-- Location: `core/domain/src/commonMain/kotlin/.../common`
-
-**Acceptance Criteria:**
-- [ ] Result sealed class defined with all three states
-- [ ] All helper functions implemented and tested
-- [ ] Comprehensive KDoc documentation with code examples
-- [ ] Unit tests cover all states and helper functions
-- [ ] Located in core/domain/common package
-- [ ] No external dependencies (pure Kotlin)
-
-**Notes:** This is foundational infrastructure that will be used by DB017, DB018, and all future repository interfaces.
 
 ---
 
@@ -1547,11 +1510,48 @@ Enhance the user experience with quality-of-life features that make the app more
 
 ---
 
+### DB052: Create Result Wrapper for Async Operations
+**Story Points:** 3
+
+**As a** developer
+**I need** a standardized Result wrapper for async operations
+**So that** repositories can handle success/error/loading states consistently
+
+**Technical Details:**
+- Create `Result<T>` sealed class in `core/domain/src/commonMain/kotlin/.../common`
+- Three states:
+    - `data class Success<T>(val data: T) : Result<T>()`
+    - `data class Error<T>(val exception: Throwable, val message: String? = null) : Result<T>()`
+    - `class Loading<T> : Result<T>()`
+- Add helper functions:
+    - `isSuccess()`: Boolean
+    - `isError()`: Boolean
+    - `isLoading()`: Boolean
+    - `getOrNull()`: T?
+    - `getOrThrow()`: T
+    - `onSuccess(action: (T) -> Unit)`: Result<T>
+    - `onError(action: (Throwable) -> Unit)`: Result<T>
+- Include comprehensive KDoc with usage examples
+- Add unit tests demonstrating all states and helper functions
+- Location: `core/domain/src/commonMain/kotlin/.../common`
+
+**Acceptance Criteria:**
+- [ ] Result sealed class defined with all three states
+- [ ] All helper functions implemented and tested
+- [ ] Comprehensive KDoc documentation with code examples
+- [ ] Unit tests cover all states and helper functions
+- [ ] Located in core/domain/common package
+- [ ] No external dependencies (pure Kotlin)
+
+**Notes:** This is foundational infrastructure that will be used by DB017, DB018, and all future repository interfaces.
+
+---
+
 ## Epic 14: Home Screen & Personalization
 
 Build the personalized landing experience that serves as the app's engagement hub. This epic delivers the Home screen with upcoming sessions, announcements, and role-based quick actions for committee members.
 
-<!-- EPIC:DATA #53 #54 -->
+<!-- EPIC:DATA #53 #54 #55 #56 -->
 
 ### DB053: Home Screen UI Implementation
 **Story Points:** 5
@@ -1721,11 +1721,194 @@ Build the personalized landing experience that serves as the app's engagement hu
 
 ---
 
+## Epic 15: Design System & Visual Polish
+
+Establish a comprehensive design system with spacing tokens, responsive layouts, and consistent visual patterns. This epic ensures a modern, professional UI that scales across different screen sizes and maintains visual consistency throughout the app.
+
+<!-- EPIC:DATA #57 #58 -->
+
+### DB057: Design Tokens System Implementation
+**Story Points:** 5
+
+**As a** developer
+**I need** a centralized design tokens system
+**So that** spacing, colors, and typography are consistent across the app
+
+**Technical Details:**
+- Create design tokens system in `core/ui/src/commonMain/kotlin/.../theme/`
+- Implement spacing scale based on 8dp grid:
+  - `extraSmall = 4.dp`
+  - `small = 8.dp`
+  - `medium = 12.dp`
+  - `standard = 16.dp` (base screen margin)
+  - `large = 24.dp`
+  - `extraLarge = 32.dp`
+  - `huge = 48.dp`
+- Create `AppSpacing` data class with semantic naming:
+  - `screenHorizontal` (default 16.dp)
+  - `cardPadding` (default 16.dp)
+  - `itemSpacing` (default 8.dp)
+  - `sectionSpacing` (default 24.dp)
+- Implement responsive spacing:
+  - Small phones (<360dp): 12.dp horizontal margins
+  - Normal phones (360-599dp): 16.dp horizontal margins
+  - Large phones/Small tablets (600-839dp): 20.dp horizontal margins
+  - Tablets (840dp+): 24.dp horizontal margins
+- Create `LocalSpacing` CompositionLocal
+- Integrate with existing `AppTheme`
+- Add extension properties for common use cases
+
+**Implementation:**
+```kotlin
+// Spacing.kt
+data class AppSpacing(
+    val extraSmall: Dp = 4.dp,
+    val small: Dp = 8.dp,
+    val medium: Dp = 12.dp,
+    val standard: Dp = 16.dp,
+    val large: Dp = 24.dp,
+    val extraLarge: Dp = 32.dp,
+    val huge: Dp = 48.dp,
+    val screenHorizontal: Dp = 16.dp,
+    val cardPadding: Dp = 16.dp,
+    val itemSpacing: Dp = 8.dp,
+    val sectionSpacing: Dp = 24.dp
+)
+
+val LocalSpacing = compositionLocalOf { AppSpacing() }
+
+@Composable
+fun rememberResponsiveSpacing(): AppSpacing {
+    val configuration = LocalConfiguration.current
+    return remember(configuration.screenWidthDp) {
+        when {
+            configuration.screenWidthDp < 360 -> AppSpacing(
+                screenHorizontal = 12.dp,
+                cardPadding = 12.dp
+            )
+            configuration.screenWidthDp < 600 -> AppSpacing() // Default 16.dp
+            configuration.screenWidthDp < 840 -> AppSpacing(
+                screenHorizontal = 20.dp,
+                cardPadding = 20.dp
+            )
+            else -> AppSpacing(
+                screenHorizontal = 24.dp,
+                cardPadding = 24.dp,
+                sectionSpacing = 32.dp
+            )
+        }
+    }
+}
+```
+
+**Acceptance Criteria:**
+- [ ] AppSpacing data class defined with all spacing values
+- [ ] LocalSpacing CompositionLocal created
+- [ ] Responsive spacing function implemented
+- [ ] Integrated into AppTheme composable
+- [ ] Available globally via `LocalSpacing.current`
+- [ ] Spacing adapts to screen width correctly
+- [ ] Documentation added explaining the spacing scale
+- [ ] Works on both Android and iOS
+- [ ] No breaking changes to existing theme
+
+**Usage Example:**
+```kotlin
+val spacing = LocalSpacing.current
+Column(
+    modifier = Modifier.padding(horizontal = spacing.screenHorizontal)
+) {
+    // Content uses consistent spacing
+}
+```
+
+**Existing Code:** Integrate with existing AppTheme in core/ui module.
+
+---
+
+### DB058: Apply Design Tokens to Existing Screens
+**Story Points:** 3
+
+**As a** developer
+**I want** existing screens to use the new design tokens
+**So that** the app has consistent spacing throughout
+
+**Dependencies:** DB057 (Design Tokens System must exist first)
+
+**Technical Details:**
+- Refactor existing screens to use `LocalSpacing.current`:
+  - SettingsScreen
+  - ScheduleScreen (TrainingScreen)
+  - Any other implemented screens
+- Replace hardcoded padding values (e.g., `16.dp`) with semantic tokens:
+  - `Modifier.padding(16.dp)` → `Modifier.padding(spacing.screenHorizontal)`
+  - `Modifier.padding(8.dp)` → `Modifier.padding(spacing.itemSpacing)`
+  - `Spacer(modifier = Modifier.height(24.dp))` → `Spacer(modifier = Modifier.height(spacing.sectionSpacing))`
+- Ensure responsive spacing works on different screen sizes
+- Test on small phones (360dp), normal phones (411dp), and tablets (600dp+)
+- Visual QA to ensure spacing looks good on all sizes
+
+**Screens to Update:**
+1. SettingsScreen
+   - Screen padding
+   - Section spacing
+   - List item padding
+2. ScheduleScreen (if implemented)
+   - Screen padding
+   - Calendar widget spacing
+   - Session list item spacing
+3. Any other existing screens
+
+**Refactoring Pattern:**
+```kotlin
+// Before
+Column(
+    modifier = Modifier.padding(horizontal = 16.dp)
+) {
+    Text("Title")
+    Spacer(modifier = Modifier.height(24.dp))
+    // Content
+}
+
+// After
+val spacing = LocalSpacing.current
+Column(
+    modifier = Modifier.padding(horizontal = spacing.screenHorizontal)
+) {
+    Text("Title")
+    Spacer(modifier = Modifier.height(spacing.sectionSpacing))
+    // Content
+}
+```
+
+**Acceptance Criteria:**
+- [ ] All existing screens use `LocalSpacing.current`
+- [ ] No hardcoded spacing values remain (16.dp, 8.dp, etc.)
+- [ ] Screens adapt to different screen sizes
+- [ ] Visual consistency across all screens
+- [ ] No visual regressions (before/after comparison)
+- [ ] Settings screen spacing looks good
+- [ ] Schedule screen spacing looks good (if implemented)
+- [ ] Works on both Android and iOS
+- [ ] Tested on small, medium, and large screens
+
+**Notes:**
+- This story prepares the codebase for future UI implementation
+- All new screens (DB053-DB056) should use design tokens from the start
+- Focus on existing implemented screens only (don't create new screens in this story)
+
+**Testing:**
+- Visual regression testing on 3 screen sizes (small, medium, large)
+- Manual QA on Android emulator and iOS simulator
+- Verify spacing looks balanced and professional
+
+---
+
 
 ## Summary
 
-**Total User Stories:** 56
-**Total Story Points:** 254
+**Total User Stories:** 58
+**Total Story Points:** 262
 
 ### Key Points:
 - **Localization:** All 5 languages (en, pt-PT, pt-BR, es-ES, en-GB) already set up
