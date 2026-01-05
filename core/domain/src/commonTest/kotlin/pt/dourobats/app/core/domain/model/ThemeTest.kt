@@ -25,30 +25,21 @@ class ThemeTest {
     }
 
     @Test
-    fun `fromValue is SYSTEM when SYSTEM provided`() {
-        // Arrange & Act
-        val theme = Theme.fromValue("SYSTEM")
-
-        // Assert
-        assertEquals(Theme.SYSTEM, theme)
-    }
-
-    @Test
-    fun `fromValue is SYSTEM when invalid value provided`() {
+    fun `fromValue is LIGHT when invalid value provided`() {
         // Arrange & Act
         val theme = Theme.fromValue("INVALID")
 
         // Assert
-        assertEquals(Theme.SYSTEM, theme)
+        assertEquals(Theme.LIGHT, theme)
     }
 
     @Test
-    fun `fromValue is SYSTEM when empty string provided`() {
+    fun `fromValue is LIGHT when empty string provided`() {
         // Arrange & Act
         val theme = Theme.fromValue("")
 
         // Assert
-        assertEquals(Theme.SYSTEM, theme)
+        assertEquals(Theme.LIGHT, theme)
     }
 
     @Test
@@ -77,14 +68,5 @@ class ThemeTest {
 
         // Act & Assert
         assertEquals("Dark", theme.displayName)
-    }
-
-    @Test
-    fun `SYSTEM has correct display name`() {
-        // Arrange
-        val theme = Theme.SYSTEM
-
-        // Act & Assert
-        assertEquals("System Default", theme.displayName)
     }
 }

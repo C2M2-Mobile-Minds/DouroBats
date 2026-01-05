@@ -25,6 +25,7 @@ class ComposeMultiplatformConventionPlugin : Plugin<Project> {
                             implementation(composeExt.dependencies.runtime)
                             implementation(composeExt.dependencies.foundation)
                             implementation(composeExt.dependencies.material3)
+                            implementation(composeExt.dependencies.materialIconsExtended)
                             implementation(composeExt.dependencies.ui)
                             implementation(composeExt.dependencies.components.resources)
                             implementation(composeExt.dependencies.components.uiToolingPreview)

@@ -229,6 +229,7 @@ class SettingsViewModelTest {
         }
         viewModel.enterEditMode()
         viewModel.updateDisplayName("John Doe")
+        viewModel.updateEmail("john@example.com")
         viewModel.updatePhoneNumber("+351912345678")
 
         // Act
@@ -238,6 +239,7 @@ class SettingsViewModelTest {
         // Assert
         val profile = repository.getUserProfile()
         assertEquals("John Doe", profile.displayName)
+        assertEquals("john@example.com", profile.email)
         assertEquals("+351912345678", profile.phoneNumber)
         collectorJob.cancel()
     }
@@ -317,6 +319,7 @@ class SettingsViewModelTest {
         }
         viewModel.enterEditMode()
         viewModel.updateDisplayName("  John Doe  ")
+        viewModel.updateEmail("  john@example.com  ")
         viewModel.updatePhoneNumber("  +351912345678  ")
 
         // Act
@@ -326,6 +329,7 @@ class SettingsViewModelTest {
         // Assert
         val profile = repository.getUserProfile()
         assertEquals("John Doe", profile.displayName)
+        assertEquals("john@example.com", profile.email)
         assertEquals("+351912345678", profile.phoneNumber)
         collectorJob.cancel()
     }

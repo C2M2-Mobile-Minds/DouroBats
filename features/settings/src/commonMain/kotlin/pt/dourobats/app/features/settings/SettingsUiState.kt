@@ -16,7 +16,7 @@ import pt.dourobats.app.core.domain.model.UserProfile
 data class SettingsUiState(
     val userProfile: UserProfile = UserProfile.empty(),
     val currentLanguage: Language = Language.ENGLISH_US,
-    val currentTheme: Theme = Theme.SYSTEM,
+    val currentTheme: Theme = Theme.LIGHT,
     val isLoading: Boolean = false,
     val validationErrors: ValidationErrors = ValidationErrors()
 ) {
@@ -24,17 +24,19 @@ data class SettingsUiState(
      * Validation errors for profile fields.
      *
      * @property displayName Error message for display name field
+     * @property email Error message for email field
      * @property phoneNumber Error message for phone number field
      */
     data class ValidationErrors(
         val displayName: String? = null,
+        val email: String? = null,
         val phoneNumber: String? = null
     ) {
         /**
          * Whether there are any validation errors.
          */
         val hasErrors: Boolean
-            get() = displayName != null || phoneNumber != null
+            get() = displayName != null || email != null || phoneNumber != null
     }
 }
 
@@ -43,11 +45,13 @@ data class SettingsUiState(
  * Separate from UI state to track form changes before saving.
  *
  * @property displayName Edited display name
+ * @property email Edited email address
  * @property phoneNumber Edited phone number
  * @property profileImageUrl Edited profile image URL
  */
 data class ProfileEditState(
     val displayName: String = "",
+    val email: String = "",
     val phoneNumber: String = "",
     val profileImageUrl: String? = null
 )

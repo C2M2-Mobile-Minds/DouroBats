@@ -2,10 +2,15 @@ package pt.dourobats.app
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import dourobats.core.ui.generated.resources.Res
 import dourobats.core.ui.generated.resources.login_button_temp
@@ -44,7 +49,7 @@ private fun AppContent() {
 
     // Load the saved theme from DataStore
     val savedTheme by settingsRepository.themeFlow.collectAsState(
-        initial = Theme.SYSTEM
+        initial = Theme.LIGHT
     )
 
     // Track language state for triggering recomposition
@@ -67,7 +72,6 @@ private fun AppContent() {
     val useDarkTheme = when (savedTheme) {
         Theme.LIGHT -> false
         Theme.DARK -> true
-        Theme.SYSTEM -> systemDarkTheme
     }
 
     AppTheme(darkTheme = useDarkTheme) {
@@ -95,7 +99,7 @@ private fun MainApp() {
             NavigationBar {
                 Screen.entries.forEach { screen ->
                     NavigationBarItem(
-                        icon = { Text(screen.emoji) },
+                        icon = { Icon(screen.icon, contentDescription = stringResource(screen.titleRes)) },
                         label = { Text(stringResource(screen.titleRes)) },
                         selected = selectedScreen == screen,
                         onClick = { selectedScreen = screen }
@@ -133,8 +137,8 @@ private fun LoginScreen(onLoginSuccess: () -> Unit) {
     }
 }
 
-private enum class Screen(val titleRes: org.jetbrains.compose.resources.StringResource, val emoji: String) {
-    Home(Res.string.nav_home, "\uD83C\uDFE0"),
-    Training(Res.string.nav_training, "\uD83C\uDFD0"),
-    Settings(Res.string.nav_settings, "⚙️")
+private enum class Screen(val titleRes: org.jetbrains.compose.resources.StringResource, val icon: ImageVector) {
+    Home(Res.string.nav_home, Icons.Default.Home),
+    Training(Res.string.nav_training, Icons.Default.CalendarMonth),
+    Settings(Res.string.nav_settings, Icons.Default.Settings)
 }

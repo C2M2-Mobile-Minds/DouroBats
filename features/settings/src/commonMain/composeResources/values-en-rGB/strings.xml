@@ -18,6 +18,7 @@
     <!-- Profile Editing -->
     <string name="settings_edit_profile">Edit Profile</string>
     <string name="settings_save">Save</string>
+    <string name="settings_save_changes">Save Changes</string>
     <string name="settings_cancel">Cancel</string>
 
     <!-- Language Settings -->
@@ -28,6 +29,23 @@
     <!-- Theme Settings -->
     <string name="settings_theme">Theme</string>
     <string name="settings_theme_select">Select Theme</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+
+    <!-- Booking History -->
+    <string name="settings_booking_history">My Booking History</string>
+    <string name="settings_booking_attended">Attended</string>
+    <string name="settings_booking_canceled">Cancelled</string>
+    <string name="settings_booking_upcoming">Upcoming</string>
+
+    <!-- Committee Tools -->
+    <string name="settings_committee_tools">Committee Tools</string>
+    <string name="settings_committee_manage_sessions">Manage Sessions</string>
+    <string name="settings_committee_manage_sessions_description">View and manage committee sessions</string>
+    <string name="settings_committee_view_reports">View Reports</string>
+    <string name="settings_committee_view_reports_description">Access committee reports and analytics</string>
+    <string name="settings_committee_settings">Committee Settings</string>
+    <string name="settings_committee_settings_description">Configure committee preferences</string>
 
     <!-- Actions -->
     <string name="settings_logout">Logout</string>

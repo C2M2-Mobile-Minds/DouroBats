@@ -27,9 +27,9 @@ class FakeSettingsRepositoryBuilder {
 
     /**
      * The initial theme for the repository.
-     * Defaults to SYSTEM if not specified.
+     * Defaults to LIGHT if not specified.
      */
-    var initialTheme: Theme = Theme.SYSTEM
+    var initialTheme: Theme = Theme.LIGHT
 
     /**
      * The initial user profile for the repository.

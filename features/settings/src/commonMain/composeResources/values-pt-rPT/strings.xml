@@ -18,6 +18,7 @@
     <!-- Profile Editing -->
     <string name="settings_edit_profile">Editar Perfil</string>
     <string name="settings_save">Guardar</string>
+    <string name="settings_save_changes">Guardar Alterações</string>
     <string name="settings_cancel">Cancelar</string>
 
     <!-- Language Settings -->
@@ -28,6 +29,23 @@
     <!-- Theme Settings -->
     <string name="settings_theme">Tema</string>
     <string name="settings_theme_select">Selecionar Tema</string>
+    <string name="settings_theme_light">Claro</string>
+    <string name="settings_theme_dark">Escuro</string>
+
+    <!-- Booking History -->
+    <string name="settings_booking_history">O Meu Histórico de Reservas</string>
+    <string name="settings_booking_attended">Participadas</string>
+    <string name="settings_booking_canceled">Canceladas</string>
+    <string name="settings_booking_upcoming">Próximas</string>
+
+    <!-- Committee Tools -->
+    <string name="settings_committee_tools">Ferramentas do Comité</string>
+    <string name="settings_committee_manage_sessions">Gerir Sessões</string>
+    <string name="settings_committee_manage_sessions_description">Ver e gerir sessões do comité</string>
+    <string name="settings_committee_view_reports">Ver Relatórios</string>
+    <string name="settings_committee_view_reports_description">Aceder a relatórios e análises do comité</string>
+    <string name="settings_committee_settings">Definições do Comité</string>
+    <string name="settings_committee_settings_description">Configurar preferências do comité</string>
 
     <!-- Actions -->
     <string name="settings_logout">Terminar Sessão</string>

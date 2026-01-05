@@ -8,8 +8,16 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
+
+/**
+ * Platform-specific function to update system bars appearance.
+ * - On Android: Updates status bar and navigation bar colors/appearance
+ * - On iOS: No-op (iOS handles this automatically)
+ */
+expect fun updateSystemBarsAppearance(isDark: Boolean)
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -261,6 +269,11 @@ fun AppTheme(
       else -> lightScheme
   }
 
+  // Update system bars appearance when theme changes
+  SideEffect {
+      updateSystemBarsAppearance(darkTheme)
+  }
+
   // Use BoxWithConstraints to get screen width for responsive spacing
   BoxWithConstraints {
       // Create responsive spacing based on available width
@@ -271,7 +284,7 @@ fun AppTheme(
       CompositionLocalProvider(LocalSpacing provides spacing) {
           MaterialTheme(
             colorScheme = colorScheme,
-            typography = AppTypography(),
+            typography = appTypography(),
             content = content
           )
       }

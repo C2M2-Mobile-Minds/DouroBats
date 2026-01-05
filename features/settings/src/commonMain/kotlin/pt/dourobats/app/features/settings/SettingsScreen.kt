@@ -1,7 +1,6 @@
 package pt.dourobats.app.features.settings
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,13 +8,24 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Divider
-import androidx.compose.material3.ListItem
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.Event
+import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -25,181 +35,187 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import dourobats.features.settings.generated.resources.*
+import dourobats.features.settings.generated.resources.Res
+import dourobats.features.settings.generated.resources.settings_booking_history
+import dourobats.features.settings.generated.resources.settings_committee_manage_sessions
+import dourobats.features.settings.generated.resources.settings_committee_manage_sessions_description
+import dourobats.features.settings.generated.resources.settings_committee_settings
+import dourobats.features.settings.generated.resources.settings_committee_settings_description
+import dourobats.features.settings.generated.resources.settings_committee_tools
+import dourobats.features.settings.generated.resources.settings_committee_view_reports
+import dourobats.features.settings.generated.resources.settings_committee_view_reports_description
+import dourobats.features.settings.generated.resources.settings_language
+import dourobats.features.settings.generated.resources.settings_logout
+import dourobats.features.settings.generated.resources.settings_section_preferences
+import dourobats.features.settings.generated.resources.settings_theme
+import dourobats.features.settings.generated.resources.settings_theme_dark
+import dourobats.features.settings.generated.resources.settings_theme_light
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import pt.dourobats.app.features.settings.components.ProfileEditDialog
+import pt.dourobats.app.core.domain.model.Theme
+import pt.dourobats.app.core.ui.components.SectionCard
+import pt.dourobats.app.core.ui.theme.LocalSpacing
+import pt.dourobats.app.features.settings.components.BookingStatsCard
+import pt.dourobats.app.features.settings.components.LanguageBottomSheet
+import pt.dourobats.app.features.settings.components.ProfileEditBottomSheet
 import pt.dourobats.app.features.settings.components.ProfileHeader
-import pt.dourobats.app.features.settings.components.ThemeSelectionDialog
 
 /**
- * Settings screen showing user profile, preferences, and account actions.
+ * Modern card-based Settings screen with Material Design 3 patterns.
+ *
+ * Features:
+ * - Card-based layout for visual grouping
+ * - Segmented button for theme selection (clear Light/Dark choice)
+ * - Bottom sheet for language selection (better mobile UX)
+ * - Modal bottom sheet for profile editing (modern mobile pattern)
+ * - Responsive spacing using design tokens
  *
  * @param modifier Optional modifier for the screen
  * @param viewModel ViewModel managing settings state and logic
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = koinViewModel()
 ) {
+    val spacing = LocalSpacing.current
     val uiState by viewModel.uiState.collectAsState()
     val editState by viewModel.editState.collectAsState()
-    var showLanguageDialog by remember { mutableStateOf(false) }
-    var showThemeDialog by remember { mutableStateOf(false) }
+    var showLanguageSheet by remember { mutableStateOf(false) }
     var showEditDialog by remember { mutableStateOf(false) }
-    var showDeleteDialog by remember { mutableStateOf(false) }
 
     Column(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = spacing.screenHorizontal)
     ) {
-        // Header
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = stringResource(Res.string.settings_title),
-                style = MaterialTheme.typography.headlineLarge
+        Spacer(modifier = Modifier.height(spacing.standard))
+
+        // Profile Section (NO CARD)
+        ProfileHeader(
+            userProfile = uiState.userProfile,
+            onEditClick = { showEditDialog = true }
+        )
+
+        Spacer(modifier = Modifier.height(spacing.sectionSpacing))
+
+        // My Booking History Card
+        SectionCard(title = stringResource(Res.string.settings_booking_history)) {
+            BookingStatsCard()
+        }
+
+        Spacer(modifier = Modifier.height(spacing.sectionSpacing))
+
+        // Preferences Card
+        SectionCard(title = stringResource(Res.string.settings_section_preferences)) {
+            // Language selector
+            SettingsClickableItem(
+                icon = Icons.Default.Language,
+                title = stringResource(Res.string.settings_language),
+                subtitle = uiState.currentLanguage.displayName,
+                onClick = { showLanguageSheet = true }
             )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = stringResource(Res.string.settings_subtitle),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+
+            Spacer(modifier = Modifier.height(spacing.standard))
+
+            // Theme selector with SegmentedButton
+            Column(modifier = Modifier.padding(vertical = spacing.small)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.Palette,
+                        contentDescription = stringResource(Res.string.settings_theme),
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(spacing.standard))
+                    Text(
+                        text = stringResource(Res.string.settings_theme),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(spacing.small))
+
+                SingleChoiceSegmentedButtonRow(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    SegmentedButton(
+                        selected = uiState.currentTheme == Theme.LIGHT,
+                        onClick = { viewModel.setTheme(Theme.LIGHT) },
+                        shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2)
+                    ) {
+                        Text(stringResource(Res.string.settings_theme_light))
+                    }
+                    SegmentedButton(
+                        selected = uiState.currentTheme == Theme.DARK,
+                        onClick = { viewModel.setTheme(Theme.DARK) },
+                        shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2)
+                    ) {
+                        Text(stringResource(Res.string.settings_theme_dark))
+                    }
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(spacing.sectionSpacing))
+
+        // Committee Tools Card
+        SectionCard(title = stringResource(Res.string.settings_committee_tools)) {
+            SettingsClickableItem(
+                icon = Icons.Default.Event,
+                title = stringResource(Res.string.settings_committee_manage_sessions),
+                subtitle = stringResource(Res.string.settings_committee_manage_sessions_description),
+                onClick = { /* TODO: Navigate to manage sessions */ }
+            )
+
+            Spacer(modifier = Modifier.height(spacing.standard))
+
+            SettingsClickableItem(
+                icon = Icons.Default.BarChart,
+                title = stringResource(Res.string.settings_committee_view_reports),
+                subtitle = stringResource(Res.string.settings_committee_view_reports_description),
+                onClick = { /* TODO: Navigate to reports */ }
+            )
+
+            Spacer(modifier = Modifier.height(spacing.standard))
+
+            SettingsClickableItem(
+                icon = Icons.Default.Settings,
+                title = stringResource(Res.string.settings_committee_settings),
+                subtitle = stringResource(Res.string.settings_committee_settings_description),
+                onClick = { /* TODO: Navigate to committee settings */ }
             )
         }
 
-        Divider()
+        Spacer(modifier = Modifier.height(spacing.sectionSpacing))
 
-        // Settings List
-        LazyColumn(
-            modifier = Modifier.fillMaxSize()
+        // Logout Button (standalone)
+        Button(
+            onClick = { viewModel.logout() },
+            modifier = Modifier.fillMaxWidth()
         ) {
-            // Profile Header
-            item {
-                ProfileHeader(
-                    userProfile = uiState.userProfile,
-                    onEditClick = { showEditDialog = true }
-                )
-                Divider()
-            }
-
-            // Account Section
-            item {
-                SectionHeader(title = stringResource(Res.string.settings_section_account))
-            }
-
-            item {
-                SettingsItem(
-                    icon = "\uD83D\uDCBC",
-                    title = stringResource(Res.string.settings_display_name),
-                    subtitle = uiState.userProfile.displayName.ifEmpty { stringResource(Res.string.settings_not_set) },
-                    onClick = { showEditDialog = true }
-                )
-            }
-
-            item {
-                SettingsItem(
-                    icon = "✉️",
-                    title = stringResource(Res.string.settings_email),
-                    subtitle = uiState.userProfile.email.ifEmpty { stringResource(Res.string.settings_not_set) },
-                    onClick = { } // Read-only
-                )
-            }
-
-            item {
-                SettingsItem(
-                    icon = "\uD83D\uDCF1",
-                    title = stringResource(Res.string.settings_phone),
-                    subtitle = uiState.userProfile.phoneNumber.ifEmpty { stringResource(Res.string.settings_not_set) },
-                    onClick = { showEditDialog = true }
-                )
-            }
-
-            item {
-                Divider()
-            }
-
-            // Preferences Section
-            item {
-                SectionHeader(title = stringResource(Res.string.settings_section_preferences))
-            }
-
-            item {
-                SettingsItem(
-                    icon = "\uD83C\uDF10",
-                    title = stringResource(Res.string.settings_language),
-                    subtitle = uiState.currentLanguage.displayName,
-                    onClick = { showLanguageDialog = true }
-                )
-            }
-
-            item {
-                SettingsItem(
-                    icon = "\uD83C\uDFA8",
-                    title = stringResource(Res.string.settings_theme),
-                    subtitle = uiState.currentTheme.displayName,
-                    onClick = { showThemeDialog = true }
-                )
-            }
-
-            item {
-                Divider()
-            }
-
-            // Actions Section
-            item {
-                SectionHeader(title = stringResource(Res.string.settings_section_actions))
-            }
-
-            item {
-                ActionItem(
-                    icon = "🚪",
-                    title = stringResource(Res.string.settings_logout),
-                    onClick = { viewModel.logout() }
-                )
-            }
-
-            item {
-                ActionItem(
-                    icon = "🗑️",
-                    title = stringResource(Res.string.settings_delete_account),
-                    onClick = { showDeleteDialog = true },
-                    textColor = MaterialTheme.colorScheme.error
-                )
-            }
+            Text(stringResource(Res.string.settings_logout))
         }
+
+        Spacer(modifier = Modifier.height(spacing.sectionSpacing))
     }
 
-    // Dialogs
-    if (showLanguageDialog) {
-        LanguageSelectionDialog(
+    // Language Bottom Sheet
+    if (showLanguageSheet) {
+        LanguageBottomSheet(
             currentLanguage = uiState.currentLanguage,
             onLanguageSelected = { language ->
                 viewModel.setLanguage(language)
-                showLanguageDialog = false
+                showLanguageSheet = false
             },
-            onDismiss = { showLanguageDialog = false }
+            onDismiss = { showLanguageSheet = false }
         )
     }
 
-    if (showThemeDialog) {
-        ThemeSelectionDialog(
-            currentTheme = uiState.currentTheme,
-            onThemeSelected = { theme ->
-                viewModel.setTheme(theme)
-                showThemeDialog = false
-            },
-            onDismiss = { showThemeDialog = false }
-        )
-    }
-
-    // Only call enterEditMode when dialog is first shown
+    // Profile Edit Bottom Sheet
     LaunchedEffect(showEditDialog) {
         if (showEditDialog) {
             viewModel.enterEditMode()
@@ -207,15 +223,18 @@ fun SettingsScreen(
     }
 
     if (showEditDialog) {
-        ProfileEditDialog(
+        ProfileEditBottomSheet(
             editState = editState,
-            email = uiState.userProfile.email,
             validationErrors = uiState.validationErrors,
             onDisplayNameChange = viewModel::updateDisplayName,
+            onEmailChange = viewModel::updateEmail,
             onPhoneNumberChange = viewModel::updatePhoneNumber,
             onSave = {
-                viewModel.saveProfile()
-                showEditDialog = false
+                viewModel.saveProfile(
+                    onSuccess = {
+                        showEditDialog = false
+                    }
+                )
             },
             onDismiss = {
                 viewModel.cancelEdit()
@@ -224,105 +243,81 @@ fun SettingsScreen(
         )
     }
 
-    if (showDeleteDialog) {
-        AlertDialog(
-            onDismissRequest = { showDeleteDialog = false },
-            title = { Text(stringResource(Res.string.settings_delete_account)) },
-            text = { Text(stringResource(Res.string.settings_delete_account_confirm)) },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        viewModel.deleteAccount()
-                        showDeleteDialog = false
-                    }
-                ) {
-                    Text(stringResource(Res.string.settings_delete), color = MaterialTheme.colorScheme.error)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDeleteDialog = false }) {
-                    Text(stringResource(Res.string.settings_cancel))
-                }
-            }
-        )
-    }
 }
 
 /**
- * Section header composable for grouping settings.
- *
- * @param title Section title
- * @param modifier Optional modifier
+ * Clickable settings item (e.g., language selector).
  */
 @Composable
-private fun SectionHeader(
-    title: String,
-    modifier: Modifier = Modifier
-) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.titleSmall,
-        color = MaterialTheme.colorScheme.primary,
-        modifier = modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-    )
-}
-
-/**
- * Settings item with icon, title, and subtitle.
- *
- * @param icon Emoji icon
- * @param title Item title
- * @param subtitle Item subtitle/value
- * @param onClick Click callback
- * @param modifier Optional modifier
- */
-@Composable
-private fun SettingsItem(
-    icon: String,
+private fun SettingsClickableItem(
+    icon: ImageVector,
     title: String,
     subtitle: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    ListItem(
-        headlineContent = { Text(title) },
-        supportingContent = { Text(subtitle) },
-        leadingContent = {
+    val spacing = LocalSpacing.current
+
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(vertical = spacing.small),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = title,
+            modifier = Modifier.size(24.dp),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(modifier = Modifier.width(spacing.standard))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(text = title, style = MaterialTheme.typography.bodyLarge)
             Text(
-                text = icon,
-                style = MaterialTheme.typography.headlineSmall
+                text = subtitle,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-        },
-        modifier = modifier.clickable(onClick = onClick)
-    )
+        }
+    }
 }
 
 /**
- * Action item with icon and title (for logout, delete account, etc.).
- *
- * @param icon Emoji icon
- * @param title Action title
- * @param onClick Click callback
- * @param modifier Optional modifier
- * @param textColor Text color (default or error)
+ * Action button item (logout, delete).
  */
 @Composable
 private fun ActionItem(
     icon: String,
     title: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    textColor: Color = MaterialTheme.colorScheme.onSurface
+    isDestructive: Boolean = false,
+    modifier: Modifier = Modifier
 ) {
-    ListItem(
-        headlineContent = { Text(title, color = textColor) },
-        leadingContent = {
-            Text(
-                text = icon,
-                style = MaterialTheme.typography.headlineSmall,
-                color = textColor
-            )
-        },
-        modifier = modifier.clickable(onClick = onClick)
-    )
+    val spacing = LocalSpacing.current
+    val textColor = if (isDestructive) {
+        MaterialTheme.colorScheme.error
+    } else {
+        MaterialTheme.colorScheme.onSurface
+    }
+
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(vertical = spacing.small),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = icon,
+            style = MaterialTheme.typography.headlineSmall,
+            color = textColor
+        )
+        Spacer(modifier = Modifier.width(spacing.standard))
+        Text(
+            text = title,
+            style = MaterialTheme.typography.bodyLarge,
+            color = textColor
+        )
+    }
 }
