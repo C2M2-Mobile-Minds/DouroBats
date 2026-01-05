@@ -74,15 +74,7 @@ fun SettingsScreen(
             onEditClick = { showEditDialog = true }
         )
 
-        Spacer(modifier = Modifier.height(spacing.small))
-
-        // Account details
-        AccountDetailItem(
-            icon = "✉️",
-            label = stringResource(Res.string.settings_email),
-            value = uiState.userProfile.email.ifEmpty { stringResource(Res.string.settings_not_set) }
-        )
-
+        // Phone number (if available)
         if (uiState.userProfile.phoneNumber.isNotEmpty()) {
             Spacer(modifier = Modifier.height(spacing.small))
             AccountDetailItem(

@@ -16,7 +16,7 @@ import pt.dourobats.app.core.domain.model.UserProfile
 data class SettingsUiState(
     val userProfile: UserProfile = UserProfile.empty(),
     val currentLanguage: Language = Language.ENGLISH_US,
-    val currentTheme: Theme = Theme.SYSTEM,
+    val currentTheme: Theme = Theme.LIGHT,
     val isLoading: Boolean = false,
     val validationErrors: ValidationErrors = ValidationErrors()
 ) {
