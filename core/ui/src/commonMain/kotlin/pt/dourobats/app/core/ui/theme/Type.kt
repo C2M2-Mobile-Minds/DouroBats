@@ -12,9 +12,9 @@ import dourobats.core.ui.generated.resources.quicksand_semibold
 import org.jetbrains.compose.resources.Font
 
 /**
- * Poppins font family loaded from Compose Resources (KMP-compatible).
+ * Quicksand font family loaded from Compose Resources (KMP-compatible).
  *
- * Poppins is a modern geometric sans-serif typeface designed for:
+ * Quicksand is a modern geometric sans-serif typeface designed for:
  * - Excellent readability on screens
  * - Clean, professional appearance
  * - Modern, minimalist aesthetics
@@ -36,16 +36,16 @@ fun quicksandFontFamily() = FontFamily(
 )
 
 /**
- * App Typography using Poppins font family.
+ * App Typography using Quicksand font family.
  *
- * Applies Poppins to all Material Design 3 text styles:
+ * Applies Quicksand to all Material Design 3 text styles:
  * - Display styles: Large, prominent text (e.g., hero headlines)
  * - Headline styles: Section headers
  * - Title styles: Card titles, list headers
  * - Body styles: Main content text
  * - Label styles: Buttons, captions, small text
  *
- * @return Typography configured with Poppins font family
+ * @return Typography configured with Quicksand font family
  */
 @Composable
 fun appTypography(): Typography {
