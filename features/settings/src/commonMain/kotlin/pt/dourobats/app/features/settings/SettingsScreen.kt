@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -31,6 +32,7 @@ import pt.dourobats.app.core.domain.model.Theme
 import pt.dourobats.app.core.ui.components.SectionCard
 import pt.dourobats.app.core.ui.components.SwitchListItem
 import pt.dourobats.app.core.ui.theme.LocalSpacing
+import pt.dourobats.app.features.settings.components.BookingStatsCard
 import pt.dourobats.app.features.settings.components.LanguageBottomSheet
 import pt.dourobats.app.features.settings.components.ProfileEditDialog
 import pt.dourobats.app.features.settings.components.ProfileHeader
@@ -57,7 +59,6 @@ fun SettingsScreen(
     val editState by viewModel.editState.collectAsState()
     var showLanguageSheet by remember { mutableStateOf(false) }
     var showEditDialog by remember { mutableStateOf(false) }
-    var showDeleteDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -67,30 +68,35 @@ fun SettingsScreen(
     ) {
         Spacer(modifier = Modifier.height(spacing.standard))
 
-        // Profile Card
-        SectionCard(title = stringResource(Res.string.settings_section_account)) {
-            ProfileHeader(
-                userProfile = uiState.userProfile,
-                onEditClick = { showEditDialog = true }
-            )
+        // Profile Section (NO CARD)
+        ProfileHeader(
+            userProfile = uiState.userProfile,
+            onEditClick = { showEditDialog = true }
+        )
 
+        Spacer(modifier = Modifier.height(spacing.small))
+
+        // Account details
+        AccountDetailItem(
+            icon = "✉️",
+            label = stringResource(Res.string.settings_email),
+            value = uiState.userProfile.email.ifEmpty { stringResource(Res.string.settings_not_set) }
+        )
+
+        if (uiState.userProfile.phoneNumber.isNotEmpty()) {
             Spacer(modifier = Modifier.height(spacing.small))
-
-            // Account details
             AccountDetailItem(
-                icon = "✉️",
-                label = stringResource(Res.string.settings_email),
-                value = uiState.userProfile.email.ifEmpty { stringResource(Res.string.settings_not_set) }
+                icon = "\uD83D\uDCF1",
+                label = stringResource(Res.string.settings_phone),
+                value = uiState.userProfile.phoneNumber
             )
+        }
 
-            if (uiState.userProfile.phoneNumber.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(spacing.small))
-                AccountDetailItem(
-                    icon = "\uD83D\uDCF1",
-                    label = stringResource(Res.string.settings_phone),
-                    value = uiState.userProfile.phoneNumber
-                )
-            }
+        Spacer(modifier = Modifier.height(spacing.sectionSpacing))
+
+        // My Booking History Card
+        SectionCard(title = "My Booking History") {
+            BookingStatsCard()
         }
 
         Spacer(modifier = Modifier.height(spacing.sectionSpacing))
@@ -107,10 +113,10 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(spacing.standard))
 
-            // Dark mode toggle
+            // Theme toggle
             SwitchListItem(
                 icon = "\uD83C\uDFA8",
-                title = stringResource(Res.string.settings_theme),
+                title = "Theme (Light/Dark)",
                 subtitle = uiState.currentTheme.displayName,
                 checked = uiState.currentTheme == Theme.DARK,
                 onCheckedChange = { isDark ->
@@ -121,22 +127,42 @@ fun SettingsScreen(
 
         Spacer(modifier = Modifier.height(spacing.sectionSpacing))
 
-        // Account Actions Card
-        SectionCard(title = stringResource(Res.string.settings_section_actions)) {
-            ActionItem(
-                icon = "🚪",
-                title = stringResource(Res.string.settings_logout),
-                onClick = { viewModel.logout() }
+        // Committee Tools Card
+        SectionCard(title = "Committee Tools") {
+            SettingsClickableItem(
+                icon = "📅",
+                title = "Manage Sessions",
+                subtitle = "View and manage committee sessions",
+                onClick = { /* TODO: Navigate to manage sessions */ }
             )
 
             Spacer(modifier = Modifier.height(spacing.standard))
 
-            ActionItem(
-                icon = "🗑️",
-                title = stringResource(Res.string.settings_delete_account),
-                onClick = { showDeleteDialog = true },
-                isDestructive = true
+            SettingsClickableItem(
+                icon = "📊",
+                title = "View Reports",
+                subtitle = "Access committee reports and analytics",
+                onClick = { /* TODO: Navigate to reports */ }
             )
+
+            Spacer(modifier = Modifier.height(spacing.standard))
+
+            SettingsClickableItem(
+                icon = "⚙️",
+                title = "Committee Settings",
+                subtitle = "Configure committee preferences",
+                onClick = { /* TODO: Navigate to committee settings */ }
+            )
+        }
+
+        Spacer(modifier = Modifier.height(spacing.sectionSpacing))
+
+        // Logout Button (standalone)
+        Button(
+            onClick = { viewModel.logout() },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Logout")
         }
 
         Spacer(modifier = Modifier.height(spacing.sectionSpacing))
@@ -179,32 +205,6 @@ fun SettingsScreen(
         )
     }
 
-    // Delete Account Confirmation
-    if (showDeleteDialog) {
-        AlertDialog(
-            onDismissRequest = { showDeleteDialog = false },
-            title = { Text(stringResource(Res.string.settings_delete_account)) },
-            text = { Text(stringResource(Res.string.settings_delete_account_confirm)) },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        viewModel.deleteAccount()
-                        showDeleteDialog = false
-                    }
-                ) {
-                    Text(
-                        stringResource(Res.string.settings_delete),
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDeleteDialog = false }) {
-                    Text(stringResource(Res.string.settings_cancel))
-                }
-            }
-        )
-    }
 }
 
 /**
