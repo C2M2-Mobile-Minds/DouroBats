@@ -3,4 +3,13 @@
     <!-- Training/Schedule Screen -->
     <string name="training_title">Agenda de Treinos</string>
     <string name="training_coming_soon">Visualização do calendário em breve...</string>
+
+    <!-- Calendar - Day Names (Short) -->
+    <string name="day_monday_short">Seg</string>
+    <string name="day_tuesday_short">Ter</string>
+    <string name="day_wednesday_short">Qua</string>
+    <string name="day_thursday_short">Qui</string>
+    <string name="day_friday_short">Sex</string>
+    <string name="day_saturday_short">Sáb</string>
+    <string name="day_sunday_short">Dom</string>
 </resources>

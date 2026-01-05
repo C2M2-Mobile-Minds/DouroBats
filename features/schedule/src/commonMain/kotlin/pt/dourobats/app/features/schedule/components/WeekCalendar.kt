@@ -27,10 +27,19 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import dourobats.features.schedule.generated.resources.Res
+import dourobats.features.schedule.generated.resources.day_friday_short
+import dourobats.features.schedule.generated.resources.day_monday_short
+import dourobats.features.schedule.generated.resources.day_saturday_short
+import dourobats.features.schedule.generated.resources.day_sunday_short
+import dourobats.features.schedule.generated.resources.day_thursday_short
+import dourobats.features.schedule.generated.resources.day_tuesday_short
+import dourobats.features.schedule.generated.resources.day_wednesday_short
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
+import org.jetbrains.compose.resources.stringResource
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 
 /**
@@ -219,33 +228,34 @@ private fun generateWeekDates(
  * Helper to subtract days from LocalDate.
  */
 private fun LocalDate.minusDays(days: Int): LocalDate {
-    return this.minus(kotlinx.datetime.DatePeriod(days = days))
+    return kotlinx.datetime.LocalDate.fromEpochDays(this.toEpochDays() - days)
 }
 
 /**
  * Helper to add days to LocalDate.
  */
 private fun LocalDate.plusDays(days: Int): LocalDate {
-    return this.plus(kotlinx.datetime.DatePeriod(days = days))
+    return kotlinx.datetime.LocalDate.fromEpochDays(this.toEpochDays() + days)
 }
 
 /**
- * Gets short day of week name (Mon, Tue, etc.).
+ * Gets localized short day of week name (Mon, Tue, etc.).
  *
- * TODO: Add proper localization using strings from resources.
+ * Returns the appropriate localized string resource based on the day of week.
+ * Supports 5 languages: English US, English UK, Spanish, Portuguese BR, Portuguese PT.
  *
  * @param date The date to get the day name for
- * @return Short day name string
+ * @return Localized short day name string resource
  */
+@Composable
 private fun getDayOfWeekShort(date: LocalDate): String {
     return when (date.dayOfWeek) {
-        kotlinx.datetime.DayOfWeek.MONDAY -> "Mon"
-        kotlinx.datetime.DayOfWeek.TUESDAY -> "Tue"
-        kotlinx.datetime.DayOfWeek.WEDNESDAY -> "Wed"
-        kotlinx.datetime.DayOfWeek.THURSDAY -> "Thu"
-        kotlinx.datetime.DayOfWeek.FRIDAY -> "Fri"
-        kotlinx.datetime.DayOfWeek.SATURDAY -> "Sat"
-        kotlinx.datetime.DayOfWeek.SUNDAY -> "Sun"
-        else -> ""
+        kotlinx.datetime.DayOfWeek.MONDAY -> stringResource(Res.string.day_monday_short)
+        kotlinx.datetime.DayOfWeek.TUESDAY -> stringResource(Res.string.day_tuesday_short)
+        kotlinx.datetime.DayOfWeek.WEDNESDAY -> stringResource(Res.string.day_wednesday_short)
+        kotlinx.datetime.DayOfWeek.THURSDAY -> stringResource(Res.string.day_thursday_short)
+        kotlinx.datetime.DayOfWeek.FRIDAY -> stringResource(Res.string.day_friday_short)
+        kotlinx.datetime.DayOfWeek.SATURDAY -> stringResource(Res.string.day_saturday_short)
+        kotlinx.datetime.DayOfWeek.SUNDAY -> stringResource(Res.string.day_sunday_short)
     }
 }
