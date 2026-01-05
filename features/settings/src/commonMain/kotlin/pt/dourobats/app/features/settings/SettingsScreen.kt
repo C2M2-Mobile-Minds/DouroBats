@@ -26,10 +26,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import dourobats.features.settings.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import pt.dourobats.app.core.ui.theme.LocalSpacing
 import pt.dourobats.app.features.settings.components.ProfileEditDialog
 import pt.dourobats.app.features.settings.components.ProfileHeader
 import pt.dourobats.app.features.settings.components.ThemeSelectionDialog
@@ -45,6 +45,7 @@ fun SettingsScreen(
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = koinViewModel()
 ) {
+    val spacing = LocalSpacing.current
     val uiState by viewModel.uiState.collectAsState()
     val editState by viewModel.editState.collectAsState()
     var showLanguageDialog by remember { mutableStateOf(false) }
@@ -59,14 +60,14 @@ fun SettingsScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(spacing.screenHorizontal),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = stringResource(Res.string.settings_title),
                 style = MaterialTheme.typography.headlineLarge
             )
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(spacing.extraSmall))
             Text(
                 text = stringResource(Res.string.settings_subtitle),
                 style = MaterialTheme.typography.bodyMedium,
@@ -259,11 +260,13 @@ private fun SectionHeader(
     title: String,
     modifier: Modifier = Modifier
 ) {
+    val spacing = LocalSpacing.current
+
     Text(
         text = title,
         style = MaterialTheme.typography.titleSmall,
         color = MaterialTheme.colorScheme.primary,
-        modifier = modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+        modifier = modifier.padding(horizontal = spacing.screenHorizontal, vertical = spacing.small)
     )
 }
 
