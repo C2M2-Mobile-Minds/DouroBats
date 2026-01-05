@@ -1942,11 +1942,78 @@ Column(
 
 ---
 
+### DB059: Modern Settings Screen Redesign with Card Layout
+**Story Points:** 5
+
+**As a** user
+**I want** a modern, visually organized Settings screen
+**So that** I can easily find and adjust my preferences with a better UX
+
+**Dependencies:** DB057 (Design Tokens), DB058 (Design Tokens Applied)
+
+**Technical Details:**
+- Redesign SettingsScreen with Material Design 3 card-based layout
+- Replace theme dialog with inline toggle switch (Light/Dark only, no System)
+- Replace language dialog with modal bottom sheet (better mobile UX)
+- Group settings into visually distinct cards:
+  - **Profile Card**: Avatar, name, email, phone with edit button
+  - **Preferences Card**: Language selector, Dark mode toggle
+  - **Committee Tools Card**: Only visible to privileged users, all admin tools
+  - **Account Actions Card**: Logout and delete account
+- Use design tokens for consistent spacing (cardPadding, sectionSpacing)
+- Apply proper Material Design 3 elevation and surface colors
+- Maintain all existing functionality (no breaking changes)
+
+**UI Components to Create:**
+1. `SettingsCard` - Reusable card container with title
+2. `SettingsSwitchItem` - List item with trailing switch
+3. `LanguageBottomSheet` - Modal bottom sheet with radio buttons
+4. Update `ProfileHeader` to be card-based
+
+**Visual Design:**
+- Cards use `MaterialTheme.colorScheme.surface` with elevation
+- Background uses `MaterialTheme.colorScheme.background`
+- Spacing between cards: `spacing.sectionSpacing`
+- Card internal padding: `spacing.cardPadding`
+- Proper elevation for depth (1.dp for cards)
+- Rounded corners (12.dp) for modern look
+
+**Interaction Changes:**
+- **Before:** Tap theme → Dialog opens → Select option → Dialog closes
+- **After:** Toggle switch → Instant theme change
+- **Before:** Tap language → Dialog with radio buttons
+- **After:** Tap language → Bottom sheet slides up with radio buttons
+
+**Acceptance Criteria:**
+- [ ] Settings organized into 4 distinct cards (Profile, Preferences, Committee Tools, Actions)
+- [ ] Cards have proper elevation and rounded corners
+- [ ] Theme selection uses toggle switch (Light/Dark only)
+- [ ] Language selection uses modal bottom sheet
+- [ ] Bottom sheet has radio buttons for all 5 languages
+- [ ] Design tokens used throughout (no hardcoded spacing)
+- [ ] Profile card shows avatar, name, email, phone
+- [ ] Committee Tools card only visible to privileged users
+- [ ] All existing functionality preserved (no regressions)
+- [ ] Visual hierarchy is clear and modern
+- [ ] Works on both Android and iOS
+- [ ] Smooth animations (bottom sheet slide, theme transition)
+
+**Design Rationale:**
+- **Card grouping**: Improves visual hierarchy and scannability
+- **Toggle for theme**: Modern pattern, one less tap, instant feedback
+- **Bottom sheet for language**: More native Android feel, better for thumb reach
+- **No flags**: Language ≠ Country (best practice)
+- **Elevation**: Creates depth and separates grouped content
+
+**Existing Code:** Refactor existing SettingsScreen, keep SettingsViewModel unchanged
+
+---
+
 
 ## Summary
 
-**Total User Stories:** 58
-**Total Story Points:** 262
+**Total User Stories:** 59
+**Total Story Points:** 267
 
 ### Key Points:
 - **Localization:** All 5 languages (en, pt-PT, pt-BR, es-ES, en-GB) already set up
