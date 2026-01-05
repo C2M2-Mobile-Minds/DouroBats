@@ -1,4 +1,4 @@
-package pt.dourobats.app.features.settings.components
+package pt.dourobats.app.core.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -11,47 +11,56 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 
 /**
- * Reusable card container for grouping related settings.
+ * Reusable card container for grouping related content.
  *
- * Provides consistent styling with Material Design 3:
- * - Rounded corners (12.dp)
- * - Subtle elevation (1.dp)
+ * Generic, isolated component that can be used across any feature.
+ * Provides consistent styling with Material Design 3.
+ *
+ * ## Features
+ * - Rounded corners (configurable)
+ * - Subtle elevation (configurable)
  * - Surface color background
  * - Responsive padding using design tokens
+ * - Optional section title
  *
  * ## Usage
  *
  * ```kotlin
- * SettingsCard(title = "Preferences") {
- *     SettingsSwitchItem(...)
- *     SettingsItem(...)
+ * SectionCard(title = "User Information") {
+ *     Text("Name: John Doe")
+ *     Text("Email: john@example.com")
  * }
  * ```
  *
  * @param title Optional section title displayed at the top of the card
  * @param modifier Optional modifier for the card
- * @param content Card content (settings items, etc.)
+ * @param cornerRadius Corner radius for the card (default: 12.dp)
+ * @param elevation Elevation for the card (default: 1.dp)
+ * @param content Card content
  */
 @Composable
-fun SettingsCard(
+fun SectionCard(
     title: String? = null,
     modifier: Modifier = Modifier,
+    cornerRadius: Dp = 12.dp,
+    elevation: Dp = 1.dp,
     content: @Composable ColumnScope.() -> Unit
 ) {
     val spacing = LocalSpacing.current
 
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(cornerRadius),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 1.dp
+            defaultElevation = elevation
         )
     ) {
         Column(

@@ -28,12 +28,12 @@ import dourobats.features.settings.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.dourobats.app.core.domain.model.Theme
+import pt.dourobats.app.core.ui.components.SectionCard
+import pt.dourobats.app.core.ui.components.SwitchListItem
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 import pt.dourobats.app.features.settings.components.LanguageBottomSheet
 import pt.dourobats.app.features.settings.components.ProfileEditDialog
 import pt.dourobats.app.features.settings.components.ProfileHeader
-import pt.dourobats.app.features.settings.components.SettingsCard
-import pt.dourobats.app.features.settings.components.SettingsSwitchItem
 
 /**
  * Modern card-based Settings screen with Material Design 3 patterns.
@@ -68,7 +68,7 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(spacing.standard))
 
         // Profile Card
-        SettingsCard(title = stringResource(Res.string.settings_section_account)) {
+        SectionCard(title = stringResource(Res.string.settings_section_account)) {
             ProfileHeader(
                 userProfile = uiState.userProfile,
                 onEditClick = { showEditDialog = true }
@@ -96,7 +96,7 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(spacing.sectionSpacing))
 
         // Preferences Card
-        SettingsCard(title = stringResource(Res.string.settings_section_preferences)) {
+        SectionCard(title = stringResource(Res.string.settings_section_preferences)) {
             // Language selector
             SettingsClickableItem(
                 icon = "\uD83C\uDF10",
@@ -108,7 +108,7 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(spacing.standard))
 
             // Dark mode toggle
-            SettingsSwitchItem(
+            SwitchListItem(
                 icon = "\uD83C\uDFA8",
                 title = stringResource(Res.string.settings_theme),
                 subtitle = uiState.currentTheme.displayName,
@@ -122,7 +122,7 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(spacing.sectionSpacing))
 
         // Account Actions Card
-        SettingsCard(title = stringResource(Res.string.settings_section_actions)) {
+        SectionCard(title = stringResource(Res.string.settings_section_actions)) {
             ActionItem(
                 icon = "🚪",
                 title = stringResource(Res.string.settings_logout),
