@@ -23,8 +23,8 @@ import pt.dourobats.app.core.ui.theme.LocalSpacing
  *
  * ## Features
  * - Rounded corners (configurable)
- * - Subtle elevation (configurable)
- * - Surface color background
+ * - Elevated surface for better visibility in dark mode (configurable)
+ * - Surface color background with tonal elevation
  * - Responsive padding using design tokens
  * - Optional section title
  *
@@ -40,7 +40,7 @@ import pt.dourobats.app.core.ui.theme.LocalSpacing
  * @param title Optional section title displayed at the top of the card
  * @param modifier Optional modifier for the card
  * @param cornerRadius Corner radius for the card (default: 12.dp)
- * @param elevation Elevation for the card (default: 1.dp)
+ * @param elevation Elevation for the card (default: 4.dp for better visibility in dark mode)
  * @param content Card content
  */
 @Composable
@@ -48,7 +48,7 @@ fun SectionCard(
     title: String? = null,
     modifier: Modifier = Modifier,
     cornerRadius: Dp = 12.dp,
-    elevation: Dp = 1.dp,
+    elevation: Dp = 4.dp,
     content: @Composable ColumnScope.() -> Unit
 ) {
     val spacing = LocalSpacing.current
