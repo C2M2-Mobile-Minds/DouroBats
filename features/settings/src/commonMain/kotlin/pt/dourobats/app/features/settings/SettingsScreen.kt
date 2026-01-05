@@ -8,14 +8,24 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.Event
+import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -25,16 +35,31 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import dourobats.features.settings.generated.resources.*
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
+import dourobats.features.settings.generated.resources.Res
+import dourobats.features.settings.generated.resources.settings_booking_history
+import dourobats.features.settings.generated.resources.settings_committee_manage_sessions
+import dourobats.features.settings.generated.resources.settings_committee_manage_sessions_description
+import dourobats.features.settings.generated.resources.settings_committee_settings
+import dourobats.features.settings.generated.resources.settings_committee_settings_description
+import dourobats.features.settings.generated.resources.settings_committee_tools
+import dourobats.features.settings.generated.resources.settings_committee_view_reports
+import dourobats.features.settings.generated.resources.settings_committee_view_reports_description
+import dourobats.features.settings.generated.resources.settings_language
+import dourobats.features.settings.generated.resources.settings_logout
+import dourobats.features.settings.generated.resources.settings_section_preferences
+import dourobats.features.settings.generated.resources.settings_theme
+import dourobats.features.settings.generated.resources.settings_theme_dark
+import dourobats.features.settings.generated.resources.settings_theme_light
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.dourobats.app.core.domain.model.Theme
 import pt.dourobats.app.core.ui.components.SectionCard
-import pt.dourobats.app.core.ui.components.SwitchListItem
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 import pt.dourobats.app.features.settings.components.BookingStatsCard
 import pt.dourobats.app.features.settings.components.LanguageBottomSheet
-import pt.dourobats.app.features.settings.components.ProfileEditDialog
+import pt.dourobats.app.features.settings.components.ProfileEditBottomSheet
 import pt.dourobats.app.features.settings.components.ProfileHeader
 
 /**
@@ -42,13 +67,15 @@ import pt.dourobats.app.features.settings.components.ProfileHeader
  *
  * Features:
  * - Card-based layout for visual grouping
- * - Toggle switch for theme (instant feedback)
+ * - Segmented button for theme selection (clear Light/Dark choice)
  * - Bottom sheet for language selection (better mobile UX)
+ * - Modal bottom sheet for profile editing (modern mobile pattern)
  * - Responsive spacing using design tokens
  *
  * @param modifier Optional modifier for the screen
  * @param viewModel ViewModel managing settings state and logic
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     modifier: Modifier = Modifier,
@@ -74,20 +101,10 @@ fun SettingsScreen(
             onEditClick = { showEditDialog = true }
         )
 
-        // Phone number (if available)
-        if (uiState.userProfile.phoneNumber.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(spacing.small))
-            AccountDetailItem(
-                icon = "\uD83D\uDCF1",
-                label = stringResource(Res.string.settings_phone),
-                value = uiState.userProfile.phoneNumber
-            )
-        }
-
         Spacer(modifier = Modifier.height(spacing.sectionSpacing))
 
         // My Booking History Card
-        SectionCard(title = "My Booking History") {
+        SectionCard(title = stringResource(Res.string.settings_booking_history)) {
             BookingStatsCard()
         }
 
@@ -97,7 +114,7 @@ fun SettingsScreen(
         SectionCard(title = stringResource(Res.string.settings_section_preferences)) {
             // Language selector
             SettingsClickableItem(
-                icon = "\uD83C\uDF10",
+                icon = Icons.Default.Language,
                 title = stringResource(Res.string.settings_language),
                 subtitle = uiState.currentLanguage.displayName,
                 onClick = { showLanguageSheet = true }
@@ -105,44 +122,70 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(spacing.standard))
 
-            // Theme toggle
-            SwitchListItem(
-                icon = "\uD83C\uDFA8",
-                title = "Theme (Light/Dark)",
-                subtitle = uiState.currentTheme.displayName,
-                checked = uiState.currentTheme == Theme.DARK,
-                onCheckedChange = { isDark ->
-                    viewModel.setTheme(if (isDark) Theme.DARK else Theme.LIGHT)
+            // Theme selector with SegmentedButton
+            Column(modifier = Modifier.padding(vertical = spacing.small)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.Palette,
+                        contentDescription = stringResource(Res.string.settings_theme),
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(spacing.standard))
+                    Text(
+                        text = stringResource(Res.string.settings_theme),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
                 }
-            )
+
+                Spacer(modifier = Modifier.height(spacing.small))
+
+                SingleChoiceSegmentedButtonRow(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    SegmentedButton(
+                        selected = uiState.currentTheme == Theme.LIGHT,
+                        onClick = { viewModel.setTheme(Theme.LIGHT) },
+                        shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2)
+                    ) {
+                        Text(stringResource(Res.string.settings_theme_light))
+                    }
+                    SegmentedButton(
+                        selected = uiState.currentTheme == Theme.DARK,
+                        onClick = { viewModel.setTheme(Theme.DARK) },
+                        shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2)
+                    ) {
+                        Text(stringResource(Res.string.settings_theme_dark))
+                    }
+                }
+            }
         }
 
         Spacer(modifier = Modifier.height(spacing.sectionSpacing))
 
         // Committee Tools Card
-        SectionCard(title = "Committee Tools") {
+        SectionCard(title = stringResource(Res.string.settings_committee_tools)) {
             SettingsClickableItem(
-                icon = "📅",
-                title = "Manage Sessions",
-                subtitle = "View and manage committee sessions",
+                icon = Icons.Default.Event,
+                title = stringResource(Res.string.settings_committee_manage_sessions),
+                subtitle = stringResource(Res.string.settings_committee_manage_sessions_description),
                 onClick = { /* TODO: Navigate to manage sessions */ }
             )
 
             Spacer(modifier = Modifier.height(spacing.standard))
 
             SettingsClickableItem(
-                icon = "📊",
-                title = "View Reports",
-                subtitle = "Access committee reports and analytics",
+                icon = Icons.Default.BarChart,
+                title = stringResource(Res.string.settings_committee_view_reports),
+                subtitle = stringResource(Res.string.settings_committee_view_reports_description),
                 onClick = { /* TODO: Navigate to reports */ }
             )
 
             Spacer(modifier = Modifier.height(spacing.standard))
 
             SettingsClickableItem(
-                icon = "⚙️",
-                title = "Committee Settings",
-                subtitle = "Configure committee preferences",
+                icon = Icons.Default.Settings,
+                title = stringResource(Res.string.settings_committee_settings),
+                subtitle = stringResource(Res.string.settings_committee_settings_description),
                 onClick = { /* TODO: Navigate to committee settings */ }
             )
         }
@@ -154,7 +197,7 @@ fun SettingsScreen(
             onClick = { viewModel.logout() },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Logout")
+            Text(stringResource(Res.string.settings_logout))
         }
 
         Spacer(modifier = Modifier.height(spacing.sectionSpacing))
@@ -172,7 +215,7 @@ fun SettingsScreen(
         )
     }
 
-    // Profile Edit Dialog
+    // Profile Edit Bottom Sheet
     LaunchedEffect(showEditDialog) {
         if (showEditDialog) {
             viewModel.enterEditMode()
@@ -180,15 +223,18 @@ fun SettingsScreen(
     }
 
     if (showEditDialog) {
-        ProfileEditDialog(
+        ProfileEditBottomSheet(
             editState = editState,
-            email = uiState.userProfile.email,
             validationErrors = uiState.validationErrors,
             onDisplayNameChange = viewModel::updateDisplayName,
+            onEmailChange = viewModel::updateEmail,
             onPhoneNumberChange = viewModel::updatePhoneNumber,
             onSave = {
-                viewModel.saveProfile()
-                showEditDialog = false
+                viewModel.saveProfile(
+                    onSuccess = {
+                        showEditDialog = false
+                    }
+                )
             },
             onDismiss = {
                 viewModel.cancelEdit()
@@ -200,43 +246,11 @@ fun SettingsScreen(
 }
 
 /**
- * Account detail display item (read-only).
- */
-@Composable
-private fun AccountDetailItem(
-    icon: String,
-    label: String,
-    value: String,
-    modifier: Modifier = Modifier
-) {
-    val spacing = LocalSpacing.current
-
-    Row(
-        modifier = modifier.padding(vertical = spacing.extraSmall),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(text = icon, style = MaterialTheme.typography.titleMedium)
-        Spacer(modifier = Modifier.width(spacing.standard))
-        Column {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Text(
-                text = value,
-                style = MaterialTheme.typography.bodyLarge
-            )
-        }
-    }
-}
-
-/**
  * Clickable settings item (e.g., language selector).
  */
 @Composable
 private fun SettingsClickableItem(
-    icon: String,
+    icon: ImageVector,
     title: String,
     subtitle: String,
     onClick: () -> Unit,
@@ -251,7 +265,12 @@ private fun SettingsClickableItem(
             .padding(vertical = spacing.small),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = icon, style = MaterialTheme.typography.headlineSmall)
+        Icon(
+            imageVector = icon,
+            contentDescription = title,
+            modifier = Modifier.size(24.dp),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
+        )
         Spacer(modifier = Modifier.width(spacing.standard))
         Column(modifier = Modifier.weight(1f)) {
             Text(text = title, style = MaterialTheme.typography.bodyLarge)

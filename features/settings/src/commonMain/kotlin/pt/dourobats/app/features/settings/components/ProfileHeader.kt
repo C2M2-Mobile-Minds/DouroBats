@@ -10,6 +10,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -17,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dourobats.features.settings.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
@@ -66,10 +71,11 @@ fun ProfileHeader(
                         .background(MaterialTheme.colorScheme.primaryContainer),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = "👤",
-                        style = MaterialTheme.typography.displayLarge,
-                        color = MaterialTheme.colorScheme.primary
+                    Icon(
+                        imageVector = Icons.Default.AccountCircle,
+                        contentDescription = stringResource(Res.string.settings_profile_picture),
+                        modifier = Modifier.size(56.dp),
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
             }
@@ -88,9 +94,11 @@ fun ProfileHeader(
                     modifier = Modifier.padding(6.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = "✏️",
-                        style = MaterialTheme.typography.bodyMedium
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = stringResource(Res.string.settings_edit_profile),
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
             }
@@ -101,8 +109,11 @@ fun ProfileHeader(
         // Display name
         Text(
             text = userProfile.displayName.ifEmpty { stringResource(Res.string.settings_no_name) },
-            style = MaterialTheme.typography.headlineSmall
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold
         )
+
+        Spacer(modifier = Modifier.height(spacing.extraSmall))
 
         // Email
         Text(
@@ -110,5 +121,15 @@ fun ProfileHeader(
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
+
+        // Phone number
+        if (userProfile.phoneNumber.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(spacing.extraSmall))
+            Text(
+                text = userProfile.phoneNumber,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     }
 }
