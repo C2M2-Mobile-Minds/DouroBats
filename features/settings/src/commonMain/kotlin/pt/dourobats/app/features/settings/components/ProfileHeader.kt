@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import dourobats.features.settings.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
 import pt.dourobats.app.core.domain.model.UserProfile
+import pt.dourobats.app.core.ui.theme.LocalSpacing
 
 /**
  * Profile header component displaying user avatar and basic info.
@@ -35,10 +36,12 @@ fun ProfileHeader(
     onEditClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val spacing = LocalSpacing.current
+
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(spacing.standard),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
@@ -93,7 +96,7 @@ fun ProfileHeader(
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(spacing.standard))
 
         // Display name
         Text(
