@@ -44,7 +44,7 @@ private fun AppContent() {
 
     // Load the saved theme from DataStore
     val savedTheme by settingsRepository.themeFlow.collectAsState(
-        initial = Theme.SYSTEM
+        initial = Theme.LIGHT
     )
 
     // Track language state for triggering recomposition
@@ -67,7 +67,6 @@ private fun AppContent() {
     val useDarkTheme = when (savedTheme) {
         Theme.LIGHT -> false
         Theme.DARK -> true
-        Theme.SYSTEM -> systemDarkTheme
     }
 
     AppTheme(darkTheme = useDarkTheme) {
