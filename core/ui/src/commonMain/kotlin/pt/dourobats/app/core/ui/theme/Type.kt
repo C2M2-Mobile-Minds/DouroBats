@@ -5,10 +5,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import dourobats.core.ui.generated.resources.Res
-import dourobats.core.ui.generated.resources.poppins_bold
-import dourobats.core.ui.generated.resources.poppins_medium
-import dourobats.core.ui.generated.resources.poppins_regular
-import dourobats.core.ui.generated.resources.poppins_semibold
+import dourobats.core.ui.generated.resources.quicksand_bold
+import dourobats.core.ui.generated.resources.quicksand_medium
+import dourobats.core.ui.generated.resources.quicksand_regular
+import dourobats.core.ui.generated.resources.quicksand_semibold
 import org.jetbrains.compose.resources.Font
 
 /**
@@ -28,11 +28,11 @@ import org.jetbrains.compose.resources.Font
  * Note: Font loading from resources requires @Composable context
  */
 @Composable
-fun poppinsFontFamily() = FontFamily(
-    Font(Res.font.poppins_regular, FontWeight.Normal),
-    Font(Res.font.poppins_medium, FontWeight.Medium),
-    Font(Res.font.poppins_semibold, FontWeight.SemiBold),
-    Font(Res.font.poppins_bold, FontWeight.Bold),
+fun quicksandFontFamily() = FontFamily(
+    Font(Res.font.quicksand_regular, FontWeight.Normal),
+    Font(Res.font.quicksand_medium, FontWeight.Medium),
+    Font(Res.font.quicksand_semibold, FontWeight.SemiBold),
+    Font(Res.font.quicksand_bold, FontWeight.Bold),
 )
 
 /**
@@ -48,8 +48,8 @@ fun poppinsFontFamily() = FontFamily(
  * @return Typography configured with Poppins font family
  */
 @Composable
-fun AppTypography(): Typography {
-    val fontFamily = poppinsFontFamily()
+fun appTypography(): Typography {
+    val fontFamily = quicksandFontFamily()
     val baseline = Typography()
 
     return Typography(
