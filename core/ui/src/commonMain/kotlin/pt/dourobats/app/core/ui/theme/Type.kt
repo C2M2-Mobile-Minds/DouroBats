@@ -5,26 +5,51 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import dourobats.core.ui.generated.resources.Res
-import dourobats.core.ui.generated.resources.montserrat_bold
-import dourobats.core.ui.generated.resources.montserrat_medium
-import dourobats.core.ui.generated.resources.montserrat_regular
-import dourobats.core.ui.generated.resources.montserrat_semibold
+import dourobats.core.ui.generated.resources.poppins_bold
+import dourobats.core.ui.generated.resources.poppins_medium
+import dourobats.core.ui.generated.resources.poppins_regular
+import dourobats.core.ui.generated.resources.poppins_semibold
 import org.jetbrains.compose.resources.Font
 
-// Montserrat font family loaded from Compose Resources (KMP-compatible)
-// Note: Font loading from resources requires @Composable context
+/**
+ * Poppins font family loaded from Compose Resources (KMP-compatible).
+ *
+ * Poppins is a modern geometric sans-serif typeface designed for:
+ * - Excellent readability on screens
+ * - Clean, professional appearance
+ * - Modern, minimalist aesthetics
+ *
+ * Font weights available:
+ * - Regular (400)
+ * - Medium (500)
+ * - SemiBold (600)
+ * - Bold (700)
+ *
+ * Note: Font loading from resources requires @Composable context
+ */
 @Composable
-fun montserratFontFamily() = FontFamily(
-    Font(Res.font.montserrat_regular, FontWeight.Normal),
-    Font(Res.font.montserrat_medium, FontWeight.Medium),
-    Font(Res.font.montserrat_semibold, FontWeight.SemiBold),
-    Font(Res.font.montserrat_bold, FontWeight.Bold),
+fun poppinsFontFamily() = FontFamily(
+    Font(Res.font.poppins_regular, FontWeight.Normal),
+    Font(Res.font.poppins_medium, FontWeight.Medium),
+    Font(Res.font.poppins_semibold, FontWeight.SemiBold),
+    Font(Res.font.poppins_bold, FontWeight.Bold),
 )
 
-// Create Typography with Montserrat font
+/**
+ * App Typography using Poppins font family.
+ *
+ * Applies Poppins to all Material Design 3 text styles:
+ * - Display styles: Large, prominent text (e.g., hero headlines)
+ * - Headline styles: Section headers
+ * - Title styles: Card titles, list headers
+ * - Body styles: Main content text
+ * - Label styles: Buttons, captions, small text
+ *
+ * @return Typography configured with Poppins font family
+ */
 @Composable
 fun AppTypography(): Typography {
-    val fontFamily = montserratFontFamily()
+    val fontFamily = poppinsFontFamily()
     val baseline = Typography()
 
     return Typography(
