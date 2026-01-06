@@ -121,7 +121,8 @@ fun ScheduleScreen(
                     yearMonth = currentYearMonth,
                     selectedDate = selectedDate,
                     onDateSelected = { date -> selectedDate = date },
-                    onMonthChange = { yearMonth -> currentYearMonth = yearMonth }
+                    onMonthChange = { yearMonth -> currentYearMonth = yearMonth },
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
         }

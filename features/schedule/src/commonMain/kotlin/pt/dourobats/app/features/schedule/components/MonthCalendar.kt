@@ -303,9 +303,11 @@ private fun MonthGrid(
         columns = GridCells.Fixed(7),
         modifier = Modifier
             .fillMaxWidth()
+            .height(360.dp)
             .padding(horizontal = spacing.screenHorizontal),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp)
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        userScrollEnabled = false
     ) {
         items(dates.size) { index ->
             val date = dates[index]
