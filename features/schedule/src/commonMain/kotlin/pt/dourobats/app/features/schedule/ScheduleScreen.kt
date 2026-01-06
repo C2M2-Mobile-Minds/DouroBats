@@ -1,8 +1,7 @@
 package pt.dourobats.app.features.schedule
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -14,7 +13,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import dourobats.features.schedule.generated.resources.Res
-import dourobats.features.schedule.generated.resources.training_title
 import dourobats.features.schedule.generated.resources.view_mode_month
 import dourobats.features.schedule.generated.resources.view_mode_week
 import kotlinx.datetime.Clock
@@ -57,98 +55,105 @@ fun ScheduleScreen(
         mutableStateOf(YearMonth(selectedDate.year, selectedDate.month))
     }
 
-    Column(
+    // Load mock data
+    val allSessions = remember { MockSessionData.generateMockSessions() }
+    val bookedIds = remember { MockSessionData.getUserBookedSessionIds() }
+    val sessionsWithData = remember(allSessions, bookedIds) {
+        allSessions.toDisplayData(bookedIds)
+    }
+
+    // Filter sessions for selected date
+    val selectedDateSessions = remember(sessionsWithData, selectedDate) {
+        sessionsWithData.filter { it.session.dateTime.date == selectedDate }
+    }
+
+    // Filter user's upcoming booked sessions
+    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+    val upcomingSessions = remember(sessionsWithData, today) {
+        sessionsWithData.filter {
+            it.isUserBooked && it.session.dateTime.date >= today
+        }.sortedBy { it.session.dateTime }
+    }
+
+    LazyColumn(
         modifier = modifier
             .fillMaxSize()
             .padding(top = spacing.standard),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Screen title
-        Text(
-            text = stringResource(Res.string.training_title),
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(horizontal = spacing.screenHorizontal)
-        )
-
-        Spacer(modifier = Modifier.height(spacing.small))
-
         // View Mode Toggle
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = spacing.screenHorizontal),
-            horizontalArrangement = Arrangement.End
-        ) {
-            TextButton(onClick = {
-                viewMode = if (viewMode == CalendarViewMode.WEEK)
-                    CalendarViewMode.MONTH
-                else
-                    CalendarViewMode.WEEK
-            }) {
-                Text(
-                    text = if (viewMode == CalendarViewMode.WEEK)
-                        stringResource(Res.string.view_mode_month)
+        item {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = spacing.screenHorizontal),
+                horizontalArrangement = Arrangement.End
+            ) {
+                TextButton(onClick = {
+                    viewMode = if (viewMode == CalendarViewMode.WEEK)
+                        CalendarViewMode.MONTH
                     else
-                        stringResource(Res.string.view_mode_week),
-                    style = MaterialTheme.typography.labelLarge
+                        CalendarViewMode.WEEK
+                }) {
+                    Text(
+                        text = if (viewMode == CalendarViewMode.WEEK)
+                            stringResource(Res.string.view_mode_month)
+                        else
+                            stringResource(Res.string.view_mode_week),
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                }
+            }
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(spacing.small))
+        }
+
+        // Conditional calendar display
+        item {
+            when (viewMode) {
+                CalendarViewMode.WEEK -> WeekCalendar(
+                    selectedDate = selectedDate,
+                    onDateSelected = { date -> selectedDate = date }
+                )
+                CalendarViewMode.MONTH -> MonthCalendar(
+                    yearMonth = currentYearMonth,
+                    selectedDate = selectedDate,
+                    onDateSelected = { date -> selectedDate = date },
+                    onMonthChange = { yearMonth -> currentYearMonth = yearMonth }
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(spacing.small))
-
-        // Conditional calendar display
-        when (viewMode) {
-            CalendarViewMode.WEEK -> WeekCalendar(
-                selectedDate = selectedDate,
-                onDateSelected = { date -> selectedDate = date }
-            )
-            CalendarViewMode.MONTH -> MonthCalendar(
-                yearMonth = currentYearMonth,
-                selectedDate = selectedDate,
-                onDateSelected = { date -> selectedDate = date },
-                onMonthChange = { yearMonth -> currentYearMonth = yearMonth }
-            )
-        }
-
-        Spacer(modifier = Modifier.height(spacing.large))
-
-        // Load mock data
-        val allSessions = remember { MockSessionData.generateMockSessions() }
-        val bookedIds = remember { MockSessionData.getUserBookedSessionIds() }
-        val sessionsWithData = remember(allSessions, bookedIds) {
-            allSessions.toDisplayData(bookedIds)
-        }
-
-        // Filter sessions for selected date
-        val selectedDateSessions = remember(sessionsWithData, selectedDate) {
-            sessionsWithData.filter { it.session.dateTime.date == selectedDate }
-        }
-
-        // Filter user's upcoming booked sessions
-        val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
-        val upcomingSessions = remember(sessionsWithData, today) {
-            sessionsWithData.filter {
-                it.isUserBooked && it.session.dateTime.date >= today
-            }.sortedBy { it.session.dateTime }
+        item {
+            Spacer(modifier = Modifier.height(spacing.large))
         }
 
         // Section 1: Available sessions on selected date
-        SessionListSection(
-            title = "Available Sessions",
-            sessions = selectedDateSessions,
-            emptyMessage = "No sessions available on this date"
-        )
+        item {
+            SessionListSection(
+                title = "Available Sessions",
+                sessions = selectedDateSessions,
+                emptyMessage = "No sessions available on this date"
+            )
+        }
 
-        Spacer(modifier = Modifier.height(spacing.large))
+        item {
+            Spacer(modifier = Modifier.height(spacing.large))
+        }
 
         // Section 2: User's upcoming booked sessions
-        SessionListSection(
-            title = "My Schedule",
-            sessions = upcomingSessions,
-            emptyMessage = "You have no upcoming sessions booked"
-        )
+        item {
+            SessionListSection(
+                title = "My Schedule",
+                sessions = upcomingSessions,
+                emptyMessage = "You have no upcoming sessions booked"
+            )
+        }
 
-        Spacer(modifier = Modifier.height(spacing.large))
+        item {
+            Spacer(modifier = Modifier.height(spacing.large))
+        }
     }
 }
