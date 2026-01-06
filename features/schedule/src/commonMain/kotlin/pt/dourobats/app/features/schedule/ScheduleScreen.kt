@@ -1,6 +1,8 @@
 package pt.dourobats.app.features.schedule
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -11,9 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import dourobats.features.schedule.generated.resources.Res
-import dourobats.features.schedule.generated.resources.training_coming_soon
 import dourobats.features.schedule.generated.resources.training_title
 import dourobats.features.schedule.generated.resources.view_mode_month
 import dourobats.features.schedule.generated.resources.view_mode_week
@@ -23,8 +23,11 @@ import kotlinx.datetime.todayIn
 import org.jetbrains.compose.resources.stringResource
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 import pt.dourobats.app.features.schedule.components.MonthCalendar
+import pt.dourobats.app.features.schedule.components.SessionListSection
 import pt.dourobats.app.features.schedule.components.WeekCalendar
 import pt.dourobats.app.features.schedule.components.YearMonth
+import pt.dourobats.app.features.schedule.data.MockSessionData
+import pt.dourobats.app.features.schedule.data.toDisplayData
 
 /**
  * Calendar view mode enum.
@@ -57,6 +60,7 @@ fun ScheduleScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(top = spacing.standard),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -110,27 +114,42 @@ fun ScheduleScreen(
 
         Spacer(modifier = Modifier.height(spacing.large))
 
-        // Placeholder for session list (will be implemented in DB010)
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(spacing.screenHorizontal),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = "Selected: ${selectedDate}",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(spacing.small))
-            Text(
-                text = stringResource(Res.string.training_coming_soon),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center
-            )
+        // Load mock data
+        val allSessions = remember { MockSessionData.generateMockSessions() }
+        val bookedIds = remember { MockSessionData.getUserBookedSessionIds() }
+        val sessionsWithData = remember(allSessions, bookedIds) {
+            allSessions.toDisplayData(bookedIds)
         }
+
+        // Filter sessions for selected date
+        val selectedDateSessions = remember(sessionsWithData, selectedDate) {
+            sessionsWithData.filter { it.session.dateTime.date == selectedDate }
+        }
+
+        // Filter user's upcoming booked sessions
+        val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+        val upcomingSessions = remember(sessionsWithData, today) {
+            sessionsWithData.filter {
+                it.isUserBooked && it.session.dateTime.date >= today
+            }.sortedBy { it.session.dateTime }
+        }
+
+        // Section 1: Available sessions on selected date
+        SessionListSection(
+            title = "Available Sessions",
+            sessions = selectedDateSessions,
+            emptyMessage = "No sessions available on this date"
+        )
+
+        Spacer(modifier = Modifier.height(spacing.large))
+
+        // Section 2: User's upcoming booked sessions
+        SessionListSection(
+            title = "My Schedule",
+            sessions = upcomingSessions,
+            emptyMessage = "You have no upcoming sessions booked"
+        )
+
+        Spacer(modifier = Modifier.height(spacing.large))
     }
 }
