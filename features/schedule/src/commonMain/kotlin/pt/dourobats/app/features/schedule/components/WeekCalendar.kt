@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -20,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -80,34 +82,25 @@ fun WeekCalendar(
     val spacing = LocalSpacing.current
     val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
 
-    // Generate dates for current week plus 4 weeks before and 4 weeks after
-    val dates = generateWeekDates(selectedDate, weeksBeforeAfter = 4)
+    // Generate only the 7 days of the current week
+    val dates = remember { generateCurrentWeekDates() }
 
-    val listState = rememberLazyListState()
-
-    // Auto-scroll to selected date when it changes
-    LaunchedEffect(selectedDate) {
-        val selectedIndex = dates.indexOf(selectedDate)
-        if (selectedIndex != -1) {
-            listState.animateScrollToItem(
-                index = selectedIndex.coerceAtLeast(3) - 3
-            )
-        }
-    }
-
-    LazyRow(
-        modifier = modifier.fillMaxWidth(),
-        state = listState,
-        horizontalArrangement = Arrangement.spacedBy(spacing.small),
-        contentPadding = PaddingValues(horizontal = spacing.screenHorizontal)
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = spacing.medium),
+        horizontalArrangement = Arrangement.spacedBy(4.dp), // Tiny gap between circles
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        items(dates) { date ->
-            DateItem(
-                date = date,
-                isSelected = date == selectedDate,
-                isToday = date == today,
-                onDateClick = onDateSelected
-            )
+        dates.forEach { date ->
+            Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                DateItem(
+                    date = date,
+                    isSelected = date == selectedDate,
+                    isToday = date == today,
+                    onDateClick = onDateSelected
+                )
+            }
         }
     }
 }
@@ -257,5 +250,18 @@ private fun getDayOfWeekShort(date: LocalDate): String {
         kotlinx.datetime.DayOfWeek.FRIDAY -> stringResource(Res.string.day_friday_short)
         kotlinx.datetime.DayOfWeek.SATURDAY -> stringResource(Res.string.day_saturday_short)
         kotlinx.datetime.DayOfWeek.SUNDAY -> stringResource(Res.string.day_sunday_short)
+    }
+}
+
+private fun generateCurrentWeekDates(): List<LocalDate> {
+    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+
+    // DayOfWeek.ordinal: Monday is 0, Sunday is 6
+    val daysFromMonday = today.dayOfWeek.ordinal
+    val startOfCurrentWeek = today.minusDays(daysFromMonday)
+
+    // Generate exactly 7 days starting from Monday
+    return (0..6).map { dayOffset ->
+        startOfCurrentWeek.plusDays(dayOffset)
     }
 }
