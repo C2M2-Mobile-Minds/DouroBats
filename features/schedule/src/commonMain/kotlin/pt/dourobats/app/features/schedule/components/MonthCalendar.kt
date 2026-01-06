@@ -136,6 +136,7 @@ fun MonthCalendar(
         // Month header with navigation
         MonthHeader(
             yearMonth = yearMonth,
+            today = today,
             onPreviousMonth = { onMonthChange(yearMonth.minusMonths(1)) },
             onNextMonth = { onMonthChange(yearMonth.plusMonths(1)) }
         )
@@ -163,10 +164,16 @@ fun MonthCalendar(
 @Composable
 private fun MonthHeader(
     yearMonth: YearMonth,
+    today: LocalDate,
     onPreviousMonth: () -> Unit,
     onNextMonth: () -> Unit
 ) {
     val spacing = LocalSpacing.current
+
+    // Determine if previous month navigation should be disabled
+    val currentYearMonth = YearMonth(today.year, today.month)
+    val isPreviousMonthDisabled = yearMonth.year < currentYearMonth.year ||
+            (yearMonth.year == currentYearMonth.year && yearMonth.month.ordinal <= currentYearMonth.month.ordinal)
 
     Row(
         modifier = Modifier
@@ -175,9 +182,19 @@ private fun MonthHeader(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Previous month button
-        IconButton(onClick = onPreviousMonth) {
-            Text("<", style = MaterialTheme.typography.headlineSmall)
+        // Previous month button (disabled if would navigate to past)
+        IconButton(
+            onClick = onPreviousMonth,
+            enabled = !isPreviousMonthDisabled
+        ) {
+            Text(
+                text = "<",
+                style = MaterialTheme.typography.headlineSmall,
+                color = if (isPreviousMonthDisabled)
+                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                else
+                    MaterialTheme.colorScheme.onSurface
+            )
         }
 
         // Month and year label
