@@ -17,6 +17,12 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.koin.test)
+            @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+            implementation(libs.compose.ui.test)
+        }
+        androidInstrumentedTest.dependencies {
+            implementation(libs.compose.ui.test.junit4)
+            implementation(libs.compose.ui.test.manifest)
         }
     }
 }

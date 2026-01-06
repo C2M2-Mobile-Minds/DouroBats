@@ -132,7 +132,7 @@ fun ScheduleScreen(
         }
 
         item {
-            Spacer(modifier = Modifier.height(spacing.standard))
+            Spacer(modifier = Modifier.height(spacing.large))
         }
 
         // Section 1: Available sessions on selected date

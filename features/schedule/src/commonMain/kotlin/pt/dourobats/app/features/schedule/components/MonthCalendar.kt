@@ -297,27 +297,35 @@ private fun MonthGrid(
     onDateSelected: (LocalDate) -> Unit
 ) {
     val spacing = LocalSpacing.current
-    val dates = remember(yearMonth) { generateMonthGridDates(yearMonth) }
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(7),
+    // Divide 42 dates into 6 lists of 7
+    val weeks = remember(yearMonth) {
+        generateMonthGridDates(yearMonth).chunked(7)
+    }
+
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(360.dp)
             .padding(horizontal = spacing.screenHorizontal),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-        userScrollEnabled = false
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        items(dates.size) { index ->
-            val date = dates[index]
-            MonthDateItem(
-                date = date,
-                isSelected = date == selectedDate,
-                isToday = date == today,
-                isCurrentMonth = date.month == yearMonth.month,
-                onDateClick = onDateSelected
-            )
+        weeks.forEach { week ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                week.forEach { date ->
+                    Box(modifier = Modifier.weight(1f)) {
+                        MonthDateItem(
+                            date = date,
+                            isSelected = date == selectedDate,
+                            isToday = date == today,
+                            isCurrentMonth = date.month == yearMonth.month,
+                            onDateClick = onDateSelected
+                        )
+                    }
+                }
+            }
         }
     }
 }
