@@ -60,7 +60,9 @@ object CalendarUtils {
      */
     fun getMonthGridDates(year: Int, month: Int): List<LocalDate> {
         val firstDayOfMonth = LocalDate(year, month, 1)
-        val lastDayOfMonth = LocalDate(year, month, firstDayOfMonth.month.length(isLeapYear(year)))
+        // Get the last day by going to next month's first day and subtracting one day
+        val nextMonth = if (month == 12) LocalDate(year + 1, 1, 1) else LocalDate(year, month + 1, 1)
+        val lastDayOfMonth = nextMonth.minus(1, DateTimeUnit.DAY)
 
         val gridStart = getWeekStart(firstDayOfMonth)
         val gridEnd = getWeekStart(lastDayOfMonth).plus(6, DateTimeUnit.DAY)

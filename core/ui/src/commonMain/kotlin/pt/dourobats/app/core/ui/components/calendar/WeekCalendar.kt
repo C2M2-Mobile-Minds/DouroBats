@@ -1,4 +1,4 @@
-package pt.dourobats.app.features.schedule.components
+package pt.dourobats.app.core.ui.components.calendar
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -29,19 +29,8 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import dourobats.features.schedule.generated.resources.Res
-import dourobats.features.schedule.generated.resources.day_friday_short
-import dourobats.features.schedule.generated.resources.day_monday_short
-import dourobats.features.schedule.generated.resources.day_saturday_short
-import dourobats.features.schedule.generated.resources.day_sunday_short
-import dourobats.features.schedule.generated.resources.day_thursday_short
-import dourobats.features.schedule.generated.resources.day_tuesday_short
-import dourobats.features.schedule.generated.resources.day_wednesday_short
-import kotlinx.datetime.Clock
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.todayIn
-import org.jetbrains.compose.resources.stringResource
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 
 /**
@@ -70,20 +59,23 @@ import pt.dourobats.app.core.ui.theme.LocalSpacing
  * ```
  *
  * @param selectedDate Currently selected date
+ * @param today Today's date (for highlighting)
  * @param onDateSelected Callback when a date is tapped
+ * @param dayNames Map of DayOfWeek to localized short day names (defaults to English)
  * @param modifier Optional modifier for the calendar
  */
 @Composable
 fun WeekCalendar(
     selectedDate: LocalDate,
+    today: LocalDate,
     onDateSelected: (LocalDate) -> Unit,
+    dayNames: Map<DayOfWeek, String> = defaultDayNames(),
     modifier: Modifier = Modifier
 ) {
     val spacing = LocalSpacing.current
-    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
 
     // Generate only the 7 days of the current week
-    val dates = remember { generateCurrentWeekDates() }
+    val dates = remember(today) { generateCurrentWeekDates(today) }
 
     Row(
         modifier = modifier
@@ -98,6 +90,7 @@ fun WeekCalendar(
                     date = date,
                     isSelected = date == selectedDate,
                     isToday = date == today,
+                    dayNames = dayNames,
                     onDateClick = onDateSelected
                 )
             }
@@ -111,6 +104,7 @@ fun WeekCalendar(
  * @param date The date to display
  * @param isSelected Whether this date is currently selected
  * @param isToday Whether this date is today
+ * @param dayNames Map of DayOfWeek to localized short day names
  * @param onDateClick Callback when this date is clicked
  */
 @Composable
@@ -118,6 +112,7 @@ private fun DateItem(
     date: LocalDate,
     isSelected: Boolean,
     isToday: Boolean,
+    dayNames: Map<DayOfWeek, String>,
     onDateClick: (LocalDate) -> Unit
 ) {
     val spacing = LocalSpacing.current
@@ -157,7 +152,7 @@ private fun DateItem(
     ) {
         // Day of week (Mon, Tue, etc.)
         Text(
-            text = getDayOfWeekShort(date),
+            text = dayNames[date.dayOfWeek] ?: "",
             style = MaterialTheme.typography.labelSmall,
             color = textColor.copy(alpha = 0.7f),
             textAlign = TextAlign.Center
@@ -231,31 +226,11 @@ private fun LocalDate.plusDays(days: Int): LocalDate {
     return kotlinx.datetime.LocalDate.fromEpochDays(this.toEpochDays() + days)
 }
 
+
 /**
- * Gets localized short day of week name (Mon, Tue, etc.).
- *
- * Returns the appropriate localized string resource based on the day of week.
- * Supports 5 languages: English US, English UK, Spanish, Portuguese BR, Portuguese PT.
- *
- * @param date The date to get the day name for
- * @return Localized short day name string resource
+ * Generates dates for the current week (Monday to Sunday).
  */
-@Composable
-private fun getDayOfWeekShort(date: LocalDate): String {
-    return when (date.dayOfWeek) {
-        kotlinx.datetime.DayOfWeek.MONDAY -> stringResource(Res.string.day_monday_short)
-        kotlinx.datetime.DayOfWeek.TUESDAY -> stringResource(Res.string.day_tuesday_short)
-        kotlinx.datetime.DayOfWeek.WEDNESDAY -> stringResource(Res.string.day_wednesday_short)
-        kotlinx.datetime.DayOfWeek.THURSDAY -> stringResource(Res.string.day_thursday_short)
-        kotlinx.datetime.DayOfWeek.FRIDAY -> stringResource(Res.string.day_friday_short)
-        kotlinx.datetime.DayOfWeek.SATURDAY -> stringResource(Res.string.day_saturday_short)
-        kotlinx.datetime.DayOfWeek.SUNDAY -> stringResource(Res.string.day_sunday_short)
-    }
-}
-
-private fun generateCurrentWeekDates(): List<LocalDate> {
-    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
-
+internal fun generateCurrentWeekDates(today: LocalDate): List<LocalDate> {
     // DayOfWeek.ordinal: Monday is 0, Sunday is 6
     val daysFromMonday = today.dayOfWeek.ordinal
     val startOfCurrentWeek = today.minusDays(daysFromMonday)

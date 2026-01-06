@@ -8,6 +8,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.core.domain)
+            api(libs.kotlinx.datetime)  // API because we expose kotlinx.datetime types in public API
         }
     }
 }

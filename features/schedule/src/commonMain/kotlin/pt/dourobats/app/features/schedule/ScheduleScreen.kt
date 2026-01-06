@@ -12,22 +12,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import dourobats.features.schedule.generated.resources.*
 import dourobats.features.schedule.generated.resources.Res
-import dourobats.features.schedule.generated.resources.sessions_available_empty
-import dourobats.features.schedule.generated.resources.sessions_available_title
-import dourobats.features.schedule.generated.resources.sessions_my_schedule_empty
-import dourobats.features.schedule.generated.resources.sessions_my_schedule_title
-import dourobats.features.schedule.generated.resources.view_mode_month
-import dourobats.features.schedule.generated.resources.view_mode_week
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 import org.jetbrains.compose.resources.stringResource
 import pt.dourobats.app.core.ui.theme.LocalSpacing
-import pt.dourobats.app.features.schedule.components.MonthCalendar
-import pt.dourobats.app.features.schedule.components.SessionListSection
-import pt.dourobats.app.features.schedule.components.WeekCalendar
-import pt.dourobats.app.features.schedule.components.YearMonth
+import pt.dourobats.app.core.ui.components.calendar.MonthCalendar
+import pt.dourobats.app.core.ui.components.calendar.WeekCalendar
+import pt.dourobats.app.core.ui.components.calendar.YearMonth
+import pt.dourobats.app.core.ui.components.SessionListSection
 import pt.dourobats.app.features.schedule.data.MockSessionData
 import pt.dourobats.app.features.schedule.data.toDisplayData
 
@@ -72,12 +69,38 @@ fun ScheduleScreen(
     }
 
     // Filter user's upcoming booked sessions
-    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+    val today = kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault())
     val upcomingSessions = remember(sessionsWithData, today) {
         sessionsWithData.filter {
             it.isUserBooked && it.session.dateTime.date >= today
         }.sortedBy { it.session.dateTime }
     }
+
+    // Localized calendar strings
+    val dayNames = mapOf(
+        DayOfWeek.MONDAY to stringResource(Res.string.day_monday_short),
+        DayOfWeek.TUESDAY to stringResource(Res.string.day_tuesday_short),
+        DayOfWeek.WEDNESDAY to stringResource(Res.string.day_wednesday_short),
+        DayOfWeek.THURSDAY to stringResource(Res.string.day_thursday_short),
+        DayOfWeek.FRIDAY to stringResource(Res.string.day_friday_short),
+        DayOfWeek.SATURDAY to stringResource(Res.string.day_saturday_short),
+        DayOfWeek.SUNDAY to stringResource(Res.string.day_sunday_short)
+    )
+
+    val monthNames = mapOf(
+        Month.JANUARY to stringResource(Res.string.month_january),
+        Month.FEBRUARY to stringResource(Res.string.month_february),
+        Month.MARCH to stringResource(Res.string.month_march),
+        Month.APRIL to stringResource(Res.string.month_april),
+        Month.MAY to stringResource(Res.string.month_may),
+        Month.JUNE to stringResource(Res.string.month_june),
+        Month.JULY to stringResource(Res.string.month_july),
+        Month.AUGUST to stringResource(Res.string.month_august),
+        Month.SEPTEMBER to stringResource(Res.string.month_september),
+        Month.OCTOBER to stringResource(Res.string.month_october),
+        Month.NOVEMBER to stringResource(Res.string.month_november),
+        Month.DECEMBER to stringResource(Res.string.month_december)
+    )
 
     LazyColumn(
         modifier = modifier
@@ -119,13 +142,18 @@ fun ScheduleScreen(
             when (viewMode) {
                 CalendarViewMode.WEEK -> WeekCalendar(
                     selectedDate = selectedDate,
-                    onDateSelected = { date -> selectedDate = date }
+                    today = today,
+                    onDateSelected = { date -> selectedDate = date },
+                    dayNames = dayNames
                 )
                 CalendarViewMode.MONTH -> MonthCalendar(
                     yearMonth = currentYearMonth,
                     selectedDate = selectedDate,
+                    today = today,
                     onDateSelected = { date -> selectedDate = date },
                     onMonthChange = { yearMonth -> currentYearMonth = yearMonth },
+                    monthNames = monthNames,
+                    dayNames = dayNames,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -141,7 +169,8 @@ fun ScheduleScreen(
                 title = stringResource(Res.string.sessions_available_title),
                 sessions = selectedDateSessions,
                 emptyMessage = stringResource(Res.string.sessions_available_empty),
-                showDate = false  // Don't show date - all sessions are on selected date
+                showDate = false,  // Don't show date - all sessions are on selected date
+                bookedBadgeText = stringResource(Res.string.session_booked_badge)
             )
         }
 
@@ -155,7 +184,8 @@ fun ScheduleScreen(
                 title = stringResource(Res.string.sessions_my_schedule_title),
                 sessions = upcomingSessions,
                 emptyMessage = stringResource(Res.string.sessions_my_schedule_empty),
-                showDate = true  // Show date - sessions can be on different dates
+                showDate = true,  // Show date - sessions can be on different dates
+                bookedBadgeText = stringResource(Res.string.session_booked_badge)
             )
         }
 

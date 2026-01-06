@@ -1,4 +1,4 @@
-package pt.dourobats.app.features.schedule.components
+package pt.dourobats.app.core.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,17 +19,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import dourobats.features.schedule.generated.resources.Res
-import dourobats.features.schedule.generated.resources.session_booked_badge
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
-import kotlinx.datetime.toJavaLocalDate
-import kotlinx.datetime.toJavaLocalTime
-import org.jetbrains.compose.resources.stringResource
 import pt.dourobats.app.core.ui.theme.LocalSpacing
-import pt.dourobats.app.features.schedule.data.SessionDisplayData
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
+import pt.dourobats.app.core.ui.model.SessionDisplayData
 
 /**
  * Session card component displaying session details.
@@ -39,12 +32,14 @@ import java.time.format.FormatStyle
  *
  * @param sessionData Session data to display
  * @param showDate Whether to display the session date (useful when showing sessions from multiple dates)
+ * @param bookedBadgeText Text to display on the booked badge (default: "Booked")
  * @param modifier Optional modifier for the card
  */
 @Composable
 fun SessionCard(
     sessionData: SessionDisplayData,
     showDate: Boolean = false,
+    bookedBadgeText: String = "Booked",
     modifier: Modifier = Modifier
 ) {
     val spacing = LocalSpacing.current
@@ -98,7 +93,7 @@ fun SessionCard(
                             .padding(horizontal = spacing.small, vertical = spacing.extraSmall)
                     ) {
                         Text(
-                            text = stringResource(Res.string.session_booked_badge),
+                            text = bookedBadgeText,
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onPrimary,
                             fontWeight = FontWeight.Bold
@@ -183,19 +178,43 @@ fun SessionCard(
 }
 
 /**
- * Formats session date as localized medium format (e.g., "Jan 6, 2026" or "6 ene 2026")
+ * Formats session date as "YYYY-MM-DD" (e.g., "2026-01-06")
+ * Simple format that works across all platforms.
  */
 private fun formatSessionDate(date: LocalDate): String {
-    val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
-    return date.toJavaLocalDate().format(formatter)
+    val monthName = when (date.monthNumber) {
+        1 -> "Jan"
+        2 -> "Feb"
+        3 -> "Mar"
+        4 -> "Apr"
+        5 -> "May"
+        6 -> "Jun"
+        7 -> "Jul"
+        8 -> "Aug"
+        9 -> "Sep"
+        10 -> "Oct"
+        11 -> "Nov"
+        12 -> "Dec"
+        else -> ""
+    }
+    return "$monthName ${date.dayOfMonth}, ${date.year}"
 }
 
 /**
  * Formats session time as "HH:MM - HH:MM" (e.g., "18:00 - 20:00")
+ * Simple format that works across all platforms.
  */
 private fun formatSessionTime(startTime: LocalTime, durationMinutes: Int): String {
-    val formatter = DateTimeFormatter.ofPattern("HH:mm")
-    val start = startTime.toJavaLocalTime()
-    val end = start.plusMinutes(durationMinutes.toLong())
-    return "${start.format(formatter)} - ${end.format(formatter)}"
+    val startHour = startTime.hour.toString().padStart(2, '0')
+    val startMinute = startTime.minute.toString().padStart(2, '0')
+
+    // Calculate end time
+    val totalMinutes = startTime.hour * 60 + startTime.minute + durationMinutes
+    val endHour = (totalMinutes / 60) % 24
+    val endMinute = totalMinutes % 60
+
+    val endHourStr = endHour.toString().padStart(2, '0')
+    val endMinuteStr = endMinute.toString().padStart(2, '0')
+
+    return "$startHour:$startMinute - $endHourStr:$endMinuteStr"
 }

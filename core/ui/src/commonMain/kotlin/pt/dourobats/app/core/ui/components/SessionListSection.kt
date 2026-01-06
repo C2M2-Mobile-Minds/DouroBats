@@ -1,4 +1,4 @@
-package pt.dourobats.app.features.schedule.components
+package pt.dourobats.app.core.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import pt.dourobats.app.core.ui.theme.LocalSpacing
-import pt.dourobats.app.features.schedule.data.SessionDisplayData
+import pt.dourobats.app.core.ui.model.SessionDisplayData
 
 /**
  * Section component for displaying a list of sessions.
@@ -24,6 +24,7 @@ import pt.dourobats.app.features.schedule.data.SessionDisplayData
  * @param sessions List of sessions to display
  * @param emptyMessage Message to show when no sessions available
  * @param showDate Whether to show dates on session cards (useful for multi-date lists)
+ * @param bookedBadgeText Text to display on the booked badge (default: "Booked")
  * @param modifier Optional modifier for the section
  */
 @Composable
@@ -32,6 +33,7 @@ fun SessionListSection(
     sessions: List<SessionDisplayData>,
     emptyMessage: String,
     showDate: Boolean = false,
+    bookedBadgeText: String = "Booked",
     modifier: Modifier = Modifier
 ) {
     val spacing = LocalSpacing.current
@@ -63,7 +65,8 @@ fun SessionListSection(
                 sessions.forEach { sessionData ->
                     SessionCard(
                         sessionData = sessionData,
-                        showDate = showDate
+                        showDate = showDate,
+                        bookedBadgeText = bookedBadgeText
                     )
                 }
             }

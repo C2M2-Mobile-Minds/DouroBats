@@ -1,4 +1,4 @@
-package pt.dourobats.app.features.schedule.components
+package pt.dourobats.app.core.ui.components.calendar
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -29,33 +29,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import dourobats.features.schedule.generated.resources.Res
-import dourobats.features.schedule.generated.resources.day_friday_short
-import dourobats.features.schedule.generated.resources.day_monday_short
-import dourobats.features.schedule.generated.resources.day_saturday_short
-import dourobats.features.schedule.generated.resources.day_sunday_short
-import dourobats.features.schedule.generated.resources.day_thursday_short
-import dourobats.features.schedule.generated.resources.day_tuesday_short
-import dourobats.features.schedule.generated.resources.day_wednesday_short
-import dourobats.features.schedule.generated.resources.month_april
-import dourobats.features.schedule.generated.resources.month_august
-import dourobats.features.schedule.generated.resources.month_december
-import dourobats.features.schedule.generated.resources.month_february
-import dourobats.features.schedule.generated.resources.month_january
-import dourobats.features.schedule.generated.resources.month_july
-import dourobats.features.schedule.generated.resources.month_june
-import dourobats.features.schedule.generated.resources.month_march
-import dourobats.features.schedule.generated.resources.month_may
-import dourobats.features.schedule.generated.resources.month_november
-import dourobats.features.schedule.generated.resources.month_october
-import dourobats.features.schedule.generated.resources.month_september
-import kotlinx.datetime.Clock
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.todayIn
-import org.jetbrains.compose.resources.stringResource
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 
 /**
@@ -117,26 +93,32 @@ data class YearMonth(val year: Int, val month: Month) {
  *
  * @param yearMonth The year and month to display
  * @param selectedDate Currently selected date
+ * @param today Today's date (for highlighting)
  * @param onDateSelected Callback when a date is tapped
  * @param onMonthChange Callback when month navigation is triggered
+ * @param monthNames Map of Month to localized month names (defaults to English)
+ * @param dayNames Map of DayOfWeek to localized short day names (defaults to English)
  * @param modifier Optional modifier for the calendar
  */
 @Composable
 fun MonthCalendar(
     yearMonth: YearMonth,
     selectedDate: LocalDate,
+    today: LocalDate,
     onDateSelected: (LocalDate) -> Unit,
     onMonthChange: (YearMonth) -> Unit,
+    monthNames: Map<Month, String> = defaultMonthNames(),
+    dayNames: Map<DayOfWeek, String> = defaultDayNames(),
     modifier: Modifier = Modifier
 ) {
     val spacing = LocalSpacing.current
-    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
 
     Column(modifier = modifier.fillMaxWidth()) {
         // Month header with navigation
         MonthHeader(
             yearMonth = yearMonth,
             today = today,
+            monthNames = monthNames,
             onPreviousMonth = { onMonthChange(yearMonth.minusMonths(1)) },
             onNextMonth = { onMonthChange(yearMonth.plusMonths(1)) }
         )
@@ -144,7 +126,7 @@ fun MonthCalendar(
         Spacer(modifier = Modifier.height(spacing.standard))
 
         // Day of week headers
-        DayOfWeekHeader()
+        DayOfWeekHeader(dayNames = dayNames)
 
         Spacer(modifier = Modifier.height(spacing.small))
 
@@ -165,6 +147,7 @@ fun MonthCalendar(
 private fun MonthHeader(
     yearMonth: YearMonth,
     today: LocalDate,
+    monthNames: Map<Month, String>,
     onPreviousMonth: () -> Unit,
     onNextMonth: () -> Unit
 ) {
@@ -199,7 +182,7 @@ private fun MonthHeader(
 
         // Month and year label
         Text(
-            text = getMonthYearString(yearMonth),
+            text = "${monthNames[yearMonth.month]} ${yearMonth.year}",
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold
         )
@@ -211,33 +194,12 @@ private fun MonthHeader(
     }
 }
 
-/**
- * Gets the localized month and year string (e.g., "January 2024").
- */
-@Composable
-private fun getMonthYearString(yearMonth: YearMonth): String {
-    val monthName = when (yearMonth.month) {
-        Month.JANUARY -> stringResource(Res.string.month_january)
-        Month.FEBRUARY -> stringResource(Res.string.month_february)
-        Month.MARCH -> stringResource(Res.string.month_march)
-        Month.APRIL -> stringResource(Res.string.month_april)
-        Month.MAY -> stringResource(Res.string.month_may)
-        Month.JUNE -> stringResource(Res.string.month_june)
-        Month.JULY -> stringResource(Res.string.month_july)
-        Month.AUGUST -> stringResource(Res.string.month_august)
-        Month.SEPTEMBER -> stringResource(Res.string.month_september)
-        Month.OCTOBER -> stringResource(Res.string.month_october)
-        Month.NOVEMBER -> stringResource(Res.string.month_november)
-        Month.DECEMBER -> stringResource(Res.string.month_december)
-    }
-    return "$monthName ${yearMonth.year}"
-}
 
 /**
  * Day of week header row (Mon, Tue, Wed, ...).
  */
 @Composable
-private fun DayOfWeekHeader() {
+private fun DayOfWeekHeader(dayNames: Map<DayOfWeek, String>) {
     val spacing = LocalSpacing.current
 
     Row(
@@ -260,7 +222,7 @@ private fun DayOfWeekHeader() {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = getDayOfWeekShort(dayOfWeek),
+                    text = dayNames[dayOfWeek] ?: "",
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.Bold
@@ -270,21 +232,6 @@ private fun DayOfWeekHeader() {
     }
 }
 
-/**
- * Gets localized short day of week name (Mon, Tue, etc.).
- */
-@Composable
-private fun getDayOfWeekShort(dayOfWeek: DayOfWeek): String {
-    return when (dayOfWeek) {
-        DayOfWeek.MONDAY -> stringResource(Res.string.day_monday_short)
-        DayOfWeek.TUESDAY -> stringResource(Res.string.day_tuesday_short)
-        DayOfWeek.WEDNESDAY -> stringResource(Res.string.day_wednesday_short)
-        DayOfWeek.THURSDAY -> stringResource(Res.string.day_thursday_short)
-        DayOfWeek.FRIDAY -> stringResource(Res.string.day_friday_short)
-        DayOfWeek.SATURDAY -> stringResource(Res.string.day_saturday_short)
-        DayOfWeek.SUNDAY -> stringResource(Res.string.day_sunday_short)
-    }
-}
 
 /**
  * Month grid layout (7×6 = 42 cells).
@@ -440,3 +387,34 @@ private fun LocalDate.minusDays(days: Int): LocalDate {
 private fun LocalDate.plusDays(days: Int): LocalDate {
     return LocalDate.fromEpochDays(this.toEpochDays() + days)
 }
+
+/**
+ * Default English month names.
+ */
+fun defaultMonthNames(): Map<Month, String> = mapOf(
+    Month.JANUARY to "January",
+    Month.FEBRUARY to "February",
+    Month.MARCH to "March",
+    Month.APRIL to "April",
+    Month.MAY to "May",
+    Month.JUNE to "June",
+    Month.JULY to "July",
+    Month.AUGUST to "August",
+    Month.SEPTEMBER to "September",
+    Month.OCTOBER to "October",
+    Month.NOVEMBER to "November",
+    Month.DECEMBER to "December"
+)
+
+/**
+ * Default English short day names.
+ */
+fun defaultDayNames(): Map<DayOfWeek, String> = mapOf(
+    DayOfWeek.MONDAY to "Mon",
+    DayOfWeek.TUESDAY to "Tue",
+    DayOfWeek.WEDNESDAY to "Wed",
+    DayOfWeek.THURSDAY to "Thu",
+    DayOfWeek.FRIDAY to "Fri",
+    DayOfWeek.SATURDAY to "Sat",
+    DayOfWeek.SUNDAY to "Sun"
+)

@@ -6,6 +6,7 @@ import kotlinx.datetime.LocalTime
 import pt.dourobats.app.core.domain.model.Session
 import pt.dourobats.app.core.domain.model.SessionStatus
 import pt.dourobats.app.core.domain.model.SkillLevel
+import pt.dourobats.app.core.ui.model.SessionDisplayData
 import kotlin.time.Duration.Companion.hours
 
 /**
@@ -117,19 +118,7 @@ object MockSessionData {
 }
 
 /**
- * Extended session model with display data.
- * Combines Session with Sport and venue information.
- */
-data class SessionDisplayData(
-    val session: Session,
-    val sportName: String,
-    val sportIcon: String,
-    val venueName: String,
-    val isUserBooked: Boolean
-)
-
-/**
- * Converts mock sessions to display data.
+ * Converts sessions to display data with feature-specific sport mapping.
  */
 fun List<Session>.toDisplayData(bookedIds: Set<String>): List<SessionDisplayData> {
     return map { session ->
