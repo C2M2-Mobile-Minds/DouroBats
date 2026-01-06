@@ -30,4 +30,11 @@
     <string name="month_october">Octubre</string>
     <string name="month_november">Noviembre</string>
     <string name="month_december">Diciembre</string>
+
+    <!-- Session Lists -->
+    <string name="sessions_available_title">Sesiones Disponibles</string>
+    <string name="sessions_my_schedule_title">Mi Agenda</string>
+    <string name="sessions_available_empty">No hay sesiones disponibles en esta fecha</string>
+    <string name="sessions_my_schedule_empty">No tienes sesiones programadas</string>
+    <string name="session_booked_badge">Reservado</string>
 </resources>

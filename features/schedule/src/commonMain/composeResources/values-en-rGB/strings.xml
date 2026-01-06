@@ -30,4 +30,11 @@
     <string name="month_october">October</string>
     <string name="month_november">November</string>
     <string name="month_december">December</string>
+
+    <!-- Session Lists -->
+    <string name="sessions_available_title">Available Sessions</string>
+    <string name="sessions_my_schedule_title">My Schedule</string>
+    <string name="sessions_available_empty">No sessions available on this date</string>
+    <string name="sessions_my_schedule_empty">You have no upcoming sessions booked</string>
+    <string name="session_booked_badge">Booked</string>
 </resources>
