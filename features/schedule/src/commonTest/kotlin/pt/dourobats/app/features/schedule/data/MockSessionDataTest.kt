@@ -132,7 +132,7 @@ class MockSessionDataTest {
     }
 
     @Test
-    fun `toDisplayData maps baseball to correct icon and name`() {
+    fun `toDisplayData maps volleyball to correct icon and name`() {
         // Arrange
         val sessions = MockSessionData.generateMockSessions()
         val bookedIds = MockSessionData.getUserBookedSessionIds()
@@ -141,15 +141,15 @@ class MockSessionDataTest {
         val displayData = sessions.toDisplayData(bookedIds)
 
         // Assert
-        val baseballSessions = displayData.filter { it.session.sportId == "baseball" }
-        baseballSessions.forEach { data ->
-            assertEquals("Baseball", data.sportName, "Baseball should have correct name")
-            assertEquals("⚾", data.sportIcon, "Baseball should have correct icon")
+        val volleyballSessions = displayData.filter { it.session.sportId == "volleyball" }
+        volleyballSessions.forEach { data ->
+            assertEquals("Volleyball", data.sportName, "Volleyball should have correct name")
+            assertEquals("🏐", data.sportIcon, "Volleyball should have correct icon")
         }
     }
 
     @Test
-    fun `toDisplayData maps softball to correct icon and name`() {
+    fun `toDisplayData maps futsal to correct icon and name`() {
         // Arrange
         val sessions = MockSessionData.generateMockSessions()
         val bookedIds = MockSessionData.getUserBookedSessionIds()
@@ -158,10 +158,10 @@ class MockSessionDataTest {
         val displayData = sessions.toDisplayData(bookedIds)
 
         // Assert
-        val softballSessions = displayData.filter { it.session.sportId == "softball" }
-        softballSessions.forEach { data ->
-            assertEquals("Softball", data.sportName, "Softball should have correct name")
-            assertEquals("🥎", data.sportIcon, "Softball should have correct icon")
+        val futsalSessions = displayData.filter { it.session.sportId == "futsal" }
+        futsalSessions.forEach { data ->
+            assertEquals("Futsal", data.sportName, "Futsal should have correct name")
+            assertEquals("⚽", data.sportIcon, "Futsal should have correct icon")
         }
     }
 
