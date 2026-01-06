@@ -21,12 +21,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dourobats.features.schedule.generated.resources.Res
 import dourobats.features.schedule.generated.resources.session_booked_badge
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toJavaLocalTime
 import org.jetbrains.compose.resources.stringResource
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 import pt.dourobats.app.features.schedule.data.SessionDisplayData
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 /**
  * Session card component displaying session details.
@@ -104,6 +107,23 @@ fun SessionCard(
 
             Spacer(modifier = Modifier.height(spacing.small))
 
+            // Date
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(spacing.extraSmall)
+            ) {
+                Text(
+                    text = "📅",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Text(
+                    text = formatSessionDate(session.dateTime.date),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+
+            Spacer(modifier = Modifier.height(spacing.extraSmall))
+
             // Time
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -156,6 +176,14 @@ fun SessionCard(
             }
         }
     }
+}
+
+/**
+ * Formats session date as localized medium format (e.g., "Jan 6, 2026" or "6 ene 2026")
+ */
+private fun formatSessionDate(date: LocalDate): String {
+    val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
+    return date.toJavaLocalDate().format(formatter)
 }
 
 /**
