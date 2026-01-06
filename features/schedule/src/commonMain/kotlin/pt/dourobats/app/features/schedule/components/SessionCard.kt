@@ -38,11 +38,13 @@ import java.time.format.FormatStyle
  * with a "Booked" badge for user's booked sessions.
  *
  * @param sessionData Session data to display
+ * @param showDate Whether to display the session date (useful when showing sessions from multiple dates)
  * @param modifier Optional modifier for the card
  */
 @Composable
 fun SessionCard(
     sessionData: SessionDisplayData,
+    showDate: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     val spacing = LocalSpacing.current
@@ -107,22 +109,24 @@ fun SessionCard(
 
             Spacer(modifier = Modifier.height(spacing.small))
 
-            // Date
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(spacing.extraSmall)
-            ) {
-                Text(
-                    text = "📅",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Text(
-                    text = formatSessionDate(session.dateTime.date),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
+            // Date (only shown when showDate = true)
+            if (showDate) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(spacing.extraSmall)
+                ) {
+                    Text(
+                        text = "📅",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Text(
+                        text = formatSessionDate(session.dateTime.date),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
 
-            Spacer(modifier = Modifier.height(spacing.extraSmall))
+                Spacer(modifier = Modifier.height(spacing.extraSmall))
+            }
 
             // Time
             Row(

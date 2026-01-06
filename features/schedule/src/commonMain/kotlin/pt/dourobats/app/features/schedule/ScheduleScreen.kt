@@ -140,7 +140,8 @@ fun ScheduleScreen(
             SessionListSection(
                 title = stringResource(Res.string.sessions_available_title),
                 sessions = selectedDateSessions,
-                emptyMessage = stringResource(Res.string.sessions_available_empty)
+                emptyMessage = stringResource(Res.string.sessions_available_empty),
+                showDate = false  // Don't show date - all sessions are on selected date
             )
         }
 
@@ -153,7 +154,8 @@ fun ScheduleScreen(
             SessionListSection(
                 title = stringResource(Res.string.sessions_my_schedule_title),
                 sessions = upcomingSessions,
-                emptyMessage = stringResource(Res.string.sessions_my_schedule_empty)
+                emptyMessage = stringResource(Res.string.sessions_my_schedule_empty),
+                showDate = true  // Show date - sessions can be on different dates
             )
         }
 

@@ -23,6 +23,7 @@ import pt.dourobats.app.features.schedule.data.SessionDisplayData
  * @param title Section title (e.g., "Available Sessions", "My Schedule")
  * @param sessions List of sessions to display
  * @param emptyMessage Message to show when no sessions available
+ * @param showDate Whether to show dates on session cards (useful for multi-date lists)
  * @param modifier Optional modifier for the section
  */
 @Composable
@@ -30,6 +31,7 @@ fun SessionListSection(
     title: String,
     sessions: List<SessionDisplayData>,
     emptyMessage: String,
+    showDate: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     val spacing = LocalSpacing.current
@@ -59,7 +61,10 @@ fun SessionListSection(
                 modifier = Modifier.padding(horizontal = spacing.screenHorizontal)
             ) {
                 sessions.forEach { sessionData ->
-                    SessionCard(sessionData = sessionData)
+                    SessionCard(
+                        sessionData = sessionData,
+                        showDate = showDate
+                    )
                 }
             }
         }
