@@ -19,8 +19,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import dourobats.features.schedule.generated.resources.Res
+import dourobats.features.schedule.generated.resources.session_booked_badge
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.toJavaLocalTime
+import org.jetbrains.compose.resources.stringResource
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 import pt.dourobats.app.features.schedule.data.SessionDisplayData
 import java.time.format.DateTimeFormatter
@@ -90,7 +93,7 @@ fun SessionCard(
                             .padding(horizontal = spacing.small, vertical = spacing.extraSmall)
                     ) {
                         Text(
-                            text = "Booked",
+                            text = stringResource(Res.string.session_booked_badge),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onPrimary,
                             fontWeight = FontWeight.Bold

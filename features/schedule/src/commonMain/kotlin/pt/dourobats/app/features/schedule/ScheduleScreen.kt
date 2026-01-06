@@ -13,6 +13,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import dourobats.features.schedule.generated.resources.Res
+import dourobats.features.schedule.generated.resources.sessions_available_empty
+import dourobats.features.schedule.generated.resources.sessions_available_title
+import dourobats.features.schedule.generated.resources.sessions_my_schedule_empty
+import dourobats.features.schedule.generated.resources.sessions_my_schedule_title
 import dourobats.features.schedule.generated.resources.view_mode_month
 import dourobats.features.schedule.generated.resources.view_mode_week
 import kotlinx.datetime.Clock
@@ -134,9 +138,9 @@ fun ScheduleScreen(
         // Section 1: Available sessions on selected date
         item {
             SessionListSection(
-                title = "Available Sessions",
+                title = stringResource(Res.string.sessions_available_title),
                 sessions = selectedDateSessions,
-                emptyMessage = "No sessions available on this date"
+                emptyMessage = stringResource(Res.string.sessions_available_empty)
             )
         }
 
@@ -147,9 +151,9 @@ fun ScheduleScreen(
         // Section 2: User's upcoming booked sessions
         item {
             SessionListSection(
-                title = "My Schedule",
+                title = stringResource(Res.string.sessions_my_schedule_title),
                 sessions = upcomingSessions,
-                emptyMessage = "You have no upcoming sessions booked"
+                emptyMessage = stringResource(Res.string.sessions_my_schedule_empty)
             )
         }
 
