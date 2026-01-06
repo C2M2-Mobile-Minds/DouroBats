@@ -1,3 +1,6 @@
+rootProject.name = "build-logic"
+include(":convention")
+
 dependencyResolutionManagement {
     repositories {
         google()
@@ -6,10 +9,7 @@ dependencyResolutionManagement {
     }
     versionCatalogs {
         create("libs") {
-            from(files("../gradle/libs.versions.toml"))
+            from(files("${rootDir.parent}/gradle/libs.versions.toml"))
         }
     }
 }
-
-rootProject.name = "build-logic"
-include(":convention")

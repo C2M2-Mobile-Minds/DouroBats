@@ -12,7 +12,7 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
-            implementation(libs.kotlinx.datetime)
+            // kotlinx.datetime comes transitively from core:ui (api) and core:domain
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

@@ -3,4 +3,38 @@
     <!-- Training/Schedule Screen -->
     <string name="training_title">Agenda de Treinos</string>
     <string name="training_coming_soon">Visualização do calendário em breve...</string>
+
+    <!-- Calendar - Day Names (Short) -->
+    <string name="day_monday_short">Seg</string>
+    <string name="day_tuesday_short">Ter</string>
+    <string name="day_wednesday_short">Qua</string>
+    <string name="day_thursday_short">Qui</string>
+    <string name="day_friday_short">Sex</string>
+    <string name="day_saturday_short">Sáb</string>
+    <string name="day_sunday_short">Dom</string>
+
+    <!-- Calendar - View Mode -->
+    <string name="view_mode_week">Semana</string>
+    <string name="view_mode_month">Mês</string>
+
+    <!-- Calendar - Month Names (Full) -->
+    <string name="month_january">Janeiro</string>
+    <string name="month_february">Fevereiro</string>
+    <string name="month_march">Março</string>
+    <string name="month_april">Abril</string>
+    <string name="month_may">Maio</string>
+    <string name="month_june">Junho</string>
+    <string name="month_july">Julho</string>
+    <string name="month_august">Agosto</string>
+    <string name="month_september">Setembro</string>
+    <string name="month_october">Outubro</string>
+    <string name="month_november">Novembro</string>
+    <string name="month_december">Dezembro</string>
+
+    <!-- Session Lists -->
+    <string name="sessions_available_title">Sessões Disponíveis</string>
+    <string name="sessions_my_schedule_title">Minha Agenda</string>
+    <string name="sessions_available_empty">Nenhuma sessão disponível nesta data</string>
+    <string name="sessions_my_schedule_empty">Você não tem sessões agendadas</string>
+    <string name="session_booked_badge">Reservado</string>
 </resources>
