@@ -60,7 +60,6 @@ fun ScheduleScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
             .padding(top = spacing.standard),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
