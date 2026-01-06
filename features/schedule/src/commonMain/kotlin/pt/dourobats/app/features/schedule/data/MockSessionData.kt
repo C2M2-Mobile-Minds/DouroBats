@@ -26,7 +26,7 @@ object MockSessionData {
             // Today's sessions
             createSession(
                 id = "session-1",
-                sportName = "Baseball",
+                sportName = "Volleyball",
                 date = baseDate,
                 startTime = LocalTime(18, 0),
                 durationHours = 2.0,
@@ -36,7 +36,7 @@ object MockSessionData {
             ),
             createSession(
                 id = "session-2",
-                sportName = "Softball",
+                sportName = "Futsal",
                 date = baseDate,
                 startTime = LocalTime(20, 30),
                 durationHours = 1.5,
@@ -48,7 +48,7 @@ object MockSessionData {
             // Tomorrow's sessions
             createSession(
                 id = "session-3",
-                sportName = "Baseball",
+                sportName = "Volleyball",
                 date = baseDate.plusDays(1),
                 startTime = LocalTime(19, 0),
                 durationHours = 2.0,
@@ -60,7 +60,7 @@ object MockSessionData {
             // Week ahead sessions
             createSession(
                 id = "session-4",
-                sportName = "Baseball",
+                sportName = "Volleyball",
                 date = baseDate.plusDays(3),
                 startTime = LocalTime(18, 0),
                 durationHours = 2.0,
@@ -70,7 +70,7 @@ object MockSessionData {
             ),
             createSession(
                 id = "session-5",
-                sportName = "Softball",
+                sportName = "Futsal",
                 date = baseDate.plusDays(5),
                 startTime = LocalTime(17, 0),
                 durationHours = 2.0,
@@ -125,13 +125,13 @@ fun List<Session>.toDisplayData(bookedIds: Set<String>): List<SessionDisplayData
         SessionDisplayData(
             session = session,
             sportName = when (session.sportId) {
-                "baseball" -> "Baseball"
-                "softball" -> "Softball"
+                "volleyball" -> "Volleyball"
+                "futsal" -> "Futsal"
                 else -> "Unknown"
             },
             sportIcon = when (session.sportId) {
-                "baseball" -> "⚾"
-                "softball" -> "🥎"
+                "volleyball" -> "🏐"
+                "futsal" -> "⚽"
                 else -> "🏃"
             },
             venueName = session.venueId,
