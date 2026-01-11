@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Login Screen -->
+    <string name="login_app_name">DouroBats</string>
+    <string name="login_welcome">Bem-vindo de volta!</string>
+
+    <!-- Form Fields -->
+    <string name="login_email_label">E-mail</string>
+    <string name="login_email_placeholder">utilizador@dourobats.com</string>
+    <string name="login_password_label">Palavra-passe</string>
+    <string name="login_password_show">Mostrar palavra-passe</string>
+    <string name="login_password_hide">Ocultar palavra-passe</string>
+
+    <!-- Buttons -->
+    <string name="login_button">Entrar</string>
+    <string name="login_divider">OU</string>
+
+    <!-- Social Login -->
+    <string name="login_google">Continuar com Google</string>
+    <string name="login_facebook">Continuar com Facebook</string>
+    <string name="login_apple">Continuar com Apple</string>
+
+    <!-- Development -->
+    <string name="login_test_credentials_title">Credenciais de Teste</string>
+    <string name="login_test_credentials_text">E-mail: utilizador@dourobats.com\nPalavra-passe: 123456</string>
+</resources>
