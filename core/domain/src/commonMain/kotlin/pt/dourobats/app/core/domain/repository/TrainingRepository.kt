@@ -1,26 +1,49 @@
 package pt.dourobats.app.core.domain.repository
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.datetime.LocalDate
+import pt.dourobats.app.core.domain.common.Result
 import pt.dourobats.app.core.domain.model.Session
 
-
 /**
- * Repository interface for training session operations
- * Following Repository Pattern from Clean Architecture
+ * Repository interface for training session operations.
+ * Following Repository Pattern from Clean Architecture.
+ * Designed to work with both mock data and real API.
  */
 interface TrainingRepository {
     /**
-     * Get all training sessions as a Flow
+     * Get all available sessions for a specific date.
+     * Returns a Flow for reactive updates when backend supports real-time data.
      */
-    fun getTrainingSessions(): Flow<List<Session>>
+    fun getSessionsByDate(date: LocalDate): Flow<List<Session>>
 
     /**
-     * Get a specific training session by ID
+     * Get all sessions (for month/week views).
+     * Returns a Flow for reactive updates.
      */
-    suspend fun getTrainingSessionById(id: String): Session?
+    fun getAllSessions(): Flow<List<Session>>
 
     /**
-     * Save a new training session
+     * Get IDs of sessions the current user has booked.
+     * Returns a Flow that updates when bookings change.
      */
-    suspend fun saveTrainingSession(session: Session)
+    fun getUserBookedSessionIds(): Flow<Set<String>>
+
+    /**
+     * Book a session for the current user.
+     * API-ready: returns Result for proper error handling.
+     */
+    suspend fun bookSession(sessionId: String): Result<Unit>
+
+    /**
+     * Cancel a booking for the current user.
+     * API-ready: returns Result for proper error handling.
+     */
+    suspend fun cancelBooking(sessionId: String): Result<Unit>
+
+    /**
+     * Get a specific session by ID.
+     * Useful for detail views.
+     */
+    suspend fun getSessionById(id: String): Result<Session>
 }
