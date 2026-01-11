@@ -34,5 +34,6 @@ include(":core:test")
 
 // Feature modules
 include(":features:home")
+include(":features:login")
 include(":features:schedule")
 include(":features:settings")

@@ -21,8 +21,10 @@ import dourobats.core.ui.generated.resources.nav_training
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
+import pt.dourobats.app.core.domain.model.AuthState
 import pt.dourobats.app.core.domain.model.Language
 import pt.dourobats.app.core.domain.model.Theme
+import pt.dourobats.app.core.domain.repository.AuthRepository
 import pt.dourobats.app.core.domain.repository.SettingsRepository
 import pt.dourobats.app.core.ui.localization.LocalLanguage
 import pt.dourobats.app.core.ui.localization.changeLanguage
@@ -40,51 +42,60 @@ fun App() {
 @Composable
 private fun AppContent() {
     val settingsRepository: SettingsRepository = koinInject()
-    val systemDarkTheme = isSystemInDarkTheme()
+    val authRepository: AuthRepository = koinInject()
 
-    // Load the saved language from DataStore
+    // Track if we've loaded preferences from DataStore
+    var preferencesLoaded by remember { mutableStateOf(false) }
+
+    // Load the saved language from DataStore (nullable to detect first load)
     val savedLanguage by settingsRepository.languageFlow.collectAsState(
-        initial = Language.ENGLISH_US
+        initial = null
     )
 
-    // Load the saved theme from DataStore
+    // Load the saved theme from DataStore (nullable to detect first load)
     val savedTheme by settingsRepository.themeFlow.collectAsState(
-        initial = Theme.LIGHT
+        initial = null
     )
 
-    // Track language state for triggering recomposition
-    var currentLanguage by remember { mutableStateOf(Language.ENGLISH_US) }
+    // Reactive auth state - updates automatically when user logs in/out
+    val authState by authRepository.authStateFlow.collectAsState(
+        initial = AuthState.Loading
+    )
 
-    // Update currentLanguage when savedLanguage changes
-    LaunchedEffect(savedLanguage) {
-        if (currentLanguage != savedLanguage) {
-            currentLanguage = savedLanguage
-            changeLanguage(savedLanguage)
+    // Mark preferences as loaded once we have all values
+    LaunchedEffect(savedLanguage, savedTheme, authState) {
+        if (savedLanguage != null && savedTheme != null && authState !is AuthState.Loading) {
+            preferencesLoaded = true
         }
     }
 
-    // Initialize locale on first composition
-    LaunchedEffect(Unit) {
-        changeLanguage(savedLanguage)
+    // Initialize language when preferences load
+    LaunchedEffect(savedLanguage) {
+        savedLanguage?.let { changeLanguage(it) }
     }
 
-    // Determine if dark theme should be used based on user preference
-    val useDarkTheme = when (savedTheme) {
+    // Show empty box (native splash visible) until all preferences are loaded
+    if (!preferencesLoaded) {
+        Box(modifier = Modifier.fillMaxSize())
+        return
+    }
+
+    // All preferences loaded - render app with correct settings
+    val currentLanguage = savedLanguage ?: Language.ENGLISH_US
+    val useDarkTheme = when (savedTheme ?: Theme.LIGHT) {
         Theme.LIGHT -> false
         Theme.DARK -> true
     }
 
     AppTheme(darkTheme = useDarkTheme) {
-        // Provide the current language via CompositionLocal
         CompositionLocalProvider(LocalLanguage provides currentLanguage) {
-            // TODO: Implement proper authentication flow with splash screen
-            // For now, we'll show the main app directly
-            var isAuthenticated by remember { mutableStateOf(true) }
-
-            if (isAuthenticated) {
-                MainApp()
-            } else {
-                LoginScreen(onLoginSuccess = { isAuthenticated = true })
+            when (authState) {
+                is AuthState.Loading -> {
+                    // Should not reach here since we check above, but handle gracefully
+                    Box(modifier = Modifier.fillMaxSize())
+                }
+                is AuthState.Authenticated -> MainApp()
+                is AuthState.Unauthenticated -> LoginScreen()
             }
         }
     }
@@ -119,22 +130,8 @@ private fun MainApp() {
 }
 
 @Composable
-private fun LoginScreen(onLoginSuccess: () -> Unit) {
-    // TODO: Implement proper login UI
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = stringResource(Res.string.login_title),
-            style = MaterialTheme.typography.headlineLarge
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onLoginSuccess) {
-            Text(stringResource(Res.string.login_button_temp))
-        }
-    }
+private fun LoginScreen() {
+    pt.dourobats.app.features.login.LoginScreen()
 }
 
 private enum class Screen(val titleRes: org.jetbrains.compose.resources.StringResource, val icon: ImageVector) {

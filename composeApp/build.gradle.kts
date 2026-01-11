@@ -9,6 +9,7 @@ kotlin {
         commonMain.dependencies {
             // Feature modules
             implementation(projects.features.home)
+            implementation(projects.features.login)
             implementation(projects.features.schedule)
             implementation(projects.features.settings)
 
