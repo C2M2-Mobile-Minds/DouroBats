@@ -13,9 +13,11 @@ import pt.dourobats.app.core.domain.model.Language
 import pt.dourobats.app.core.domain.model.Theme
 import pt.dourobats.app.core.domain.model.UserProfile
 import pt.dourobats.app.core.domain.repository.SettingsRepository
+import pt.dourobats.app.core.domain.usecase.LogoutUseCase
 
 class SettingsViewModel(
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val logoutUseCase: LogoutUseCase
 ) : ViewModel() {
 
     // Edit state for profile fields
@@ -36,13 +38,13 @@ class SettingsViewModel(
             userProfile = profile,
             currentLanguage = language,
             currentTheme = theme,
-            isLoading = false,
+            isLoading = false, // Data loaded once flows emit
             validationErrors = validationErrors
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = SettingsUiState()
+        initialValue = SettingsUiState() // Nullable values, isLoading = true
     )
 
     // Separate StateFlow for backward compatibility
@@ -66,7 +68,7 @@ class SettingsViewModel(
     }
 
     fun enterEditMode() {
-        val currentProfile = uiState.value.userProfile
+        val currentProfile = uiState.value.userProfile ?: return
         _editState.value = ProfileEditState(
             displayName = currentProfile.displayName,
             email = currentProfile.email,
@@ -105,7 +107,7 @@ class SettingsViewModel(
         }
 
         viewModelScope.launch {
-            val currentProfile = uiState.value.userProfile
+            val currentProfile = uiState.value.userProfile ?: return@launch
             val updatedProfile = currentProfile.copy(
                 displayName = editState.displayName.trim(),
                 email = editState.email.trim(),
@@ -164,12 +166,9 @@ class SettingsViewModel(
     }
 
     fun logout() {
-        // TODO: Implement logout logic when auth system ready
-        // - Clear user session
-        // - Navigate to login screen
-        // - Clear cached data
         viewModelScope.launch {
-            // Placeholder - no action yet
+            logoutUseCase()
+            // Navigation happens automatically via authStateFlow in App.kt
         }
     }
 
