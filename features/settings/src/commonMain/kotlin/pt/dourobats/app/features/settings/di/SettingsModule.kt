@@ -1,6 +1,6 @@
 package pt.dourobats.app.features.settings.di
 
-import org.koin.compose.viewmodel.dsl.viewModel
+import org.koin.core.module.dsl.*
 import org.koin.dsl.module
 import pt.dourobats.app.features.settings.SettingsViewModel
 

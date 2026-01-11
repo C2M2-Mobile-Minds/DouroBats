@@ -24,6 +24,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.hours
+import pt.dourobats.app.core.domain.common.Result
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ScheduleViewModelTest {
@@ -151,12 +152,13 @@ private class FakeGetAvailableSessionsUseCase : GetAvailableSessionsUseCase(
         override fun getAllSessions() = flowOf(emptyList<Session>())
         override fun getUserBookedSessionIds() = flowOf(emptySet<String>())
         override suspend fun bookSession(sessionId: String) =
-            pt.dourobats.app.core.domain.model.Result.Success(Unit)
+            Result.Success(Unit)
         override suspend fun cancelBooking(sessionId: String) =
-            pt.dourobats.app.core.domain.model.Result.Success(Unit)
+            Result.Success(Unit)
         override suspend fun getSessionById(id: String) =
-            pt.dourobats.app.core.domain.model.Result.Error(
-                pt.dourobats.app.core.domain.exception.NetworkException("Not found")
+            Result.Error<Session>(
+                pt.dourobats.app.core.domain.exception.NetworkException("Not found"),
+                message = "Not found"
             )
     }
 ) {
@@ -176,12 +178,13 @@ private class FakeGetUserBookedSessionsUseCase : GetUserBookedSessionsUseCase(
         override fun getAllSessions() = flowOf(emptyList<Session>())
         override fun getUserBookedSessionIds() = flowOf(emptySet<String>())
         override suspend fun bookSession(sessionId: String) =
-            pt.dourobats.app.core.domain.model.Result.Success(Unit)
+            Result.Success(Unit)
         override suspend fun cancelBooking(sessionId: String) =
-            pt.dourobats.app.core.domain.model.Result.Success(Unit)
+            Result.Success(Unit)
         override suspend fun getSessionById(id: String) =
-            pt.dourobats.app.core.domain.model.Result.Error(
-                pt.dourobats.app.core.domain.exception.NetworkException("Not found")
+            Result.Error<Session>(
+                pt.dourobats.app.core.domain.exception.NetworkException("Not found"),
+                "Not found"
             )
     }
 ) {

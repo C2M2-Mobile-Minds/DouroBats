@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.number
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 import pt.dourobats.app.core.ui.model.SessionDisplayData
 
@@ -182,7 +183,7 @@ fun SessionCard(
  * Simple format that works across all platforms.
  */
 private fun formatSessionDate(date: LocalDate): String {
-    val monthName = when (date.monthNumber) {
+    val monthName = when (date.month.number) {
         1 -> "Jan"
         2 -> "Feb"
         3 -> "Mar"
@@ -197,7 +198,7 @@ private fun formatSessionDate(date: LocalDate): String {
         12 -> "Dec"
         else -> ""
     }
-    return "$monthName ${date.dayOfMonth}, ${date.year}"
+    return "$monthName ${date.day}, ${date.year}"
 }
 
 /**

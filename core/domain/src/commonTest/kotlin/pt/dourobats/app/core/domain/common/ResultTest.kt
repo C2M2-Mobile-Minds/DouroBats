@@ -258,7 +258,7 @@ class ResultTest {
 
         // When/Then
         assertTrue(result is Result.Error)
-        assertEquals(customMessage, (result as Result.Error).message)
+        assertEquals(customMessage, result.message)
         assertEquals(testException, result.exception)
     }
 
@@ -269,7 +269,7 @@ class ResultTest {
 
         // When/Then
         assertTrue(result is Result.Error)
-        assertEquals("Test error", (result as Result.Error).message)
+        assertEquals("Test error", result.message)
     }
 
     @Test
@@ -283,7 +283,7 @@ class ResultTest {
 
         // Then
         assertTrue(mappedResult is Result.Success)
-        assertEquals("John Doe", (mappedResult as Result.Success).data)
+        assertEquals("John Doe", mappedResult.data)
     }
 
     @Test
@@ -296,7 +296,7 @@ class ResultTest {
 
         // Then
         assertTrue(mappedResult is Result.Error)
-        assertEquals("Load failed", (mappedResult as Result.Error).message)
+        assertEquals("Load failed", mappedResult.message)
         assertEquals(testException, mappedResult.exception)
     }
 
@@ -433,7 +433,7 @@ class ResultTest {
 
         // Then
         assertTrue(finalResult is Result.Success)
-        assertEquals(8, (finalResult as Result.Success).data) // "JOHN DOE".length
+        assertEquals(8, finalResult.data) // "JOHN DOE".length
     }
 
     @Test
