@@ -30,15 +30,18 @@ import pt.dourobats.app.core.common.Result
 class ScheduleViewModelTest {
 
     private lateinit var viewModel: ScheduleViewModel
-    private lateinit var fakeGetAvailableSessionsUseCase: FakeGetAvailableSessionsUseCase
-    private lateinit var fakeGetUserBookedSessionsUseCase: FakeGetUserBookedSessionsUseCase
+    private lateinit var fakeGetAvailableSessionsUseCase: pt.dourobats.app.core.test.fakes.FakeGetAvailableSessionsUseCase
+    private lateinit var fakeGetUserBookedSessionsUseCase: pt.dourobats.app.core.test.fakes.FakeGetUserBookedSessionsUseCase
     private val testDispatcher = StandardTestDispatcher()
 
     @BeforeTest
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        fakeGetAvailableSessionsUseCase = FakeGetAvailableSessionsUseCase()
-        fakeGetUserBookedSessionsUseCase = FakeGetUserBookedSessionsUseCase()
+        fakeGetAvailableSessionsUseCase = pt.dourobats.app.core.test.fakes.FakeGetAvailableSessionsUseCase()
+        fakeGetUserBookedSessionsUseCase = pt.dourobats.app.core.test.fakes.FakeGetUserBookedSessionsUseCase()
+    }
+
+    private fun createViewModel() {
         viewModel = ScheduleViewModel(
             getAvailableSessionsUseCase = fakeGetAvailableSessionsUseCase,
             getUserBookedSessionsUseCase = fakeGetUserBookedSessionsUseCase
@@ -52,6 +55,7 @@ class ScheduleViewModelTest {
 
     @Test
     fun `initial state shows loading`() {
+        createViewModel()
         val state = viewModel.uiState.value
         assertTrue(state.isLoading)
     }
@@ -59,12 +63,13 @@ class ScheduleViewModelTest {
     @Test
     fun `loads sessions successfully`() = runTest {
         // Given
-        val date = LocalDate(2026, 1, 6)
+        val date = LocalDate(2026, 1, 12)
         val session = createTestSession("1", date)
-        fakeGetAvailableSessionsUseCase.sessionsForDate = listOf(session to false)
-        fakeGetUserBookedSessionsUseCase.bookedSessions = emptyList()
+        fakeGetAvailableSessionsUseCase.sessions = listOf(session to false)
+        fakeGetUserBookedSessionsUseCase.sessions = emptyList()
 
         // When
+        createViewModel()
         advanceUntilIdle()
 
         // Then
@@ -77,10 +82,11 @@ class ScheduleViewModelTest {
     @Test
     fun `selectDate updates selected date and loads new sessions`() = runTest {
         // Given
+        createViewModel()
         advanceUntilIdle()
-        val newDate = LocalDate(2026, 1, 7)
+        val newDate = LocalDate(2026, 1, 13)
         val session = createTestSession("2", newDate)
-        fakeGetAvailableSessionsUseCase.sessionsForDate = listOf(session to false)
+        fakeGetAvailableSessionsUseCase.sessions = listOf(session to false)
 
         // When
         viewModel.selectDate(newDate)
@@ -96,6 +102,7 @@ class ScheduleViewModelTest {
     @Test
     fun `toggleViewMode switches between week and month`() = runTest {
         // Given
+        createViewModel()
         advanceUntilIdle()
         val initialViewMode = viewModel.uiState.value.viewMode
 
@@ -113,12 +120,13 @@ class ScheduleViewModelTest {
     @Test
     fun `loads user booked sessions`() = runTest {
         // Given
-        val date = LocalDate(2026, 1, 6)
+        val date = LocalDate(2026, 1, 12)
         val bookedSession = createTestSession("3", date)
-        fakeGetAvailableSessionsUseCase.sessionsForDate = emptyList()
-        fakeGetUserBookedSessionsUseCase.bookedSessions = listOf(bookedSession)
+        fakeGetAvailableSessionsUseCase.sessions = emptyList()
+        fakeGetUserBookedSessionsUseCase.sessions = listOf(bookedSession)
 
         // When
+        createViewModel()
         advanceUntilIdle()
 
         // Then
@@ -140,57 +148,5 @@ class ScheduleViewModelTest {
             currentAttendees = 10,
             status = SessionStatus.SCHEDULED
         )
-    }
-}
-
-/**
- * Fake implementation of GetAvailableSessionsUseCase for testing.
- */
-private class FakeGetAvailableSessionsUseCase : GetAvailableSessionsUseCase(
-    trainingRepository = object : pt.dourobats.app.core.domain.repository.TrainingRepository {
-        override fun getSessionsByDate(date: LocalDate) = flowOf(emptyList<Session>())
-        override fun getAllSessions() = flowOf(emptyList<Session>())
-        override fun getUserBookedSessionIds() = flowOf(emptySet<String>())
-        override suspend fun bookSession(sessionId: String) =
-            Result.Success(Unit)
-        override suspend fun cancelBooking(sessionId: String) =
-            Result.Success(Unit)
-        override suspend fun getSessionById(id: String) =
-            Result.Error<Session>(
-                pt.dourobats.app.core.common.exception.NetworkException("Not found"),
-                message = "Not found"
-            )
-    }
-) {
-    var sessionsForDate: List<Pair<Session, Boolean>> = emptyList()
-
-    override operator fun invoke(date: LocalDate): Flow<List<Pair<Session, Boolean>>> {
-        return flowOf(sessionsForDate)
-    }
-}
-
-/**
- * Fake implementation of GetUserBookedSessionsUseCase for testing.
- */
-private class FakeGetUserBookedSessionsUseCase : GetUserBookedSessionsUseCase(
-    trainingRepository = object : pt.dourobats.app.core.domain.repository.TrainingRepository {
-        override fun getSessionsByDate(date: LocalDate) = flowOf(emptyList<Session>())
-        override fun getAllSessions() = flowOf(emptyList<Session>())
-        override fun getUserBookedSessionIds() = flowOf(emptySet<String>())
-        override suspend fun bookSession(sessionId: String) =
-            Result.Success(Unit)
-        override suspend fun cancelBooking(sessionId: String) =
-            Result.Success(Unit)
-        override suspend fun getSessionById(id: String) =
-            Result.Error<Session>(
-                pt.dourobats.app.core.common.exception.NetworkException("Not found"),
-                "Not found"
-            )
-    }
-) {
-    var bookedSessions: List<Session> = emptyList()
-
-    override operator fun invoke(fromDate: LocalDate): Flow<List<Session>> {
-        return flowOf(bookedSessions)
     }
 }
