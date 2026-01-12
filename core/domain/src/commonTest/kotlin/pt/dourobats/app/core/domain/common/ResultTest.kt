@@ -1,4 +1,4 @@
-package pt.dourobats.app.core.domain.common
+package pt.dourobats.app.core.common
 
 import kotlin.test.Test
 import kotlin.test.assertEquals

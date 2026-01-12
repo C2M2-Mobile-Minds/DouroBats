@@ -1,9 +1,9 @@
-package pt.dourobats.app.core.domain.repository
+package pt.dourobats.app.core.repository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.LocalDate
-import pt.dourobats.app.core.domain.common.Result
-import pt.dourobats.app.core.domain.model.Session
+import pt.dourobats.app.core.common.Result
+import pt.dourobats.app.core.model.Session
 
 /**
  * Repository interface for training session operations.

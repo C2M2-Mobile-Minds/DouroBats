@@ -1,9 +1,9 @@
-package pt.dourobats.app.core.domain.repository
+package pt.dourobats.app.core.repository
 
 import kotlinx.coroutines.flow.Flow
-import pt.dourobats.app.core.domain.model.Language
-import pt.dourobats.app.core.domain.model.Theme
-import pt.dourobats.app.core.domain.model.UserProfile
+import pt.dourobats.app.core.model.Language
+import pt.dourobats.app.core.model.Theme
+import pt.dourobats.app.core.model.UserProfile
 
 /**
  * Repository for managing application settings and user profile.

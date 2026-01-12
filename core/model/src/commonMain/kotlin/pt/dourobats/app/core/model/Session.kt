@@ -1,4 +1,4 @@
-package pt.dourobats.app.core.domain.model
+package pt.dourobats.app.core.model
 
 import kotlinx.datetime.LocalDateTime
 import kotlin.time.Duration

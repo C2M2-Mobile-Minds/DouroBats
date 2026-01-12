@@ -1,4 +1,4 @@
-package pt.dourobats.app.core.domain.exception
+package pt.dourobats.app.core.common.exception
 
 /**
  * Base exception for authentication-related errors.

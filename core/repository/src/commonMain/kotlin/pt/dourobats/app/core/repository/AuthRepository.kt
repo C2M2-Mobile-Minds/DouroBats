@@ -1,9 +1,9 @@
-package pt.dourobats.app.core.domain.repository
+package pt.dourobats.app.core.repository
 
 import kotlinx.coroutines.flow.Flow
-import pt.dourobats.app.core.domain.common.Result
-import pt.dourobats.app.core.domain.model.AuthState
-import pt.dourobats.app.core.domain.model.LoginMethod
+import pt.dourobats.app.core.common.Result
+import pt.dourobats.app.core.model.AuthState
+import pt.dourobats.app.core.model.LoginMethod
 
 /**
  * Repository for managing user authentication state.

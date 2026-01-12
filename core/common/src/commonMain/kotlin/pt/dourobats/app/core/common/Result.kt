@@ -1,4 +1,4 @@
-package pt.dourobats.app.core.domain.common
+package pt.dourobats.app.core.common
 
 /**
  * A sealed class representing the result of an asynchronous operation.
