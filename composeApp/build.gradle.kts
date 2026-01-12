@@ -14,6 +14,9 @@ kotlin {
             implementation(projects.features.settings)
 
             // Core modules
+            implementation(projects.core.model)
+            implementation(projects.core.common)
+            implementation(projects.core.repository)
             implementation(projects.core.domain)
             implementation(projects.core.data)
             implementation(projects.core.network)

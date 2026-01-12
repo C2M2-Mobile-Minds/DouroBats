@@ -21,11 +21,11 @@ import dourobats.core.ui.generated.resources.nav_training
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
-import pt.dourobats.app.core.domain.model.AuthState
-import pt.dourobats.app.core.domain.model.Language
-import pt.dourobats.app.core.domain.model.Theme
-import pt.dourobats.app.core.domain.repository.AuthRepository
-import pt.dourobats.app.core.domain.repository.SettingsRepository
+import pt.dourobats.app.core.model.AuthState
+import pt.dourobats.app.core.model.Language
+import pt.dourobats.app.core.model.Theme
+import pt.dourobats.app.core.repository.AuthRepository
+import pt.dourobats.app.core.repository.SettingsRepository
 import pt.dourobats.app.core.ui.localization.LocalLanguage
 import pt.dourobats.app.core.ui.localization.changeLanguage
 import pt.dourobats.app.core.ui.theme.AppTheme
