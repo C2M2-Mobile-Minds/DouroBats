@@ -15,7 +15,7 @@ class FakeTrainingRepositoryTest {
     fun `getSessionsByDate returns sessions for specified date`() = runTest {
         // Given
         val repository = FakeTrainingRepository()
-        val date = LocalDate(2026, 1, 6) // Base date from generateMockSessions
+        val date = LocalDate(2026, 1, 12) // Base date from generateMockSessions
 
         // When
         val sessions = repository.getSessionsByDate(date).first()
