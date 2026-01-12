@@ -9,10 +9,10 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import okio.FileSystem
 import okio.Path.Companion.toPath
-import pt.dourobats.app.core.domain.common.Result
-import pt.dourobats.app.core.domain.exception.AuthException
-import pt.dourobats.app.core.domain.model.AuthState
-import pt.dourobats.app.core.domain.model.LoginMethod
+import pt.dourobats.app.core.common.Result
+import pt.dourobats.app.core.common.exception.AuthException
+import pt.dourobats.app.core.model.AuthState
+import pt.dourobats.app.core.model.LoginMethod
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test

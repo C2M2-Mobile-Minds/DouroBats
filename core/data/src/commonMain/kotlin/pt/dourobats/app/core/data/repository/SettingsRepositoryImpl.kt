@@ -7,10 +7,10 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import pt.dourobats.app.core.domain.model.Language
-import pt.dourobats.app.core.domain.model.Theme
-import pt.dourobats.app.core.domain.model.UserProfile
-import pt.dourobats.app.core.domain.repository.SettingsRepository
+import pt.dourobats.app.core.model.Language
+import pt.dourobats.app.core.model.Theme
+import pt.dourobats.app.core.model.UserProfile
+import pt.dourobats.app.core.repository.SettingsRepository
 
 class SettingsRepositoryImpl(
     private val dataStore: DataStore<Preferences>

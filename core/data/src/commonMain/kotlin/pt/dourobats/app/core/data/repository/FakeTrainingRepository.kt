@@ -6,12 +6,14 @@ import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
-import pt.dourobats.app.core.domain.common.Result
-import pt.dourobats.app.core.domain.exception.NetworkException
-import pt.dourobats.app.core.domain.model.Session
-import pt.dourobats.app.core.domain.model.SessionStatus
-import pt.dourobats.app.core.domain.model.SkillLevel
-import pt.dourobats.app.core.domain.repository.TrainingRepository
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayIn
+import pt.dourobats.app.core.common.Result
+import pt.dourobats.app.core.common.exception.NetworkException
+import pt.dourobats.app.core.model.Session
+import pt.dourobats.app.core.model.SessionStatus
+import pt.dourobats.app.core.model.SkillLevel
+import pt.dourobats.app.core.repository.TrainingRepository
 import kotlin.time.Duration.Companion.hours
 
 /**
@@ -85,7 +87,7 @@ class FakeTrainingRepository : TrainingRepository {
      * In real implementation, this data would come from API.
      */
     private fun generateMockSessions(): List<Session> {
-        val baseDate = LocalDate(2026, 1, 6) // Today
+        val baseDate = kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault()) // Today
 
         return listOf(
             // Today's sessions

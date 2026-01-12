@@ -3,7 +3,7 @@ package pt.dourobats.app.core.data.repository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
-import pt.dourobats.app.core.domain.common.Result
+import pt.dourobats.app.core.common.Result
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

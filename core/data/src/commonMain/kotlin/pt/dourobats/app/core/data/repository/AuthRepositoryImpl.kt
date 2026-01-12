@@ -8,11 +8,11 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import pt.dourobats.app.core.domain.common.Result
-import pt.dourobats.app.core.domain.exception.AuthException
-import pt.dourobats.app.core.domain.model.AuthState
-import pt.dourobats.app.core.domain.model.LoginMethod
-import pt.dourobats.app.core.domain.repository.AuthRepository
+import pt.dourobats.app.core.common.Result
+import pt.dourobats.app.core.common.exception.AuthException
+import pt.dourobats.app.core.model.AuthState
+import pt.dourobats.app.core.model.LoginMethod
+import pt.dourobats.app.core.repository.AuthRepository
 
 /**
  * Implementation of AuthRepository using DataStore for persistence.
