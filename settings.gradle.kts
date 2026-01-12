@@ -26,6 +26,9 @@ dependencyResolutionManagement {
 include(":composeApp")
 
 // Core modules
+include(":core:model")
+include(":core:common")
+include(":core:repository")
 include(":core:domain")
 include(":core:data")
 include(":core:network")
