@@ -1,10 +1,8 @@
 package pt.dourobats.app.features.schedule.data
 
-import kotlin.time.Clock
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
-import pt.dourobats.app.core.domain.model.SessionStatus
+import pt.dourobats.app.core.model.SessionStatus
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -41,7 +39,7 @@ class MockSessionDataTest {
     @Test
     fun `generateMockSessions includes today's sessions`() {
         // Arrange
-        val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+        val today = kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault())
 
         // Act
         val sessions = MockSessionData.generateMockSessions()
@@ -54,7 +52,7 @@ class MockSessionDataTest {
     @Test
     fun `generateMockSessions includes future sessions`() {
         // Arrange
-        val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+        val today = kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault())
 
         // Act
         val sessions = MockSessionData.generateMockSessions()

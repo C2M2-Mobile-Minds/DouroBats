@@ -1,25 +1,32 @@
 package pt.dourobats.app.features.settings
 
-import pt.dourobats.app.core.domain.model.Language
-import pt.dourobats.app.core.domain.model.Theme
-import pt.dourobats.app.core.domain.model.UserProfile
+import pt.dourobats.app.core.model.Language
+import pt.dourobats.app.core.model.Theme
+import pt.dourobats.app.core.model.UserProfile
 
 /**
  * UI state for the Settings screen.
  *
- * @property userProfile Current user profile data
- * @property currentLanguage Currently selected language
- * @property currentTheme Currently selected theme
+ * @property userProfile Current user profile data (null during initial load)
+ * @property currentLanguage Currently selected language (null during initial load)
+ * @property currentTheme Currently selected theme (null during initial load)
  * @property isLoading Whether data is being loaded
  * @property validationErrors Validation errors for profile fields
  */
 data class SettingsUiState(
-    val userProfile: UserProfile = UserProfile.empty(),
-    val currentLanguage: Language = Language.ENGLISH_US,
-    val currentTheme: Theme = Theme.LIGHT,
-    val isLoading: Boolean = false,
+    val userProfile: UserProfile? = null,
+    val currentLanguage: Language? = null,
+    val currentTheme: Theme? = null,
+    val isLoading: Boolean = true,
     val validationErrors: ValidationErrors = ValidationErrors()
 ) {
+    /**
+     * Whether we have loaded all required data from DataStore.
+     */
+    val isDataLoaded: Boolean
+        get() = userProfile != null && currentLanguage != null && currentTheme != null
+
+
     /**
      * Validation errors for profile fields.
      *

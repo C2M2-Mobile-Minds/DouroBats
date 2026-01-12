@@ -1,0 +1,18 @@
+package pt.dourobats.app.core.domain.usecase
+
+import pt.dourobats.app.core.common.Result
+import pt.dourobats.app.core.model.LoginMethod
+import pt.dourobats.app.core.repository.AuthRepository
+
+class LoginWithSocialUseCaseImpl(
+    private val authRepository: AuthRepository
+) : LoginWithSocialUseCase {
+    override suspend fun invoke(method: LoginMethod): Result<Unit> {
+        if (method == LoginMethod.EMAIL) {
+            return Result.Error(
+                IllegalArgumentException("Use LoginWithEmailUseCase for email authentication")
+            )
+        }
+        return authRepository.loginWithSocial(method)
+    }
+}

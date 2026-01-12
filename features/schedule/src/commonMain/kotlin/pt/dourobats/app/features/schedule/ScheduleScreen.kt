@@ -2,10 +2,12 @@ package pt.dourobats.app.features.schedule
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -14,27 +16,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import dourobats.features.schedule.generated.resources.*
 import dourobats.features.schedule.generated.resources.Res
-import kotlin.time.Clock
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 import pt.dourobats.app.core.ui.components.calendar.MonthCalendar
 import pt.dourobats.app.core.ui.components.calendar.WeekCalendar
 import pt.dourobats.app.core.ui.components.calendar.YearMonth
 import pt.dourobats.app.core.ui.components.SessionListSection
-import pt.dourobats.app.features.schedule.data.MockSessionData
-import pt.dourobats.app.features.schedule.data.toDisplayData
-
-/**
- * Calendar view mode enum.
- */
-enum class CalendarViewMode {
-    WEEK,
-    MONTH
-}
 
 /**
  * Training schedule screen with week and month calendar views.
@@ -42,38 +34,22 @@ enum class CalendarViewMode {
  * Displays a switchable calendar view (week or month) for browsing dates
  * and selecting training sessions. Users can toggle between views using
  * a button in the top-right corner.
+ *
+ * Now uses ViewModel following clean architecture:
+ * - UI observes state from ViewModel
+ * - Business logic handled by use cases
+ * - Ready for API integration
  */
 @Composable
 fun ScheduleScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: ScheduleViewModel = koinViewModel()
 ) {
     val spacing = LocalSpacing.current
-    var selectedDate by remember {
-        mutableStateOf(Clock.System.todayIn(TimeZone.currentSystemDefault()))
-    }
-    var viewMode by remember { mutableStateOf(CalendarViewMode.WEEK) }
+    val uiState by viewModel.uiState.collectAsState()
+
     var currentYearMonth by remember {
-        mutableStateOf(YearMonth(selectedDate.year, selectedDate.month))
-    }
-
-    // Load mock data
-    val allSessions = remember { MockSessionData.generateMockSessions() }
-    val bookedIds = remember { MockSessionData.getUserBookedSessionIds() }
-    val sessionsWithData = remember(allSessions, bookedIds) {
-        allSessions.toDisplayData(bookedIds)
-    }
-
-    // Filter sessions for selected date
-    val selectedDateSessions = remember(sessionsWithData, selectedDate) {
-        sessionsWithData.filter { it.session.dateTime.date == selectedDate }
-    }
-
-    // Filter user's upcoming booked sessions
-    val today = kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault())
-    val upcomingSessions = remember(sessionsWithData, today) {
-        sessionsWithData.filter {
-            it.isUserBooked && it.session.dateTime.date >= today
-        }.sortedBy { it.session.dateTime }
+        mutableStateOf(YearMonth(uiState.selectedDate.year, uiState.selectedDate.month))
     }
 
     // Localized calendar strings
@@ -102,6 +78,19 @@ fun ScheduleScreen(
         Month.DECEMBER to stringResource(Res.string.month_december)
     )
 
+    val today = kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault())
+
+    // Show loading indicator
+    if (uiState.isLoading) {
+        Box(
+            modifier = modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+        return
+    }
+
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -116,14 +105,9 @@ fun ScheduleScreen(
                     .padding(horizontal = spacing.screenHorizontal),
                 horizontalArrangement = Arrangement.End
             ) {
-                TextButton(onClick = {
-                    viewMode = if (viewMode == CalendarViewMode.WEEK)
-                        CalendarViewMode.MONTH
-                    else
-                        CalendarViewMode.WEEK
-                }) {
+                TextButton(onClick = { viewModel.toggleViewMode() }) {
                     Text(
-                        text = if (viewMode == CalendarViewMode.WEEK)
+                        text = if (uiState.viewMode == CalendarViewMode.WEEK)
                             stringResource(Res.string.view_mode_month)
                         else
                             stringResource(Res.string.view_mode_week),
@@ -139,18 +123,18 @@ fun ScheduleScreen(
 
         // Conditional calendar display
         item {
-            when (viewMode) {
+            when (uiState.viewMode) {
                 CalendarViewMode.WEEK -> WeekCalendar(
-                    selectedDate = selectedDate,
+                    selectedDate = uiState.selectedDate,
                     today = today,
-                    onDateSelected = { date -> selectedDate = date },
+                    onDateSelected = { date -> viewModel.selectDate(date) },
                     dayNames = dayNames
                 )
                 CalendarViewMode.MONTH -> MonthCalendar(
                     yearMonth = currentYearMonth,
-                    selectedDate = selectedDate,
+                    selectedDate = uiState.selectedDate,
                     today = today,
-                    onDateSelected = { date -> selectedDate = date },
+                    onDateSelected = { date -> viewModel.selectDate(date) },
                     onMonthChange = { yearMonth -> currentYearMonth = yearMonth },
                     monthNames = monthNames,
                     dayNames = dayNames,
@@ -167,7 +151,7 @@ fun ScheduleScreen(
         item {
             SessionListSection(
                 title = stringResource(Res.string.sessions_available_title),
-                sessions = selectedDateSessions,
+                sessions = uiState.sessionsForSelectedDate,
                 emptyMessage = stringResource(Res.string.sessions_available_empty),
                 showDate = false,  // Don't show date - all sessions are on selected date
                 bookedBadgeText = stringResource(Res.string.session_booked_badge)
@@ -182,7 +166,7 @@ fun ScheduleScreen(
         item {
             SessionListSection(
                 title = stringResource(Res.string.sessions_my_schedule_title),
-                sessions = upcomingSessions,
+                sessions = uiState.upcomingBookedSessions,
                 emptyMessage = stringResource(Res.string.sessions_my_schedule_empty),
                 showDate = true,  // Show date - sessions can be on different dates
                 bookedBadgeText = stringResource(Res.string.session_booked_badge)

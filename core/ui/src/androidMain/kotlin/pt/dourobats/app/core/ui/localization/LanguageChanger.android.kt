@@ -1,6 +1,6 @@
 package pt.dourobats.app.core.ui.localization
 
-import pt.dourobats.app.core.domain.model.Language
+import pt.dourobats.app.core.model.Language
 import java.util.Locale
 
 actual fun changeLanguage(language: Language) {

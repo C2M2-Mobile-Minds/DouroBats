@@ -5,6 +5,7 @@ import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.minus
+import kotlinx.datetime.number
 import kotlinx.datetime.plus
 
 /**
@@ -90,6 +91,6 @@ object CalendarUtils {
      * @return true if the date is in the given month, false otherwise
      */
     fun isDateInMonth(date: LocalDate, year: Int, month: Int): Boolean {
-        return date.year == year && date.monthNumber == month
+        return date.year == year && date.month.number == month
     }
 }

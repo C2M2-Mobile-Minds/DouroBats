@@ -1,6 +1,6 @@
 package pt.dourobats.app.core.ui.model
 
-import pt.dourobats.app.core.domain.model.Session
+import pt.dourobats.app.core.model.Session
 
 /**
  * Extended session model with display data for UI components.

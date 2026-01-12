@@ -6,7 +6,9 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.core.domain)
+            implementation(projects.core.model)
+            implementation(projects.core.common)
+            implementation(projects.core.repository)
             implementation(projects.core.network)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)

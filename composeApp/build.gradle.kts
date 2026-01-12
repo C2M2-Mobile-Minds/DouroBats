@@ -9,10 +9,14 @@ kotlin {
         commonMain.dependencies {
             // Feature modules
             implementation(projects.features.home)
+            implementation(projects.features.login)
             implementation(projects.features.schedule)
             implementation(projects.features.settings)
 
             // Core modules
+            implementation(projects.core.model)
+            implementation(projects.core.common)
+            implementation(projects.core.repository)
             implementation(projects.core.domain)
             implementation(projects.core.data)
             implementation(projects.core.network)

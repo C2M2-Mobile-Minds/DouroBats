@@ -56,7 +56,7 @@ import dourobats.features.settings.generated.resources.settings_theme_dark
 import dourobats.features.settings.generated.resources.settings_theme_light
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import pt.dourobats.app.core.domain.model.Theme
+import pt.dourobats.app.core.model.Theme
 import pt.dourobats.app.core.ui.components.SectionCard
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 import pt.dourobats.app.features.settings.components.BookingStatsCard
@@ -89,6 +89,22 @@ fun SettingsScreen(
     var showLanguageSheet by remember { mutableStateOf(false) }
     var showEditDialog by remember { mutableStateOf(false) }
 
+    // Show loading state while data is being fetched from DataStore
+    if (!uiState.isDataLoaded) {
+        androidx.compose.foundation.layout.Box(
+            modifier = modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            androidx.compose.material3.CircularProgressIndicator()
+        }
+        return
+    }
+
+    // All data loaded - safe to access non-null values
+    val userProfile = uiState.userProfile!!
+    val currentLanguage = uiState.currentLanguage!!
+    val currentTheme = uiState.currentTheme!!
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -99,7 +115,7 @@ fun SettingsScreen(
 
         // Profile Section (NO CARD)
         ProfileHeader(
-            userProfile = uiState.userProfile,
+            userProfile = userProfile,
             onEditClick = { showEditDialog = true }
         )
 
@@ -118,7 +134,7 @@ fun SettingsScreen(
             SettingsClickableItem(
                 icon = Icons.Default.Language,
                 title = stringResource(Res.string.settings_language),
-                subtitle = uiState.currentLanguage.displayName,
+                subtitle = currentLanguage.displayName,
                 onClick = { showLanguageSheet = true }
             )
 
@@ -145,14 +161,14 @@ fun SettingsScreen(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     SegmentedButton(
-                        selected = uiState.currentTheme == Theme.LIGHT,
+                        selected = currentTheme == Theme.LIGHT,
                         onClick = { viewModel.setTheme(Theme.LIGHT) },
                         shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2)
                     ) {
                         Text(stringResource(Res.string.settings_theme_light))
                     }
                     SegmentedButton(
-                        selected = uiState.currentTheme == Theme.DARK,
+                        selected = currentTheme == Theme.DARK,
                         onClick = { viewModel.setTheme(Theme.DARK) },
                         shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2)
                     ) {
@@ -208,7 +224,7 @@ fun SettingsScreen(
     // Language Bottom Sheet
     if (showLanguageSheet) {
         LanguageBottomSheet(
-            currentLanguage = uiState.currentLanguage,
+            currentLanguage = currentLanguage,
             onLanguageSelected = { language ->
                 viewModel.setLanguage(language)
                 showLanguageSheet = false

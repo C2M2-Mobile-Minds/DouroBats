@@ -3,9 +3,9 @@ package pt.dourobats.app.features.schedule.data
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
-import pt.dourobats.app.core.domain.model.Session
-import pt.dourobats.app.core.domain.model.SessionStatus
-import pt.dourobats.app.core.domain.model.SkillLevel
+import pt.dourobats.app.core.model.Session
+import pt.dourobats.app.core.model.SessionStatus
+import pt.dourobats.app.core.model.SkillLevel
 import pt.dourobats.app.core.ui.model.SessionDisplayData
 import kotlin.time.Duration.Companion.hours
 
@@ -20,7 +20,7 @@ object MockSessionData {
      * Creates sessions across multiple dates and sports.
      */
     fun generateMockSessions(): List<Session> {
-        val baseDate = LocalDate(2026, 1, 6) // Today
+        val baseDate = LocalDate(2026, 1, 12) // Today - update this date as needed
 
         return listOf(
             // Today's sessions
