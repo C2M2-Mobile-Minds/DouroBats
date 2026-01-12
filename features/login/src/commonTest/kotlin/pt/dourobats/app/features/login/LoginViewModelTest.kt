@@ -25,8 +25,8 @@ import kotlin.test.assertTrue
 class LoginViewModelTest {
 
     private lateinit var viewModel: LoginViewModel
-    private lateinit var fakeLoginWithEmailUseCase: FakeLoginWithEmailUseCase
-    private lateinit var fakeLoginWithSocialUseCase: FakeLoginWithSocialUseCase
+    private lateinit var fakeLoginWithEmailUseCase: pt.dourobats.app.core.test.fakes.FakeLoginWithEmailUseCase
+    private lateinit var fakeLoginWithSocialUseCase: pt.dourobats.app.core.test.fakes.FakeLoginWithSocialUseCase
     private lateinit var validator: LoginFormValidator
     private lateinit var errorMapper: LoginErrorMapper
 
@@ -35,8 +35,8 @@ class LoginViewModelTest {
     @BeforeTest
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        fakeLoginWithEmailUseCase = FakeLoginWithEmailUseCase()
-        fakeLoginWithSocialUseCase = FakeLoginWithSocialUseCase()
+        fakeLoginWithEmailUseCase = pt.dourobats.app.core.test.fakes.FakeLoginWithEmailUseCase()
+        fakeLoginWithSocialUseCase = pt.dourobats.app.core.test.fakes.FakeLoginWithSocialUseCase()
         validator = LoginFormValidator()
         errorMapper = LoginErrorMapper()
 
@@ -271,49 +271,4 @@ class LoginViewModelTest {
         assertNull(viewModel.uiState.value.errorMessage)
     }
 
-    // Fake Implementations for Testing
-    private class FakeLoginWithEmailUseCase(
-        authRepository: pt.dourobats.app.core.domain.repository.AuthRepository = FakeAuthRepository()
-    ) : LoginWithEmailUseCase(authRepository) {
-        var result: Result<Unit> = Result.Success(Unit)
-        var wasCalled = false
-        var lastEmail: String? = null
-        var lastPassword: String? = null
-
-        override suspend fun invoke(email: String, password: String): Result<Unit> {
-            wasCalled = true
-            lastEmail = email
-            lastPassword = password
-            return result
-        }
-    }
-
-    private class FakeLoginWithSocialUseCase(
-        authRepository: pt.dourobats.app.core.domain.repository.AuthRepository = FakeAuthRepository()
-    ) : LoginWithSocialUseCase(authRepository) {
-        var result: Result<Unit> = Result.Success(Unit)
-        var wasCalled = false
-        var lastMethod: LoginMethod? = null
-
-        override suspend fun invoke(method: LoginMethod): Result<Unit> {
-            wasCalled = true
-            lastMethod = method
-            return result
-        }
-    }
-
-    // Fake AuthRepository for testing (not used directly, just needed for constructor)
-    private class FakeAuthRepository : pt.dourobats.app.core.domain.repository.AuthRepository {
-        override val authStateFlow: kotlinx.coroutines.flow.Flow<pt.dourobats.app.core.model.AuthState>
-            get() = kotlinx.coroutines.flow.flowOf(
-                pt.dourobats.app.core.model.AuthState.Unauthenticated
-            )
-
-        override suspend fun loginWithEmail(email: String, password: String): Result<Unit> =
-            Result.Success(Unit)
-        override suspend fun loginWithSocial(method: LoginMethod): Result<Unit> =
-            Result.Success(Unit)
-        override suspend fun logout() {}
-        override suspend fun isAuthenticated(): Boolean = false
-    }
 }
