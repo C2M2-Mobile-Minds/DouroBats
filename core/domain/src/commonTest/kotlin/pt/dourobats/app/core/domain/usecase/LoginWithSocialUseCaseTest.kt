@@ -1,9 +1,9 @@
 package pt.dourobats.app.core.domain.usecase
 
 import kotlinx.coroutines.test.runTest
-import pt.dourobats.app.core.domain.common.Result
-import pt.dourobats.app.core.domain.model.LoginMethod
-import pt.dourobats.app.core.domain.repository.AuthRepository
+import pt.dourobats.app.core.common.Result
+import pt.dourobats.app.core.model.LoginMethod
+import pt.dourobats.app.core.repository.AuthRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -14,7 +14,7 @@ class LoginWithSocialUseCaseTest {
     fun `loginWithSocial with Google method succeeds`() = runTest {
         // Given
         val repository = FakeAuthRepository()
-        val useCase = LoginWithSocialUseCase(repository)
+        val useCase = LoginWithSocialUseCaseImpl(repository)
 
         // When
         val result = useCase(LoginMethod.GOOGLE)
@@ -28,7 +28,7 @@ class LoginWithSocialUseCaseTest {
     fun `loginWithSocial with Facebook method succeeds`() = runTest {
         // Given
         val repository = FakeAuthRepository()
-        val useCase = LoginWithSocialUseCase(repository)
+        val useCase = LoginWithSocialUseCaseImpl(repository)
 
         // When
         val result = useCase(LoginMethod.FACEBOOK)
@@ -42,7 +42,7 @@ class LoginWithSocialUseCaseTest {
     fun `loginWithSocial with Apple method succeeds`() = runTest {
         // Given
         val repository = FakeAuthRepository()
-        val useCase = LoginWithSocialUseCase(repository)
+        val useCase = LoginWithSocialUseCaseImpl(repository)
 
         // When
         val result = useCase(LoginMethod.APPLE)
@@ -56,7 +56,7 @@ class LoginWithSocialUseCaseTest {
     fun `loginWithSocial with EMAIL method returns error`() = runTest {
         // Given
         val repository = FakeAuthRepository()
-        val useCase = LoginWithSocialUseCase(repository)
+        val useCase = LoginWithSocialUseCaseImpl(repository)
 
         // When
         val result = useCase(LoginMethod.EMAIL)
@@ -90,7 +90,7 @@ class LoginWithSocialUseCaseTest {
             return false
         }
 
-        override val authStateFlow: kotlinx.coroutines.flow.Flow<pt.dourobats.app.core.domain.model.AuthState>
-            get() = kotlinx.coroutines.flow.flowOf(pt.dourobats.app.core.domain.model.AuthState.Unauthenticated)
+        override val authStateFlow: kotlinx.coroutines.flow.Flow<pt.dourobats.app.core.model.AuthState>
+            get() = kotlinx.coroutines.flow.flowOf(pt.dourobats.app.core.model.AuthState.Unauthenticated)
     }
 }

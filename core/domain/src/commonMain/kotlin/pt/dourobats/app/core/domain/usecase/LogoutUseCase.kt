@@ -1,6 +1,6 @@
 package pt.dourobats.app.core.domain.usecase
 
-import pt.dourobats.app.core.domain.repository.AuthRepository
+import pt.dourobats.app.core.repository.AuthRepository
 
 /**
  * Use case for logging out the current user.
@@ -10,9 +10,7 @@ import pt.dourobats.app.core.domain.repository.AuthRepository
  *
  * @property authRepository Repository for authentication operations
  */
-open class LogoutUseCase(
-    private val authRepository: AuthRepository
-) {
+interface LogoutUseCase {
     /**
      * Logs out the current user.
      *
@@ -24,7 +22,6 @@ open class LogoutUseCase(
      * Note: This operation always succeeds. Any errors during logout
      * are logged but don't prevent the user from being logged out locally.
      */
-    open suspend operator fun invoke() {
-        authRepository.logout()
-    }
+    suspend operator fun invoke()
 }
+

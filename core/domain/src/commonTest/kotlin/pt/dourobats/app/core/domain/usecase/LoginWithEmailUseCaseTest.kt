@@ -1,10 +1,10 @@
 package pt.dourobats.app.core.domain.usecase
 
 import kotlinx.coroutines.test.runTest
-import pt.dourobats.app.core.domain.common.Result
-import pt.dourobats.app.core.domain.exception.NetworkException
-import pt.dourobats.app.core.domain.exception.ValidationException
-import pt.dourobats.app.core.domain.repository.AuthRepository
+import pt.dourobats.app.core.common.Result
+import pt.dourobats.app.core.common.exception.NetworkException
+import pt.dourobats.app.core.common.exception.ValidationException
+import pt.dourobats.app.core.repository.AuthRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -15,7 +15,7 @@ class LoginWithEmailUseCaseTest {
     fun `loginWithEmail with valid credentials returns success`() = runTest {
         // Given
         val repository = FakeAuthRepository(shouldSucceed = true)
-        val useCase = LoginWithEmailUseCase(repository)
+        val useCase = LoginWithEmailUseCaseImpl(repository)
 
         // When
         val result = useCase("test@example.com", "password123")
@@ -30,7 +30,7 @@ class LoginWithEmailUseCaseTest {
     fun `loginWithEmail with blank email returns validation error`() = runTest {
         // Given
         val repository = FakeAuthRepository(shouldSucceed = true)
-        val useCase = LoginWithEmailUseCase(repository)
+        val useCase = LoginWithEmailUseCaseImpl(repository)
 
         // When
         val result = useCase("   ", "password123")
@@ -44,7 +44,7 @@ class LoginWithEmailUseCaseTest {
     fun `loginWithEmail with empty email returns validation error`() = runTest {
         // Given
         val repository = FakeAuthRepository(shouldSucceed = true)
-        val useCase = LoginWithEmailUseCase(repository)
+        val useCase = LoginWithEmailUseCaseImpl(repository)
 
         // When
         val result = useCase("", "password123")
@@ -58,7 +58,7 @@ class LoginWithEmailUseCaseTest {
     fun `loginWithEmail with invalid email format returns validation error`() = runTest {
         // Given
         val repository = FakeAuthRepository(shouldSucceed = true)
-        val useCase = LoginWithEmailUseCase(repository)
+        val useCase = LoginWithEmailUseCaseImpl(repository)
 
         // When - invalid email formats
         val result1 = useCase("notanemail", "password123")
@@ -81,7 +81,7 @@ class LoginWithEmailUseCaseTest {
     fun `loginWithEmail with valid email formats succeeds`() = runTest {
         // Given
         val repository = FakeAuthRepository(shouldSucceed = true)
-        val useCase = LoginWithEmailUseCase(repository)
+        val useCase = LoginWithEmailUseCaseImpl(repository)
 
         // When - valid email formats
         val result1 = useCase("test@example.com", "password123")
@@ -98,7 +98,7 @@ class LoginWithEmailUseCaseTest {
     fun `loginWithEmail trims whitespace from email`() = runTest {
         // Given
         val repository = FakeAuthRepository(shouldSucceed = true)
-        val useCase = LoginWithEmailUseCase(repository)
+        val useCase = LoginWithEmailUseCaseImpl(repository)
 
         // When
         val result = useCase("  test@example.com  ", "password123")
@@ -112,7 +112,7 @@ class LoginWithEmailUseCaseTest {
     fun `loginWithEmail with blank password returns validation error`() = runTest {
         // Given
         val repository = FakeAuthRepository(shouldSucceed = true)
-        val useCase = LoginWithEmailUseCase(repository)
+        val useCase = LoginWithEmailUseCaseImpl(repository)
 
         // When
         val result = useCase("test@example.com", "   ")
@@ -126,7 +126,7 @@ class LoginWithEmailUseCaseTest {
     fun `loginWithEmail with password less than 6 characters returns validation error`() = runTest {
         // Given
         val repository = FakeAuthRepository(shouldSucceed = true)
-        val useCase = LoginWithEmailUseCase(repository)
+        val useCase = LoginWithEmailUseCaseImpl(repository)
 
         // When
         val result = useCase("test@example.com", "12345")
@@ -140,7 +140,7 @@ class LoginWithEmailUseCaseTest {
     fun `loginWithEmail with password exactly 6 characters succeeds`() = runTest {
         // Given
         val repository = FakeAuthRepository(shouldSucceed = true)
-        val useCase = LoginWithEmailUseCase(repository)
+        val useCase = LoginWithEmailUseCaseImpl(repository)
 
         // When
         val result = useCase("test@example.com", "123456")
@@ -153,7 +153,7 @@ class LoginWithEmailUseCaseTest {
     fun `loginWithEmail propagates repository errors`() = runTest {
         // Given
         val repository = FakeAuthRepository(shouldSucceed = false)
-        val useCase = LoginWithEmailUseCase(repository)
+        val useCase = LoginWithEmailUseCaseImpl(repository)
 
         // When
         val result = useCase("test@example.com", "password123")
@@ -182,7 +182,7 @@ class LoginWithEmailUseCaseTest {
             }
         }
 
-        override suspend fun loginWithSocial(method: pt.dourobats.app.core.domain.model.LoginMethod): Result<Unit> {
+        override suspend fun loginWithSocial(method: pt.dourobats.app.core.model.LoginMethod): Result<Unit> {
             return Result.Success(Unit)
         }
 
@@ -194,7 +194,7 @@ class LoginWithEmailUseCaseTest {
             return false
         }
 
-        override val authStateFlow: kotlinx.coroutines.flow.Flow<pt.dourobats.app.core.domain.model.AuthState>
-            get() = kotlinx.coroutines.flow.flowOf(pt.dourobats.app.core.domain.model.AuthState.Unauthenticated)
+        override val authStateFlow: kotlinx.coroutines.flow.Flow<pt.dourobats.app.core.model.AuthState>
+            get() = kotlinx.coroutines.flow.flowOf(pt.dourobats.app.core.model.AuthState.Unauthenticated)
     }
 }

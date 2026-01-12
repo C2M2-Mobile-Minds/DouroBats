@@ -1,8 +1,8 @@
 package pt.dourobats.app.core.domain.usecase
 
-import pt.dourobats.app.core.domain.common.Result
-import pt.dourobats.app.core.domain.model.LoginMethod
-import pt.dourobats.app.core.domain.repository.AuthRepository
+import pt.dourobats.app.core.common.Result
+import pt.dourobats.app.core.model.LoginMethod
+import pt.dourobats.app.core.repository.AuthRepository
 
 /**
  * Use case for authenticating a user with social login providers.
@@ -17,9 +17,7 @@ import pt.dourobats.app.core.domain.repository.AuthRepository
  *
  * @property authRepository Repository for authentication operations
  */
-open class LoginWithSocialUseCase(
-    private val authRepository: AuthRepository
-) {
+interface LoginWithSocialUseCase {
     /**
      * Authenticates a user with a social login provider.
      *
@@ -27,15 +25,6 @@ open class LoginWithSocialUseCase(
      * @return Result indicating success or failure
      * @throws IllegalArgumentException if EMAIL method is provided
      */
-    open suspend operator fun invoke(method: LoginMethod): Result<Unit> {
-        // Prevent misuse - EMAIL method should use LoginWithEmailUseCase
-        if (method == LoginMethod.EMAIL) {
-            return Result.Error(
-                IllegalArgumentException("Use LoginWithEmailUseCase for email authentication")
-            )
-        }
-
-        // Delegate to repository for social authentication
-        return authRepository.loginWithSocial(method)
-    }
+    suspend operator fun invoke(method: LoginMethod): Result<Unit>
 }
+

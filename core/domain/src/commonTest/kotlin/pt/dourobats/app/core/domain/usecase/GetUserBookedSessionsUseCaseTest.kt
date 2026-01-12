@@ -7,11 +7,11 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
-import pt.dourobats.app.core.domain.common.Result
-import pt.dourobats.app.core.domain.model.Session
-import pt.dourobats.app.core.domain.model.SessionStatus
-import pt.dourobats.app.core.domain.model.SkillLevel
-import pt.dourobats.app.core.domain.repository.TrainingRepository
+import pt.dourobats.app.core.common.Result
+import pt.dourobats.app.core.model.Session
+import pt.dourobats.app.core.model.SessionStatus
+import pt.dourobats.app.core.model.SkillLevel
+import pt.dourobats.app.core.repository.TrainingRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -32,7 +32,7 @@ class GetUserBookedSessionsUseCaseTest {
             allSessions = listOf(session1, session2, session3, session4),
             bookedIds = setOf("session-1", "session-2", "session-4")
         )
-        val useCase = GetUserBookedSessionsUseCase(repository)
+        val useCase = GetUserBookedSessionsUseCaseImpl(repository)
 
         // When
         val result = useCase(fromDate = baseDate).first()
@@ -55,7 +55,7 @@ class GetUserBookedSessionsUseCaseTest {
             allSessions = listOf(session1, session2, session3), // Unsorted
             bookedIds = setOf("session-1", "session-2", "session-3")
         )
-        val useCase = GetUserBookedSessionsUseCase(repository)
+        val useCase = GetUserBookedSessionsUseCaseImpl(repository)
 
         // When
         val result = useCase(fromDate = baseDate).first()
@@ -79,7 +79,7 @@ class GetUserBookedSessionsUseCaseTest {
             allSessions = listOf(session1, session2),
             bookedIds = emptySet() // No bookings
         )
-        val useCase = GetUserBookedSessionsUseCase(repository)
+        val useCase = GetUserBookedSessionsUseCaseImpl(repository)
 
         // When
         val result = useCase(fromDate = baseDate).first()
@@ -100,7 +100,7 @@ class GetUserBookedSessionsUseCaseTest {
             allSessions = listOf(pastSession, currentSession, futureSession),
             bookedIds = setOf("session-past", "session-current", "session-future")
         )
-        val useCase = GetUserBookedSessionsUseCase(repository)
+        val useCase = GetUserBookedSessionsUseCaseImpl(repository)
 
         // When
         val result = useCase(fromDate = baseDate).first()
@@ -121,7 +121,7 @@ class GetUserBookedSessionsUseCaseTest {
             allSessions = listOf(session),
             bookedIds = setOf("session-1")
         )
-        val useCase = GetUserBookedSessionsUseCase(repository)
+        val useCase = GetUserBookedSessionsUseCaseImpl(repository)
 
         // When
         val result = useCase(fromDate = baseDate).first()
@@ -143,7 +143,7 @@ class GetUserBookedSessionsUseCaseTest {
             allSessions = listOf(eveningSession, morningSession, afternoonSession), // Unsorted
             bookedIds = setOf("session-morning", "session-afternoon", "session-evening")
         )
-        val useCase = GetUserBookedSessionsUseCase(repository)
+        val useCase = GetUserBookedSessionsUseCaseImpl(repository)
 
         // When
         val result = useCase(fromDate = baseDate).first()
@@ -209,7 +209,7 @@ class GetUserBookedSessionsUseCaseTest {
         }
 
         override suspend fun getSessionById(id: String): Result<Session> {
-            return Result.Error(pt.dourobats.app.core.domain.exception.NetworkException("Not implemented"))
+            return Result.Error(pt.dourobats.app.core.common.exception.NetworkException("Not implemented"))
         }
     }
 }

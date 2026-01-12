@@ -4,11 +4,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
-import pt.dourobats.app.core.domain.common.Result
-import pt.dourobats.app.core.domain.exception.NetworkException
-import pt.dourobats.app.core.domain.exception.ValidationException
-import pt.dourobats.app.core.domain.model.Session
-import pt.dourobats.app.core.domain.repository.TrainingRepository
+import pt.dourobats.app.core.common.Result
+import pt.dourobats.app.core.common.exception.NetworkException
+import pt.dourobats.app.core.common.exception.ValidationException
+import pt.dourobats.app.core.model.Session
+import pt.dourobats.app.core.repository.TrainingRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -19,7 +19,7 @@ class BookSessionUseCaseTest {
     fun `bookSession with valid sessionId returns success`() = runTest {
         // Given
         val repository = FakeTrainingRepository(shouldSucceed = true)
-        val useCase = BookSessionUseCase(repository)
+        val useCase = BookSessionUseCaseImpl(repository)
 
         // When
         val result = useCase("session-123")
@@ -33,7 +33,7 @@ class BookSessionUseCaseTest {
     fun `bookSession with blank sessionId returns validation error`() = runTest {
         // Given
         val repository = FakeTrainingRepository(shouldSucceed = true)
-        val useCase = BookSessionUseCase(repository)
+        val useCase = BookSessionUseCaseImpl(repository)
 
         // When
         val result = useCase("   ")
@@ -47,7 +47,7 @@ class BookSessionUseCaseTest {
     fun `bookSession with empty sessionId returns validation error`() = runTest {
         // Given
         val repository = FakeTrainingRepository(shouldSucceed = true)
-        val useCase = BookSessionUseCase(repository)
+        val useCase = BookSessionUseCaseImpl(repository)
 
         // When
         val result = useCase("")
@@ -61,7 +61,7 @@ class BookSessionUseCaseTest {
     fun `bookSession propagates repository errors`() = runTest {
         // Given
         val repository = FakeTrainingRepository(shouldSucceed = false)
-        val useCase = BookSessionUseCase(repository)
+        val useCase = BookSessionUseCaseImpl(repository)
 
         // When
         val result = useCase("session-123")
