@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
-import pt.dourobats.app.core.domain.model.Session
+import pt.dourobats.app.core.model.Session
 import pt.dourobats.app.core.domain.usecase.GetAvailableSessionsUseCase
 import pt.dourobats.app.core.domain.usecase.GetUserBookedSessionsUseCase
 import pt.dourobats.app.core.ui.model.SessionDisplayData

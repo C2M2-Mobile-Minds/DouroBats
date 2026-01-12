@@ -12,9 +12,9 @@ import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
-import pt.dourobats.app.core.domain.model.Session
-import pt.dourobats.app.core.domain.model.SessionStatus
-import pt.dourobats.app.core.domain.model.SkillLevel
+import pt.dourobats.app.core.model.Session
+import pt.dourobats.app.core.model.SessionStatus
+import pt.dourobats.app.core.model.SkillLevel
 import pt.dourobats.app.core.domain.usecase.GetAvailableSessionsUseCase
 import pt.dourobats.app.core.domain.usecase.GetUserBookedSessionsUseCase
 import kotlin.test.AfterTest
@@ -24,7 +24,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.hours
-import pt.dourobats.app.core.domain.common.Result
+import pt.dourobats.app.core.common.Result
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ScheduleViewModelTest {
@@ -157,7 +157,7 @@ private class FakeGetAvailableSessionsUseCase : GetAvailableSessionsUseCase(
             Result.Success(Unit)
         override suspend fun getSessionById(id: String) =
             Result.Error<Session>(
-                pt.dourobats.app.core.domain.exception.NetworkException("Not found"),
+                pt.dourobats.app.core.common.exception.NetworkException("Not found"),
                 message = "Not found"
             )
     }
@@ -183,7 +183,7 @@ private class FakeGetUserBookedSessionsUseCase : GetUserBookedSessionsUseCase(
             Result.Success(Unit)
         override suspend fun getSessionById(id: String) =
             Result.Error<Session>(
-                pt.dourobats.app.core.domain.exception.NetworkException("Not found"),
+                pt.dourobats.app.core.common.exception.NetworkException("Not found"),
                 "Not found"
             )
     }

@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import pt.dourobats.app.core.domain.common.Result
-import pt.dourobats.app.core.domain.model.LoginMethod
+import pt.dourobats.app.core.common.Result
+import pt.dourobats.app.core.model.LoginMethod
 import pt.dourobats.app.core.domain.usecase.LoginWithEmailUseCase
 import pt.dourobats.app.core.domain.usecase.LoginWithSocialUseCase
 

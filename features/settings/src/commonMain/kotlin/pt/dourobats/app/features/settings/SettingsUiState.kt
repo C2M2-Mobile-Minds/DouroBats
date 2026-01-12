@@ -1,8 +1,8 @@
 package pt.dourobats.app.features.settings
 
-import pt.dourobats.app.core.domain.model.Language
-import pt.dourobats.app.core.domain.model.Theme
-import pt.dourobats.app.core.domain.model.UserProfile
+import pt.dourobats.app.core.model.Language
+import pt.dourobats.app.core.model.Theme
+import pt.dourobats.app.core.model.UserProfile
 
 /**
  * UI state for the Settings screen.

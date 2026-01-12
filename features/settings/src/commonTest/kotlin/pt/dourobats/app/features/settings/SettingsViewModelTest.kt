@@ -8,10 +8,10 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import pt.dourobats.app.core.domain.model.Language
-import pt.dourobats.app.core.domain.model.Theme
-import pt.dourobats.app.core.domain.model.UserProfile
-import pt.dourobats.app.core.domain.repository.SettingsRepository
+import pt.dourobats.app.core.model.Language
+import pt.dourobats.app.core.model.Theme
+import pt.dourobats.app.core.model.UserProfile
+import pt.dourobats.app.core.repository.SettingsRepository
 import pt.dourobats.app.core.test.fakes.fakeSettingsRepository
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest

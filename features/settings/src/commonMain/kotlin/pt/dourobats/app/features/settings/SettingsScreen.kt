@@ -56,7 +56,7 @@ import dourobats.features.settings.generated.resources.settings_theme_dark
 import dourobats.features.settings.generated.resources.settings_theme_light
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import pt.dourobats.app.core.domain.model.Theme
+import pt.dourobats.app.core.model.Theme
 import pt.dourobats.app.core.ui.components.SectionCard
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 import pt.dourobats.app.features.settings.components.BookingStatsCard

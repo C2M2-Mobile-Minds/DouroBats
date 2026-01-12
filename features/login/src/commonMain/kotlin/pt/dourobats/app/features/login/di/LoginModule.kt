@@ -3,9 +3,7 @@ package pt.dourobats.app.features.login.di
 import org.koin.core.module.dsl.*
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
-import pt.dourobats.app.core.domain.usecase.LoginWithEmailUseCase
-import pt.dourobats.app.core.domain.usecase.LoginWithSocialUseCase
-import pt.dourobats.app.core.domain.usecase.LogoutUseCase
+import pt.dourobats.app.core.domain.di.domainModule
 import pt.dourobats.app.features.login.LoginErrorMapper
 import pt.dourobats.app.features.login.LoginFormValidator
 import pt.dourobats.app.features.login.LoginViewModel
@@ -23,10 +21,8 @@ import pt.dourobats.app.features.login.LoginViewModel
  * ViewModel -> Use Cases -> Repository
  */
 val loginModule = module {
-    // Use cases (domain layer) - created fresh for each use
-    factoryOf(::LoginWithEmailUseCase)
-    factoryOf(::LoginWithSocialUseCase)
-    factoryOf(::LogoutUseCase)
+    includes(domainModule)
+
 
     // Utilities (presentation layer) - created fresh for each use
     factoryOf(::LoginFormValidator)

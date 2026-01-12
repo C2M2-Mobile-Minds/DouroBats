@@ -7,10 +7,10 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import pt.dourobats.app.core.domain.common.Result
-import pt.dourobats.app.core.domain.exception.AuthException
-import pt.dourobats.app.core.domain.exception.ValidationException
-import pt.dourobats.app.core.domain.model.LoginMethod
+import pt.dourobats.app.core.common.Result
+import pt.dourobats.app.core.common.exception.AuthException
+import pt.dourobats.app.core.common.exception.ValidationException
+import pt.dourobats.app.core.model.LoginMethod
 import pt.dourobats.app.core.domain.usecase.LoginWithEmailUseCase
 import pt.dourobats.app.core.domain.usecase.LoginWithSocialUseCase
 import kotlin.test.AfterTest
@@ -304,9 +304,9 @@ class LoginViewModelTest {
 
     // Fake AuthRepository for testing (not used directly, just needed for constructor)
     private class FakeAuthRepository : pt.dourobats.app.core.domain.repository.AuthRepository {
-        override val authStateFlow: kotlinx.coroutines.flow.Flow<pt.dourobats.app.core.domain.model.AuthState>
+        override val authStateFlow: kotlinx.coroutines.flow.Flow<pt.dourobats.app.core.model.AuthState>
             get() = kotlinx.coroutines.flow.flowOf(
-                pt.dourobats.app.core.domain.model.AuthState.Unauthenticated
+                pt.dourobats.app.core.model.AuthState.Unauthenticated
             )
 
         override suspend fun loginWithEmail(email: String, password: String): Result<Unit> =

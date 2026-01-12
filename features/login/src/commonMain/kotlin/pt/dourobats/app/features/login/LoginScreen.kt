@@ -59,7 +59,7 @@ import dourobats.features.login.generated.resources.Res
 import dourobats.features.login.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import pt.dourobats.app.core.domain.model.LoginMethod
+import pt.dourobats.app.core.model.LoginMethod
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 
 /**

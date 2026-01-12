@@ -8,6 +8,8 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.core.domain)
+            implementation(projects.core.model)
+            implementation(projects.core.common)
             implementation(projects.core.ui)
             implementation(libs.koin.core)
             implementation(libs.koin.compose)

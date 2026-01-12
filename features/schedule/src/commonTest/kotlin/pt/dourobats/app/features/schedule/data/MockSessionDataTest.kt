@@ -2,7 +2,7 @@ package pt.dourobats.app.features.schedule.data
 
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
-import pt.dourobats.app.core.domain.model.SessionStatus
+import pt.dourobats.app.core.model.SessionStatus
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

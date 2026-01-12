@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import dourobats.features.settings.generated.resources.Res
 import dourobats.features.settings.generated.resources.settings_language_select
 import org.jetbrains.compose.resources.stringResource
-import pt.dourobats.app.core.domain.model.Language
+import pt.dourobats.app.core.model.Language
 
 @Composable
 fun LanguageSelectionDialog(

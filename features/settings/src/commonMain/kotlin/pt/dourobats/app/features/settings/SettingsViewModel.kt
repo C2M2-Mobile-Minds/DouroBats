@@ -9,10 +9,10 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import pt.dourobats.app.core.domain.model.Language
-import pt.dourobats.app.core.domain.model.Theme
-import pt.dourobats.app.core.domain.model.UserProfile
-import pt.dourobats.app.core.domain.repository.SettingsRepository
+import pt.dourobats.app.core.model.Language
+import pt.dourobats.app.core.model.Theme
+import pt.dourobats.app.core.model.UserProfile
+import pt.dourobats.app.core.repository.SettingsRepository
 import pt.dourobats.app.core.domain.usecase.LogoutUseCase
 
 class SettingsViewModel(

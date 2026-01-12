@@ -1,8 +1,8 @@
 package pt.dourobats.app.features.login
 
-import pt.dourobats.app.core.domain.exception.AuthException
-import pt.dourobats.app.core.domain.exception.NetworkException
-import pt.dourobats.app.core.domain.exception.ValidationException
+import pt.dourobats.app.core.common.exception.AuthException
+import pt.dourobats.app.core.common.exception.NetworkException
+import pt.dourobats.app.core.common.exception.ValidationException
 
 /**
  * Maps domain exceptions to user-friendly error messages for the login screen.
