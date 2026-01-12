@@ -23,6 +23,7 @@ class SettingsViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var repository: SettingsRepository
+    private lateinit var logoutUseCase: pt.dourobats.app.core.test.fakes.FakeLogoutUseCase
     private lateinit var viewModel: SettingsViewModel
 
     @BeforeTest
@@ -31,7 +32,8 @@ class SettingsViewModelTest {
         repository = fakeSettingsRepository {
             initialLanguage = Language.ENGLISH_US
         }
-        viewModel = SettingsViewModel(repository)
+        logoutUseCase = pt.dourobats.app.core.test.fakes.FakeLogoutUseCase()
+        viewModel = SettingsViewModel(repository, logoutUseCase)
     }
 
     @AfterTest
@@ -172,7 +174,8 @@ class SettingsViewModelTest {
         repository = fakeSettingsRepository {
             initialUserProfile = testProfile
         }
-        viewModel = SettingsViewModel(repository)
+        logoutUseCase = pt.dourobats.app.core.test.fakes.FakeLogoutUseCase()
+        viewModel = SettingsViewModel(repository, logoutUseCase)
 
         val collectorJob = launch {
             viewModel.uiState.collect {}
@@ -207,7 +210,8 @@ class SettingsViewModelTest {
         repository = fakeSettingsRepository {
             initialTheme = testTheme
         }
-        viewModel = SettingsViewModel(repository)
+        logoutUseCase = pt.dourobats.app.core.test.fakes.FakeLogoutUseCase()
+        viewModel = SettingsViewModel(repository, logoutUseCase)
 
         val collectorJob = launch {
             viewModel.uiState.collect {}
@@ -224,9 +228,23 @@ class SettingsViewModelTest {
     @Test
     fun `saveProfile updates repository when valid data provided`() = runTest(testDispatcher) {
         // Arrange
+        val testProfile = UserProfile(
+            displayName = "Old Name",
+            email = "old@example.com",
+            phoneNumber = "+351000000000",
+            profileImageUrl = null
+        )
+        repository = fakeSettingsRepository {
+            initialUserProfile = testProfile
+        }
+        logoutUseCase = pt.dourobats.app.core.test.fakes.FakeLogoutUseCase()
+        viewModel = SettingsViewModel(repository, logoutUseCase)
+
         val collectorJob = launch {
             viewModel.uiState.collect {}
         }
+        advanceUntilIdle()
+
         viewModel.enterEditMode()
         viewModel.updateDisplayName("John Doe")
         viewModel.updateEmail("john@example.com")
@@ -256,7 +274,8 @@ class SettingsViewModelTest {
         repository = fakeSettingsRepository {
             initialUserProfile = testProfile
         }
-        viewModel = SettingsViewModel(repository)
+        logoutUseCase = pt.dourobats.app.core.test.fakes.FakeLogoutUseCase()
+        viewModel = SettingsViewModel(repository, logoutUseCase)
 
         val collectorJob = launch {
             viewModel.uiState.collect {}
@@ -314,9 +333,23 @@ class SettingsViewModelTest {
     @Test
     fun `saveProfile trims whitespace from fields`() = runTest(testDispatcher) {
         // Arrange
+        val testProfile = UserProfile(
+            displayName = "Old Name",
+            email = "old@example.com",
+            phoneNumber = "+351000000000",
+            profileImageUrl = null
+        )
+        repository = fakeSettingsRepository {
+            initialUserProfile = testProfile
+        }
+        logoutUseCase = pt.dourobats.app.core.test.fakes.FakeLogoutUseCase()
+        viewModel = SettingsViewModel(repository, logoutUseCase)
+
         val collectorJob = launch {
             viewModel.uiState.collect {}
         }
+        advanceUntilIdle()
+
         viewModel.enterEditMode()
         viewModel.updateDisplayName("  John Doe  ")
         viewModel.updateEmail("  john@example.com  ")
