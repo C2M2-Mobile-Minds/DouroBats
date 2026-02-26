@@ -164,15 +164,12 @@ class ScheduleViewModel(
             // Handle result
             when (result) {
                 is Result.Success -> {
-                    // Clear loading state and show success
                     _uiState.update {
                         it.copy(
                             sessionLoadingStates = it.sessionLoadingStates - sessionId,
                             successMessage = "Session booked successfully"
                         )
                     }
-                    // Reload sessions to get updated data
-                    loadSessions()
                 }
                 is Result.Error -> {
                     _uiState.update {
@@ -218,8 +215,6 @@ class ScheduleViewModel(
                             successMessage = "Booking cancelled successfully"
                         )
                     }
-                    // Reload sessions to get updated data
-                    loadSessions()
                 }
                 is Result.Error -> {
                     _uiState.update {
