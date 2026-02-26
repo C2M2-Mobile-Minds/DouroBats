@@ -29,8 +29,11 @@ import pt.dourobats.app.core.ui.theme.LocalSpacing
  * @param iconTint Icon tint colour.
  * @param title Primary label.
  * @param subtitle Secondary description text.
- * @param onClick Click handler for the whole row (no-op by default).
- * @param trailing Custom trailing content. Defaults to a [ChevronRight] when null.
+ * @param onClick Click handler for the whole row. When null, the row is not clickable
+ *   (use this for rows whose interaction is handled entirely by a trailing widget like Switch).
+ *   Defaults to null. When non-null and no [trailing] is provided, a [ChevronRight] is shown.
+ * @param trailing Custom trailing content. Defaults to a [ChevronRight] when onClick is
+ *   non-null and trailing is null; nothing when onClick is null.
  * @param iconContainerSize Size of the icon container (default 48 dp).
  * @param iconContainerShape Shape of the icon container (default [CircleShape]).
  * @param iconSize Size of the icon inside the container (default 24 dp).
@@ -43,17 +46,18 @@ fun SettingsRowItem(
     title: String,
     subtitle: String,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit = {},
+    onClick: (() -> Unit)? = null,
     trailing: @Composable (() -> Unit)? = null,
     iconContainerSize: Dp = 48.dp,
     iconContainerShape: Shape = CircleShape,
     iconSize: Dp = 24.dp
 ) {
     val spacing = LocalSpacing.current
+    val clickableModifier = if (onClick != null) Modifier.clickable { onClick() } else Modifier
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onClick() }
+            .then(clickableModifier)
             .padding(spacing.standard),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -80,7 +84,7 @@ fun SettingsRowItem(
         }
         if (trailing != null) {
             trailing()
-        } else {
+        } else if (onClick != null) {
             Icon(
                 Icons.Default.ChevronRight,
                 contentDescription = null,
