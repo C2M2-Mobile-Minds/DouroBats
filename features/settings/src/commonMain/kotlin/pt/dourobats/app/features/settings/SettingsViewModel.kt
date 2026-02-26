@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import pt.dourobats.app.core.model.Language
 import pt.dourobats.app.core.model.Theme
 import pt.dourobats.app.core.model.UserProfile
+import pt.dourobats.app.core.model.UserRole
 import pt.dourobats.app.core.domain.usecase.LogoutUseCase
 import pt.dourobats.app.core.domain.usecase.ObserveLanguageUseCase
 import pt.dourobats.app.core.domain.usecase.ObserveThemeUseCase
@@ -161,6 +162,13 @@ class SettingsViewModel(
     private fun isValidPhoneNumber(phone: String): Boolean {
         val digitsOnly = phone.replace(Regex("[^0-9]"), "")
         return digitsOnly.length in 9..15
+    }
+
+    fun setRole(role: UserRole) {
+        viewModelScope.launch {
+            val currentProfile = uiState.value.userProfile ?: return@launch
+            updateUserProfileUseCase(currentProfile.copy(roles = listOf(role)))
+        }
     }
 
     fun logout() {

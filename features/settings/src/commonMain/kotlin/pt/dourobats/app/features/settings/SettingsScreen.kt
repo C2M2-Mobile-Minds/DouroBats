@@ -23,11 +23,13 @@ import dourobats.features.settings.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.dourobats.app.core.model.Theme
+import pt.dourobats.app.core.model.UserRole
 import pt.dourobats.app.core.ui.components.AppHeader
 import pt.dourobats.app.core.ui.components.SectionHeader
 import pt.dourobats.app.core.ui.components.SettingsRowItem
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 import pt.dourobats.app.core.ui.theme.subtleOutlineBorder
+import pt.dourobats.app.features.settings.components.DeveloperOptionsBottomSheet
 import pt.dourobats.app.features.settings.components.LanguageBottomSheet
 import pt.dourobats.app.features.settings.components.NotificationsBottomSheet
 import pt.dourobats.app.features.settings.components.ProfileEditBottomSheet
@@ -43,6 +45,7 @@ fun SettingsScreen(
     var showLanguageSheet by remember { mutableStateOf(false) }
     var showEditDialog by remember { mutableStateOf(false) }
     var showNotificationsSheet by remember { mutableStateOf(false) }
+    var showDeveloperSheet by remember { mutableStateOf(false) }
 
     if (!uiState.isDataLoaded) {
         Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -54,6 +57,7 @@ fun SettingsScreen(
     val userProfile = uiState.userProfile!!
     val currentLanguage = uiState.currentLanguage!!
     val currentTheme = uiState.currentTheme!!
+    val currentRole = userProfile.roles.firstOrNull() ?: UserRole.ATHLETE
 
     Column(
         modifier = modifier
@@ -145,6 +149,26 @@ fun SettingsScreen(
                 }
             }
 
+            Spacer(modifier = Modifier.height(spacing.large))
+
+            // Developer Options Section
+            SectionHeader(title = stringResource(Res.string.settings_section_developer))
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                border = subtleOutlineBorder()
+            ) {
+                SettingsRowItem(
+                    icon = Icons.Default.Code,
+                    iconContainerColor = Color(0xFFEDE9FE),
+                    iconTint = Color(0xFF7C3AED),
+                    title = stringResource(Res.string.settings_developer_options),
+                    subtitle = stringResource(Res.string.settings_developer_options_description),
+                    onClick = { showDeveloperSheet = true }
+                )
+            }
+
             Spacer(modifier = Modifier.height(spacing.extraLarge))
 
             // Logout Button
@@ -190,6 +214,17 @@ fun SettingsScreen(
     if (showNotificationsSheet) {
         NotificationsBottomSheet(
             onDismiss = { showNotificationsSheet = false }
+        )
+    }
+
+    if (showDeveloperSheet) {
+        DeveloperOptionsBottomSheet(
+            currentRole = currentRole,
+            onRoleSelected = { role ->
+                viewModel.setRole(role)
+                showDeveloperSheet = false
+            },
+            onDismiss = { showDeveloperSheet = false }
         )
     }
 }

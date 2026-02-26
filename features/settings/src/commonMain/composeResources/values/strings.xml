@@ -82,11 +82,18 @@
     <string name="settings_no_email">No email set</string>
 
     <!-- Section Headers (additional) -->
-    <string name="settings_section_profile">PROFILE</string>
-    <string name="settings_section_activity">ACTIVITY</string>
+    <string name="settings_section_profile">Profile</string>
+    <string name="settings_section_activity">Activity</string>
 
     <!-- Role Labels -->
     <string name="settings_role_athlete">Athlete</string>
+    <string name="settings_role_supporter">Supporter</string>
+    <string name="settings_role_committee">Committee</string>
+    <string name="settings_section_developer">Developer</string>
+    <string name="settings_developer_options">Developer Options</string>
+    <string name="settings_developer_options_description">Mock app state for testing</string>
+    <string name="settings_developer_role">Simulated Role</string>
+    <string name="settings_developer_role_description">Set your role to preview role-based UI</string>
 
     <!-- Activity -->
     <string name="settings_sessions_attended">%d sessions attended</string>

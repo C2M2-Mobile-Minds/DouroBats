@@ -82,11 +82,18 @@
     <string name="settings_no_email">Sem e-mail definido</string>
 
     <!-- Section Headers (additional) -->
-    <string name="settings_section_profile">PERFIL</string>
-    <string name="settings_section_activity">ATIVIDADE</string>
+    <string name="settings_section_profile">Perfil</string>
+    <string name="settings_section_activity">Atividade</string>
 
     <!-- Role Labels -->
     <string name="settings_role_athlete">Atleta</string>
+    <string name="settings_role_supporter">Adepto</string>
+    <string name="settings_role_committee">Direção</string>
+    <string name="settings_section_developer">Programador</string>
+    <string name="settings_developer_options">Opções de Programador</string>
+    <string name="settings_developer_options_description">Simular estado da aplicação para testes</string>
+    <string name="settings_developer_role">Perfil simulado</string>
+    <string name="settings_developer_role_description">Defina o seu perfil para pré-visualizar a UI</string>
 
     <!-- Activity -->
     <string name="settings_sessions_attended">%d sessões participadas</string>
