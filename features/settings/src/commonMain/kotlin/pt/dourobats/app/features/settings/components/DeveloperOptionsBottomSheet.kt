@@ -1,5 +1,6 @@
 package pt.dourobats.app.features.settings.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -126,6 +127,7 @@ private fun RoleOption(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable(onClick = onSelect)
             .padding(horizontal = spacing.standard, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -155,7 +157,7 @@ private fun RoleOption(
         Spacer(modifier = Modifier.width(spacing.small))
         RadioButton(
             selected = selected,
-            onClick = onSelect,
+            onClick = null,
             colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colorScheme.primary)
         )
     }
