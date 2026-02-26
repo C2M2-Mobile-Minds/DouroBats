@@ -25,6 +25,13 @@ import pt.dourobats.app.core.ui.model.SessionDisplayData
  * @param emptyMessage Message to show when no sessions available
  * @param showDate Whether to show dates on session cards (useful for multi-date lists)
  * @param bookedBadgeText Text to display on the booked badge (default: "Booked")
+ * @param sessionLoadingStates Map of session IDs to loading states
+ * @param onBookSession Callback when user wants to book a session
+ * @param onCancelBooking Callback when user wants to cancel a booking
+ * @param bookButtonText Text for the book button
+ * @param cancelButtonText Text for the cancel button
+ * @param attendingText Text to show after attendee count
+ * @param fullButtonText Text for disabled full button
  * @param modifier Optional modifier for the section
  */
 @Composable
@@ -34,6 +41,13 @@ fun SessionListSection(
     emptyMessage: String,
     showDate: Boolean = false,
     bookedBadgeText: String = "Booked",
+    sessionLoadingStates: Map<String, Boolean> = emptyMap(),
+    onBookSession: ((String) -> Unit)? = null,
+    onCancelBooking: ((String) -> Unit)? = null,
+    bookButtonText: String = "Book",
+    cancelButtonText: String = "Cancel",
+    attendingText: String = "attending",
+    fullButtonText: String = "Full",
     modifier: Modifier = Modifier
 ) {
     val spacing = LocalSpacing.current
@@ -66,7 +80,14 @@ fun SessionListSection(
                     SessionCard(
                         sessionData = sessionData,
                         showDate = showDate,
-                        bookedBadgeText = bookedBadgeText
+                        bookedBadgeText = bookedBadgeText,
+                        isLoading = sessionLoadingStates[sessionData.session.id] ?: false,
+                        onBookSession = onBookSession,
+                        onCancelBooking = onCancelBooking,
+                        bookButtonText = bookButtonText,
+                        cancelButtonText = cancelButtonText,
+                        attendingText = attendingText,
+                        fullButtonText = fullButtonText
                     )
                 }
             }

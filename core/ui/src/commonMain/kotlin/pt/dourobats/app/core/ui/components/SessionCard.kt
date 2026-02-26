@@ -9,10 +9,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,11 +33,18 @@ import pt.dourobats.app.core.ui.model.SessionDisplayData
  * Session card component displaying session details.
  *
  * Shows session information including sport, time, location, and capacity
- * with a "Booked" badge for user's booked sessions.
+ * with a "Booked" badge for user's booked sessions and action buttons.
  *
  * @param sessionData Session data to display
  * @param showDate Whether to display the session date (useful when showing sessions from multiple dates)
  * @param bookedBadgeText Text to display on the booked badge (default: "Booked")
+ * @param isLoading Whether this session is currently being booked/cancelled
+ * @param onBookSession Callback when user wants to book this session
+ * @param onCancelBooking Callback when user wants to cancel this booking
+ * @param bookButtonText Text for the book button
+ * @param cancelButtonText Text for the cancel button
+ * @param attendingText Text to show after attendee count (e.g., "attending")
+ * @param fullButtonText Text for disabled full button
  * @param modifier Optional modifier for the card
  */
 @Composable
@@ -41,6 +52,13 @@ fun SessionCard(
     sessionData: SessionDisplayData,
     showDate: Boolean = false,
     bookedBadgeText: String = "Booked",
+    isLoading: Boolean = false,
+    onBookSession: ((String) -> Unit)? = null,
+    onCancelBooking: ((String) -> Unit)? = null,
+    bookButtonText: String = "Book",
+    cancelButtonText: String = "Cancel",
+    attendingText: String = "attending",
+    fullButtonText: String = "Full",
     modifier: Modifier = Modifier
 ) {
     val spacing = LocalSpacing.current
@@ -168,11 +186,51 @@ fun SessionCard(
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Text(
-                    text = if (isFull) "Full (${session.currentAttendees}/${session.capacity})"
-                           else "$availableSpots spots available (${session.currentAttendees}/${session.capacity})",
+                    text = "${session.currentAttendees}/${session.capacity} $attendingText",
                     style = MaterialTheme.typography.bodyMedium,
                     color = if (isFull) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant
                 )
+            }
+
+            Spacer(modifier = Modifier.height(spacing.small))
+
+            // Action button
+            when {
+                isLoading -> {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                }
+                sessionData.isUserBooked && onCancelBooking != null -> {
+                    OutlinedButton(
+                        onClick = { onCancelBooking(session.id) },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(cancelButtonText)
+                    }
+                }
+                !sessionData.isUserBooked && !isFull && onBookSession != null -> {
+                    Button(
+                        onClick = { onBookSession(session.id) },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(bookButtonText)
+                    }
+                }
+                !sessionData.isUserBooked && isFull -> {
+                    Button(
+                        onClick = { },
+                        enabled = false,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(fullButtonText)
+                    }
+                }
             }
         }
     }
