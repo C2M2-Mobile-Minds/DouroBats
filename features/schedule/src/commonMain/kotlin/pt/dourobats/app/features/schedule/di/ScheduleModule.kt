@@ -13,7 +13,9 @@ val scheduleModule = module {
     viewModel {
         ScheduleViewModel(
             getAvailableSessionsUseCase = get(),
-            getUserBookedSessionsUseCase = get()
+            getUserBookedSessionsUseCase = get(),
+            bookSessionUseCase = get(),
+            cancelBookingUseCase = get()
         )
     }
 }

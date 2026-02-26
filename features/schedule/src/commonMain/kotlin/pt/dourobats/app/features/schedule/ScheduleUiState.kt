@@ -13,7 +13,9 @@ data class ScheduleUiState(
     val sessionsForSelectedDate: List<SessionDisplayData> = emptyList(),
     val upcomingBookedSessions: List<SessionDisplayData> = emptyList(),
     val isLoading: Boolean = true,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val sessionLoadingStates: Map<String, Boolean> = emptyMap(),
+    val successMessage: String? = null
 )
 
 /**

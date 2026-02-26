@@ -15,6 +15,9 @@ import kotlinx.datetime.todayIn
 import pt.dourobats.app.core.model.Session
 import pt.dourobats.app.core.domain.usecase.GetAvailableSessionsUseCase
 import pt.dourobats.app.core.domain.usecase.GetUserBookedSessionsUseCase
+import pt.dourobats.app.core.domain.usecase.BookSessionUseCase
+import pt.dourobats.app.core.domain.usecase.CancelBookingUseCase
+import pt.dourobats.app.core.common.Result
 import pt.dourobats.app.core.ui.model.SessionDisplayData
 import kotlin.time.Clock
 
@@ -24,7 +27,9 @@ import kotlin.time.Clock
  */
 class ScheduleViewModel(
     private val getAvailableSessionsUseCase: GetAvailableSessionsUseCase,
-    private val getUserBookedSessionsUseCase: GetUserBookedSessionsUseCase
+    private val getUserBookedSessionsUseCase: GetUserBookedSessionsUseCase,
+    private val bookSessionUseCase: BookSessionUseCase,
+    private val cancelBookingUseCase: CancelBookingUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
@@ -147,5 +152,113 @@ class ScheduleViewModel(
             venueName = venueId, // In real app, map venue ID to venue name
             isUserBooked = isBooked
         )
+    }
+
+    /**
+     * Books a session for the current user.
+     * Sets loading state for the specific session during the operation.
+     *
+     * @param sessionId ID of the session to book
+     */
+    fun bookSession(sessionId: String) {
+        // Set loading state for this specific session
+        _uiState.update {
+            it.copy(
+                sessionLoadingStates = it.sessionLoadingStates + (sessionId to true),
+                errorMessage = null,
+                successMessage = null
+            )
+        }
+
+        viewModelScope.launch {
+            // Execute use case
+            val result = bookSessionUseCase(sessionId)
+
+            // Handle result
+            when (result) {
+                is Result.Success -> {
+                    // Clear loading state and show success
+                    _uiState.update {
+                        it.copy(
+                            sessionLoadingStates = it.sessionLoadingStates - sessionId,
+                            successMessage = "Session booked successfully"
+                        )
+                    }
+                    // Reload sessions to get updated data
+                    loadSessions()
+                }
+                is Result.Error -> {
+                    _uiState.update {
+                        it.copy(
+                            sessionLoadingStates = it.sessionLoadingStates - sessionId,
+                            errorMessage = result.message ?: "Failed to book session"
+                        )
+                    }
+                }
+                is Result.Loading -> {
+                    // Already in loading state
+                }
+            }
+        }
+    }
+
+    /**
+     * Cancels a booked session for the current user.
+     * Sets loading state for the specific session during the operation.
+     *
+     * @param sessionId ID of the session to cancel
+     */
+    fun cancelBooking(sessionId: String) {
+        // Set loading state for this specific session
+        _uiState.update {
+            it.copy(
+                sessionLoadingStates = it.sessionLoadingStates + (sessionId to true),
+                errorMessage = null,
+                successMessage = null
+            )
+        }
+
+        viewModelScope.launch {
+            // Execute use case
+            val result = cancelBookingUseCase(sessionId)
+
+            // Handle result
+            when (result) {
+                is Result.Success -> {
+                    _uiState.update {
+                        it.copy(
+                            sessionLoadingStates = it.sessionLoadingStates - sessionId,
+                            successMessage = "Booking cancelled successfully"
+                        )
+                    }
+                    // Reload sessions to get updated data
+                    loadSessions()
+                }
+                is Result.Error -> {
+                    _uiState.update {
+                        it.copy(
+                            sessionLoadingStates = it.sessionLoadingStates - sessionId,
+                            errorMessage = result.message ?: "Failed to cancel booking"
+                        )
+                    }
+                }
+                is Result.Loading -> {
+                    // Already in loading state
+                }
+            }
+        }
+    }
+
+    /**
+     * Clears success and error messages.
+     * Called when user dismisses feedback or navigates away.
+     */
+    fun clearMessages() {
+        _uiState.update {
+            it.copy(
+                errorMessage = null,
+                successMessage = null
+            )
+        }
     }
 }
