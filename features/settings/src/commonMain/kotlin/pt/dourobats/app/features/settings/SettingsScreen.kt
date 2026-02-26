@@ -28,6 +28,7 @@ import pt.dourobats.app.core.ui.components.AppHeader
 import pt.dourobats.app.core.ui.components.SectionHeader
 import pt.dourobats.app.core.ui.components.SettingsRowItem
 import pt.dourobats.app.core.ui.theme.LocalSpacing
+import pt.dourobats.app.core.common.isDebug
 import pt.dourobats.app.core.ui.theme.subtleOutlineBorder
 import pt.dourobats.app.features.settings.components.DeveloperOptionsBottomSheet
 import pt.dourobats.app.features.settings.components.LanguageBottomSheet
@@ -151,22 +152,24 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(spacing.large))
 
-            // Developer Options Section
-            SectionHeader(title = stringResource(Res.string.settings_section_developer))
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                border = subtleOutlineBorder()
-            ) {
-                SettingsRowItem(
-                    icon = Icons.Default.Code,
-                    iconContainerColor = Color(0xFFEDE9FE),
-                    iconTint = Color(0xFF7C3AED),
-                    title = stringResource(Res.string.settings_developer_options),
-                    subtitle = stringResource(Res.string.settings_developer_options_description),
-                    onClick = { showDeveloperSheet = true }
-                )
+            // Developer Options Section — debug builds only
+            if (isDebug) {
+                SectionHeader(title = stringResource(Res.string.settings_section_developer))
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    border = subtleOutlineBorder()
+                ) {
+                    SettingsRowItem(
+                        icon = Icons.Default.Code,
+                        iconContainerColor = Color(0xFFEDE9FE),
+                        iconTint = Color(0xFF7C3AED),
+                        title = stringResource(Res.string.settings_developer_options),
+                        subtitle = stringResource(Res.string.settings_developer_options_description),
+                        onClick = { showDeveloperSheet = true }
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(spacing.extraLarge))
