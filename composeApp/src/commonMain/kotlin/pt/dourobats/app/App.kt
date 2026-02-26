@@ -69,11 +69,6 @@ private fun AppContent() {
         }
     }
 
-    // Initialize language when preferences load
-    LaunchedEffect(savedLanguage) {
-        savedLanguage?.let { changeLanguage(it) }
-    }
-
     // Show empty box (native splash visible) until all preferences are loaded
     if (!preferencesLoaded) {
         Box(modifier = Modifier.fillMaxSize())
@@ -86,6 +81,10 @@ private fun AppContent() {
         Theme.LIGHT -> false
         Theme.DARK -> true
     }
+
+    // Apply language during composition so stringResource() picks it up immediately.
+    // Must run before AppTheme so children see the updated locale on first composition.
+    remember(currentLanguage) { changeLanguage(currentLanguage) }
 
     AppTheme(darkTheme = useDarkTheme) {
         CompositionLocalProvider(LocalLanguage provides currentLanguage) {
