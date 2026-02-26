@@ -17,6 +17,18 @@ import pt.dourobats.app.core.domain.usecase.LoginWithSocialUseCase
 import pt.dourobats.app.core.domain.usecase.LoginWithSocialUseCaseImpl
 import pt.dourobats.app.core.domain.usecase.LogoutUseCase
 import pt.dourobats.app.core.domain.usecase.LogoutUseCaseImpl
+import pt.dourobats.app.core.domain.usecase.ObserveLanguageUseCase
+import pt.dourobats.app.core.domain.usecase.ObserveLanguageUseCaseImpl
+import pt.dourobats.app.core.domain.usecase.ObserveThemeUseCase
+import pt.dourobats.app.core.domain.usecase.ObserveThemeUseCaseImpl
+import pt.dourobats.app.core.domain.usecase.ObserveUserProfileUseCase
+import pt.dourobats.app.core.domain.usecase.ObserveUserProfileUseCaseImpl
+import pt.dourobats.app.core.domain.usecase.SetLanguageUseCase
+import pt.dourobats.app.core.domain.usecase.SetLanguageUseCaseImpl
+import pt.dourobats.app.core.domain.usecase.SetThemeUseCase
+import pt.dourobats.app.core.domain.usecase.SetThemeUseCaseImpl
+import pt.dourobats.app.core.domain.usecase.UpdateUserProfileUseCase
+import pt.dourobats.app.core.domain.usecase.UpdateUserProfileUseCaseImpl
 
 /**
  * Koin module for the domain layer.
@@ -32,6 +44,14 @@ val domainModule = module {
     factory<LoginWithEmailUseCase> { LoginWithEmailUseCaseImpl(get()) }
     factory<LoginWithSocialUseCase> { LoginWithSocialUseCaseImpl(get()) }
     factory<LogoutUseCase> { LogoutUseCaseImpl(get()) }
+
+    // Settings use cases
+    factory<ObserveUserProfileUseCase> { ObserveUserProfileUseCaseImpl(get()) }
+    factory<ObserveLanguageUseCase> { ObserveLanguageUseCaseImpl(get()) }
+    factory<ObserveThemeUseCase> { ObserveThemeUseCaseImpl(get()) }
+    factory<SetLanguageUseCase> { SetLanguageUseCaseImpl(get()) }
+    factory<SetThemeUseCase> { SetThemeUseCaseImpl(get()) }
+    factory<UpdateUserProfileUseCase> { UpdateUserProfileUseCaseImpl(get()) }
 
     // Session management use cases
     factory<GetAllSessionsUseCase> { GetAllSessionsUseCaseImpl(get()) }
