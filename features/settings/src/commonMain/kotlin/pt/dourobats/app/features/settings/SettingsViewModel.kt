@@ -179,6 +179,5 @@ class SettingsViewModel(
 
     fun deleteAccount() {
         // TODO: Implement account deletion when backend ready
-        viewModelScope.launch { }
     }
 }
