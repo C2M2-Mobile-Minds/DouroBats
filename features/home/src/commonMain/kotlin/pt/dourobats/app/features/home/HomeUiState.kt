@@ -7,5 +7,6 @@ package pt.dourobats.app.features.home
  *   which gates visibility of the management portal section.
  */
 data class HomeUiState(
-    val isCommitteeUser: Boolean = false
+    val isCommitteeUser: Boolean = false,
+    val displayName: String = ""
 )

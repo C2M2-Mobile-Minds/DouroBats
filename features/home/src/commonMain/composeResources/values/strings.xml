@@ -2,6 +2,7 @@
 <resources>
     <!-- Home Screen -->
     <string name="home_welcome">Hello, %s!</string>
+    <string name="home_welcome_fallback">Welcome!</string>
     <string name="home_subtitle">Ready to train today?</string>
     <string name="home_next_session">Next Session</string>
     <string name="home_upcoming_sessions">Upcoming Sessions</string>

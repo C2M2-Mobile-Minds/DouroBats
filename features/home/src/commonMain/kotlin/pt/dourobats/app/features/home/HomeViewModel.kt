@@ -14,7 +14,12 @@ class HomeViewModel(
 ) : ViewModel() {
 
     val uiState: StateFlow<HomeUiState> = observeUserProfile()
-        .map { profile -> HomeUiState(isCommitteeUser = profile.roles.contains(UserRole.COMMITTEE)) }
+        .map { profile ->
+            HomeUiState(
+                isCommitteeUser = profile.roles.contains(UserRole.COMMITTEE),
+                displayName = profile.displayName
+            )
+        }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Home Screen -->
-    <string name="home_welcome">Welcome to DouroBats!</string>
+    <string name="home_welcome">Hello, %s!</string>
+    <string name="home_welcome_fallback">Welcome!</string>
     <string name="home_subtitle">Your volleyball management app</string>
     <string name="home_next_session">Next Session</string>
     <string name="home_upcoming_sessions">Upcoming Sessions</string>
