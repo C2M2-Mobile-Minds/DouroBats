@@ -37,4 +37,14 @@
     <string name="sessions_available_empty">No sessions available on this date</string>
     <string name="sessions_my_schedule_empty">You have no upcoming sessions booked</string>
     <string name="session_booked_badge">Booked</string>
+
+    <!-- Session Actions -->
+    <string name="session_button_book">Book Session</string>
+    <string name="session_button_cancel">Cancel Booking</string>
+    <string name="session_button_full">Full</string>
+    <string name="session_attending_label">attending</string>
+    <string name="session_book_success">Session booked successfully</string>
+    <string name="session_cancel_success">Booking cancelled successfully</string>
+    <string name="session_book_error">Failed to book session</string>
+    <string name="session_cancel_error">Failed to cancel booking</string>
 </resources>

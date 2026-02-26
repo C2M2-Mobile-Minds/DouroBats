@@ -37,4 +37,14 @@
     <string name="sessions_available_empty">No hay sesiones disponibles en esta fecha</string>
     <string name="sessions_my_schedule_empty">No tienes sesiones programadas</string>
     <string name="session_booked_badge">Reservado</string>
+
+    <!-- Session Actions -->
+    <string name="session_button_book">Reservar Sesión</string>
+    <string name="session_button_cancel">Cancelar Reserva</string>
+    <string name="session_button_full">Completo</string>
+    <string name="session_attending_label">asistentes</string>
+    <string name="session_book_success">Sesión reservada con éxito</string>
+    <string name="session_cancel_success">Reserva cancelada con éxito</string>
+    <string name="session_book_error">Error al reservar la sesión</string>
+    <string name="session_cancel_error">Error al cancelar la reserva</string>
 </resources>

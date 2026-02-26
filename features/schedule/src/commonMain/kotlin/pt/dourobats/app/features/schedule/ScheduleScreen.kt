@@ -4,16 +4,22 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import kotlinx.coroutines.launch
 import dourobats.features.schedule.generated.resources.*
 import dourobats.features.schedule.generated.resources.Res
 import kotlinx.datetime.DayOfWeek
@@ -47,9 +53,27 @@ fun ScheduleScreen(
 ) {
     val spacing = LocalSpacing.current
     val uiState by viewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     var currentYearMonth by remember {
         mutableStateOf(YearMonth(uiState.selectedDate.year, uiState.selectedDate.month))
+    }
+
+    // Show snackbar for success/error messages
+    LaunchedEffect(uiState.successMessage, uiState.errorMessage) {
+        uiState.successMessage?.let { message ->
+            scope.launch {
+                snackbarHostState.showSnackbar(message)
+                viewModel.clearMessages()
+            }
+        }
+        uiState.errorMessage?.let { message ->
+            scope.launch {
+                snackbarHostState.showSnackbar(message)
+                viewModel.clearMessages()
+            }
+        }
     }
 
     // Localized calendar strings
@@ -80,23 +104,30 @@ fun ScheduleScreen(
 
     val today = kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault())
 
-    // Show loading indicator
-    if (uiState.isLoading) {
-        Box(
-            modifier = modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
+    Scaffold(
+        modifier = modifier,
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { paddingValues ->
+        // Show loading indicator
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+            return@Scaffold
         }
-        return
-    }
 
-    LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(top = spacing.standard),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(top = spacing.standard),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
         // View Mode Toggle
         item {
             Row(
@@ -154,7 +185,14 @@ fun ScheduleScreen(
                 sessions = uiState.sessionsForSelectedDate,
                 emptyMessage = stringResource(Res.string.sessions_available_empty),
                 showDate = false,  // Don't show date - all sessions are on selected date
-                bookedBadgeText = stringResource(Res.string.session_booked_badge)
+                bookedBadgeText = stringResource(Res.string.session_booked_badge),
+                sessionLoadingStates = uiState.sessionLoadingStates,
+                onBookSession = { sessionId -> viewModel.bookSession(sessionId) },
+                onCancelBooking = { sessionId -> viewModel.cancelBooking(sessionId) },
+                bookButtonText = stringResource(Res.string.session_button_book),
+                cancelButtonText = stringResource(Res.string.session_button_cancel),
+                attendingText = stringResource(Res.string.session_attending_label),
+                fullButtonText = stringResource(Res.string.session_button_full)
             )
         }
 
@@ -169,12 +207,20 @@ fun ScheduleScreen(
                 sessions = uiState.upcomingBookedSessions,
                 emptyMessage = stringResource(Res.string.sessions_my_schedule_empty),
                 showDate = true,  // Show date - sessions can be on different dates
-                bookedBadgeText = stringResource(Res.string.session_booked_badge)
+                bookedBadgeText = stringResource(Res.string.session_booked_badge),
+                sessionLoadingStates = uiState.sessionLoadingStates,
+                onBookSession = { sessionId -> viewModel.bookSession(sessionId) },
+                onCancelBooking = { sessionId -> viewModel.cancelBooking(sessionId) },
+                bookButtonText = stringResource(Res.string.session_button_book),
+                cancelButtonText = stringResource(Res.string.session_button_cancel),
+                attendingText = stringResource(Res.string.session_attending_label),
+                fullButtonText = stringResource(Res.string.session_button_full)
             )
         }
 
         item {
             Spacer(modifier = Modifier.height(spacing.large))
+        }
         }
     }
 }
