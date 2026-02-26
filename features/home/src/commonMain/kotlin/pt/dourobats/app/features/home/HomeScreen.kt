@@ -2,6 +2,8 @@ package pt.dourobats.app.features.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,6 +14,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -202,22 +205,43 @@ private fun PortalItem(
 @Composable
 private fun LatestNewsSection() {
     val spacing = LocalSpacing.current
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(spacing.standard)
-    ) {
-        NewsCard(
-            tag = stringResource(Res.string.home_tag_tournament),
-            title = "Summer Championship 2024",
-            description = "Registration is now open for the annual summer championship. Secure your...",
-            modifier = Modifier.weight(1f)
-        )
-        NewsCard(
-            tag = stringResource(Res.string.home_tag_update),
-            title = "New Venue Wing",
-            description = "We have expanded our facilities with 4 new courts...",
-            modifier = Modifier.weight(0.8f)
-        )
+    val newsItems = listOf(
+        Triple("Tournament", "Summer Championship 2024", "Registration is now open for the annual summer championship. Secure your spot before it fills up!"),
+        Triple("Update", "New Venue Wing", "We have expanded our facilities with 4 new courts available for booking starting next week."),
+        Triple("Event", "Community Night", "Join us for our monthly community gathering with friendly matches and refreshments for all members.")
+    )
+    val pagerState = rememberPagerState(pageCount = { newsItems.size })
+
+    Column(verticalArrangement = Arrangement.spacedBy(spacing.small)) {
+        HorizontalPager(
+            state = pagerState,
+            contentPadding = PaddingValues(end = 32.dp),
+            pageSpacing = spacing.standard,
+            modifier = Modifier.fillMaxWidth()
+        ) { page ->
+            val (tag, title, description) = newsItems[page]
+            NewsCard(tag = tag, title = title, description = description)
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            repeat(newsItems.size) { index ->
+                val isSelected = pagerState.currentPage == index
+                Box(
+                    modifier = Modifier
+                        .padding(horizontal = 3.dp)
+                        .size(if (isSelected) 8.dp else 6.dp)
+                        .clip(CircleShape)
+                        .background(
+                            if (isSelected) MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.outlineVariant
+                        )
+                )
+            }
+        }
     }
 }
 
@@ -225,11 +249,10 @@ private fun LatestNewsSection() {
 private fun NewsCard(
     tag: String,
     title: String,
-    description: String,
-    modifier: Modifier = Modifier
+    description: String
 ) {
     Card(
-        modifier = modifier,
+        modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
