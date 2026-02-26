@@ -161,7 +161,12 @@ fun ScheduleScreen(
                                 yearMonth = currentYearMonth,
                                 selectedDate = uiState.selectedDate,
                                 today = today,
-                                onDateSelected = viewModel::selectDate,
+                                onDateSelected = { date ->
+                                    if (date.year != currentYearMonth.year || date.month != currentYearMonth.month) {
+                                        currentYearMonth = YearMonth(date.year, date.month)
+                                    }
+                                    viewModel.selectDate(date)
+                                },
                                 dayNames = cal.dayNames,
                                 sessionDates = uiState.allSessionDates,
                                 todayLabel = stringResource(Res.string.schedule_today),
