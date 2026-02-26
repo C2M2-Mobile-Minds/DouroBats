@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Home Screen -->
-    <string name="home_welcome">¡Bienvenido a DouroBats!</string>
+    <string name="home_welcome">¡Hola, %s!</string>
     <string name="home_subtitle">Tu aplicación de gestión de voleibol</string>
     <string name="home_next_session">Próxima Sesión</string>
     <string name="home_upcoming_sessions">Próximas Sesiones</string>
