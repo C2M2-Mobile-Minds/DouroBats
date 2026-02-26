@@ -102,4 +102,12 @@
     <string name="settings_dark_theme">Dark Theme</string>
     <string name="settings_enabled">Enabled</string>
     <string name="settings_disabled">Disabled</string>
+
+    <!-- Profile validation errors -->
+    <string name="settings_error_display_name_blank">Display name is required</string>
+    <string name="settings_error_display_name_too_short">Display name must be at least 2 characters</string>
+    <string name="settings_error_email_blank">Email is required</string>
+    <string name="settings_error_email_invalid">Invalid email format</string>
+    <string name="settings_error_phone_blank">Phone number is required</string>
+    <string name="settings_error_phone_invalid">Invalid phone number format</string>
 </resources>

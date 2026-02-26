@@ -148,21 +148,21 @@ class SettingsViewModel(
         val trimmedEmail = editState.email.trim()
         val trimmedPhoneNumber = editState.phoneNumber.trim()
 
-        val displayNameError = when {
-            trimmedDisplayName.isBlank() -> "Display name is required"
-            trimmedDisplayName.length < 2 -> "Display name must be at least 2 characters"
+        val displayNameError: DisplayNameError? = when {
+            trimmedDisplayName.isBlank() -> DisplayNameError.Blank
+            trimmedDisplayName.length < 2 -> DisplayNameError.TooShort
             else -> null
         }
 
-        val emailError = when {
-            trimmedEmail.isBlank() -> "Email is required"
-            !trimmedEmail.matches(Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) -> "Invalid email format"
+        val emailError: EmailError? = when {
+            trimmedEmail.isBlank() -> EmailError.Blank
+            !trimmedEmail.matches(Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) -> EmailError.InvalidFormat
             else -> null
         }
 
-        val phoneNumberError = when {
-            trimmedPhoneNumber.isBlank() -> "Phone number is required"
-            !isValidPhoneNumber(trimmedPhoneNumber) -> "Invalid phone number format"
+        val phoneNumberError: PhoneError? = when {
+            trimmedPhoneNumber.isBlank() -> PhoneError.Blank
+            !isValidPhoneNumber(trimmedPhoneNumber) -> PhoneError.InvalidFormat
             else -> null
         }
 

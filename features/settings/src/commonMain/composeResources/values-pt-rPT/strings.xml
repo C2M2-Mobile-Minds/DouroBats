@@ -102,4 +102,12 @@
     <string name="settings_dark_theme">Tema Escuro</string>
     <string name="settings_enabled">Ativado</string>
     <string name="settings_disabled">Desativado</string>
+
+    <!-- Profile validation errors -->
+    <string name="settings_error_display_name_blank">O nome é obrigatório</string>
+    <string name="settings_error_display_name_too_short">O nome deve ter pelo menos 2 caracteres</string>
+    <string name="settings_error_email_blank">O email é obrigatório</string>
+    <string name="settings_error_email_invalid">Formato de email inválido</string>
+    <string name="settings_error_phone_blank">O número de telefone é obrigatório</string>
+    <string name="settings_error_phone_invalid">Formato de número de telefone inválido</string>
 </resources>

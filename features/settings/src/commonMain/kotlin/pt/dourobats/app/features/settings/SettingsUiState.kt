@@ -35,9 +35,9 @@ data class SettingsUiState(
      * @property phoneNumber Error message for phone number field
      */
     data class ValidationErrors(
-        val displayName: String? = null,
-        val email: String? = null,
-        val phoneNumber: String? = null
+        val displayName: DisplayNameError? = null,
+        val email: EmailError? = null,
+        val phoneNumber: PhoneError? = null
     ) {
         /**
          * Whether there are any validation errors.

@@ -18,6 +18,9 @@ import dourobats.features.settings.generated.resources.Res
 import dourobats.features.settings.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
 import pt.dourobats.app.core.ui.theme.LocalSpacing
+import pt.dourobats.app.features.settings.DisplayNameError
+import pt.dourobats.app.features.settings.EmailError
+import pt.dourobats.app.features.settings.PhoneError
 import pt.dourobats.app.features.settings.ProfileEditState
 import pt.dourobats.app.features.settings.SettingsUiState
 
@@ -71,7 +74,12 @@ fun ProfileEditBottomSheet(
                         value = editState.displayName,
                         onValueChange = onDisplayNameChange,
                         label = stringResource(Res.string.settings_display_name),
-                        error = validationErrors.displayName
+                        error = validationErrors.displayName?.let {
+                            when (it) {
+                                DisplayNameError.Blank -> stringResource(Res.string.settings_error_display_name_blank)
+                                DisplayNameError.TooShort -> stringResource(Res.string.settings_error_display_name_too_short)
+                            }
+                        }
                     )
 
                     Spacer(modifier = Modifier.height(spacing.standard))
@@ -81,7 +89,12 @@ fun ProfileEditBottomSheet(
                         value = editState.email,
                         onValueChange = onEmailChange,
                         label = stringResource(Res.string.settings_email),
-                        error = validationErrors.email,
+                        error = validationErrors.email?.let {
+                            when (it) {
+                                EmailError.Blank -> stringResource(Res.string.settings_error_email_blank)
+                                EmailError.InvalidFormat -> stringResource(Res.string.settings_error_email_invalid)
+                            }
+                        },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
                     )
 
@@ -92,7 +105,12 @@ fun ProfileEditBottomSheet(
                         value = editState.phoneNumber,
                         onValueChange = onPhoneNumberChange,
                         label = stringResource(Res.string.settings_phone),
-                        error = validationErrors.phoneNumber,
+                        error = validationErrors.phoneNumber?.let {
+                            when (it) {
+                                PhoneError.Blank -> stringResource(Res.string.settings_error_phone_blank)
+                                PhoneError.InvalidFormat -> stringResource(Res.string.settings_error_phone_invalid)
+                            }
+                        },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
                     )
                 }
