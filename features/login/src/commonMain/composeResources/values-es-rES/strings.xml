@@ -24,6 +24,9 @@
     <string name="login_facebook">Continuar con Facebook</string>
     <string name="login_apple">Continuar con Apple</string>
 
+    <!-- Error Banner -->
+    <string name="login_error_dismiss">Descartar</string>
+
     <!-- Development -->
     <string name="login_test_credentials_title">Credenciales de Prueba</string>
     <string name="login_test_credentials_text">Correo: usuario@dourobats.com\nContraseña: 123456</string>

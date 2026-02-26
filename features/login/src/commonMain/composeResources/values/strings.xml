@@ -24,6 +24,9 @@
     <string name="login_facebook">Facebook</string>
     <string name="login_apple">Apple</string>
 
+    <!-- Error Banner -->
+    <string name="login_error_dismiss">Dismiss</string>
+
     <!-- Development -->
     <string name="login_test_credentials_title">Test Credentials</string>
     <string name="login_test_credentials_text">Email: user@dourobats.com\nPassword: 123456</string>
