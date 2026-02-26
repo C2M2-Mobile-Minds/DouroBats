@@ -214,9 +214,9 @@ private fun PortalItem(
 private fun LatestNewsSection() {
     val spacing = LocalSpacing.current
     val newsItems = listOf(
-        Triple("Tournament", "Summer Championship 2024", "Registration is now open for the annual summer championship. Secure your spot before it fills up!"),
-        Triple("Update", "New Venue Wing", "We have expanded our facilities with 4 new courts available for booking starting next week."),
-        Triple("Event", "Community Night", "Join us for our monthly community gathering with friendly matches and refreshments for all members.")
+        Triple(stringResource(Res.string.home_tag_tournament), "Summer Championship 2024", "Registration is now open for the annual summer championship. Secure your spot before it fills up!"),
+        Triple(stringResource(Res.string.home_tag_update), "New Venue Wing", "We have expanded our facilities with 4 new courts available for booking starting next week."),
+        Triple(stringResource(Res.string.home_tag_event), "Community Night", "Join us for our monthly community gathering with friendly matches and refreshments for all members.")
     )
     val pagerState = rememberPagerState(pageCount = { newsItems.size })
 

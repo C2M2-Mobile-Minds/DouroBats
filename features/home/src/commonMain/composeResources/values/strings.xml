@@ -21,6 +21,7 @@
     <!-- News Tags -->
     <string name="home_tag_tournament">Tournament</string>
     <string name="home_tag_update">Update</string>
+    <string name="home_tag_event">Event</string>
 
     <!-- News Actions -->
     <string name="home_read_more">Read More</string>

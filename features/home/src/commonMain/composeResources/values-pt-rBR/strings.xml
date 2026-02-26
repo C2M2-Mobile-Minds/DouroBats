@@ -21,6 +21,7 @@
     <!-- News Tags -->
     <string name="home_tag_tournament">Torneio</string>
     <string name="home_tag_update">Atualização</string>
+    <string name="home_tag_event">Evento</string>
 
     <!-- News Actions -->
     <string name="home_read_more">Ler Mais</string>
