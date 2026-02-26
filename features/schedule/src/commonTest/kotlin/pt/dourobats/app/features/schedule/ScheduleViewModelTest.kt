@@ -12,6 +12,8 @@ import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayIn
 import pt.dourobats.app.core.model.Session
 import pt.dourobats.app.core.model.SessionStatus
 import pt.dourobats.app.core.model.SkillLevel
@@ -25,6 +27,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.hours
 import pt.dourobats.app.core.common.Result
+import kotlin.time.Clock
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ScheduleViewModelTest {
@@ -32,6 +35,8 @@ class ScheduleViewModelTest {
     private lateinit var viewModel: ScheduleViewModel
     private lateinit var fakeGetAvailableSessionsUseCase: pt.dourobats.app.core.test.fakes.FakeGetAvailableSessionsUseCase
     private lateinit var fakeGetUserBookedSessionsUseCase: pt.dourobats.app.core.test.fakes.FakeGetUserBookedSessionsUseCase
+    private lateinit var fakeBookSessionUseCase: pt.dourobats.app.core.test.fakes.FakeBookSessionUseCase
+    private lateinit var fakeCancelBookingUseCase: pt.dourobats.app.core.test.fakes.FakeCancelBookingUseCase
     private val testDispatcher = StandardTestDispatcher()
 
     @BeforeTest
@@ -39,12 +44,16 @@ class ScheduleViewModelTest {
         Dispatchers.setMain(testDispatcher)
         fakeGetAvailableSessionsUseCase = pt.dourobats.app.core.test.fakes.FakeGetAvailableSessionsUseCase()
         fakeGetUserBookedSessionsUseCase = pt.dourobats.app.core.test.fakes.FakeGetUserBookedSessionsUseCase()
+        fakeBookSessionUseCase = pt.dourobats.app.core.test.fakes.FakeBookSessionUseCase()
+        fakeCancelBookingUseCase = pt.dourobats.app.core.test.fakes.FakeCancelBookingUseCase()
     }
 
     private fun createViewModel() {
         viewModel = ScheduleViewModel(
             getAvailableSessionsUseCase = fakeGetAvailableSessionsUseCase,
-            getUserBookedSessionsUseCase = fakeGetUserBookedSessionsUseCase
+            getUserBookedSessionsUseCase = fakeGetUserBookedSessionsUseCase,
+            bookSessionUseCase = fakeBookSessionUseCase,
+            cancelBookingUseCase = fakeCancelBookingUseCase
         )
     }
 
@@ -119,9 +128,9 @@ class ScheduleViewModelTest {
 
     @Test
     fun `loads user booked sessions`() = runTest {
-        // Given
-        val date = LocalDate(2026, 1, 12)
-        val bookedSession = createTestSession("3", date)
+        // Given - use today's date since ViewModel uses today for booked sessions
+        val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+        val bookedSession = createTestSession("3", today)
         fakeGetAvailableSessionsUseCase.sessions = emptyList()
         fakeGetUserBookedSessionsUseCase.sessions = listOf(bookedSession)
 
