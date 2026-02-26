@@ -1,25 +1,18 @@
 package pt.dourobats.app.features.settings.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.draw.clip
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dourobats.features.settings.generated.resources.Res
 import dourobats.features.settings.generated.resources.settings_language_select
@@ -27,32 +20,6 @@ import org.jetbrains.compose.resources.stringResource
 import pt.dourobats.app.core.model.Language
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 
-/**
- * Modal bottom sheet for language selection.
- *
- * Provides a more native Android feel compared to dialogs.
- * Better for mobile UX as it's easier to reach with thumb.
- *
- * ## Usage
- *
- * ```kotlin
- * if (showLanguageSheet) {
- *     LanguageBottomSheet(
- *         currentLanguage = uiState.currentLanguage,
- *         onLanguageSelected = { language ->
- *             viewModel.setLanguage(language)
- *             showLanguageSheet = false
- *         },
- *         onDismiss = { showLanguageSheet = false }
- *     )
- * }
- * ```
- *
- * @param currentLanguage Currently selected language
- * @param onLanguageSelected Callback when a language is selected
- * @param onDismiss Callback when sheet is dismissed
- * @param modifier Optional modifier
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LanguageBottomSheet(
@@ -62,91 +29,105 @@ fun LanguageBottomSheet(
     modifier: Modifier = Modifier
 ) {
     val spacing = LocalSpacing.current
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true
-    )
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        modifier = modifier
+        modifier = modifier,
+        containerColor = MaterialTheme.colorScheme.surface,
+        dragHandle = { BottomSheetDefaults.DragHandle(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)) }
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = spacing.large)
+                .padding(horizontal = spacing.standard)
+                .padding(bottom = spacing.huge)
         ) {
-            // Title
             Text(
                 text = stringResource(Res.string.settings_language_select),
                 style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(
-                    horizontal = spacing.screenHorizontal,
-                    vertical = spacing.standard
-                )
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(vertical = spacing.standard)
             )
-
-            HorizontalDivider()
 
             Spacer(modifier = Modifier.height(spacing.small))
 
-            // Language options
-            Language.entries.forEach { language ->
-                LanguageOption(
-                    language = language,
-                    isSelected = language == currentLanguage,
-                    onClick = { onLanguageSelected(language) }
-                )
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)),
+                border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+            ) {
+                Column {
+                    Language.entries.forEachIndexed { index, language ->
+                        LanguageOption(
+                            language = language,
+                            isSelected = language == currentLanguage,
+                            onClick = { onLanguageSelected(language) }
+                        )
+                        if (index < Language.entries.size - 1) {
+                            HorizontalDivider(
+                                modifier = Modifier.padding(horizontal = spacing.standard),
+                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                            )
+                        }
+                    }
+                }
             }
         }
     }
 }
 
-/**
- * Individual language option with radio button.
- *
- * @param language The language option
- * @param isSelected Whether this language is currently selected
- * @param onClick Callback when this option is clicked
- * @param modifier Optional modifier
- */
 @Composable
 private fun LanguageOption(
     language: Language,
     isSelected: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onClick: () -> Unit
 ) {
     val spacing = LocalSpacing.current
-
     Row(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
             .clickable(onClick = onClick)
-            .padding(
-                horizontal = spacing.screenHorizontal,
-                vertical = spacing.standard
-            ),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(spacing.standard),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        // Radio button
-        RadioButton(
-            selected = isSelected,
-            onClick = onClick
-        )
-
-        Spacer(modifier = Modifier.width(spacing.standard))
-
-        // Language name
-        Text(
-            text = language.displayName,
-            style = MaterialTheme.typography.bodyLarge,
-            color = if (isSelected) {
-                MaterialTheme.colorScheme.primary
-            } else {
-                MaterialTheme.colorScheme.onSurface
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            // Flag/Icon placeholder
+            Box(
+                modifier = Modifier
+                    .size(32.dp)
+                    .background(MaterialTheme.colorScheme.surface, CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = getFlagEmoji(language), style = MaterialTheme.typography.bodyLarge)
             }
-        )
+            Spacer(modifier = Modifier.width(spacing.standard))
+            Text(
+                text = language.displayName,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+            )
+        }
+        
+        if (isSelected) {
+            Icon(
+                imageVector = Icons.Default.Check,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(20.dp)
+            )
+        }
     }
+}
+
+private fun getFlagEmoji(language: Language): String = when(language) {
+    Language.ENGLISH_US -> "🇺🇸"
+    Language.ENGLISH_GB -> "🇬🇧"
+    Language.PORTUGUESE_PT -> "🇵🇹"
+    Language.PORTUGUESE_BR -> "🇧🇷"
+    Language.SPANISH -> "🇪🇸"
 }

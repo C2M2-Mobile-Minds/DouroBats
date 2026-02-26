@@ -32,6 +32,23 @@
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_dark">Dark</string>
 
+    <!-- Notifications -->
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_notifications_description">Manage your notification preferences</string>
+    <string name="settings_notifications_title">Notifications</string>
+    <string name="settings_notifications_section_sessions">Sessions</string>
+    <string name="settings_notifications_section_club">Club</string>
+    <string name="settings_notifications_session_reminders">Session Reminders</string>
+    <string name="settings_notifications_session_reminders_desc">Get reminded before your sessions start</string>
+    <string name="settings_notifications_booking_confirmed">Booking Confirmations</string>
+    <string name="settings_notifications_booking_confirmed_desc">Notified when a booking is confirmed or cancelled</string>
+    <string name="settings_notifications_new_sessions">New Sessions Available</string>
+    <string name="settings_notifications_new_sessions_desc">Be the first to know when new sessions are posted</string>
+    <string name="settings_notifications_announcements">Club Announcements</string>
+    <string name="settings_notifications_announcements_desc">News and updates from the club</string>
+    <string name="settings_notifications_session_cancelled">Session Cancellations</string>
+    <string name="settings_notifications_session_cancelled_desc">Alert when a session you booked is cancelled</string>
+
     <!-- Booking History -->
     <string name="settings_booking_history">My Booking History</string>
     <string name="settings_booking_attended">Attended</string>
@@ -63,4 +80,19 @@
     <string name="settings_profile_picture">Profile picture</string>
     <string name="settings_no_name">No name set</string>
     <string name="settings_no_email">No email set</string>
+
+    <!-- Section Headers (additional) -->
+    <string name="settings_section_profile">PROFILE</string>
+    <string name="settings_section_activity">ACTIVITY</string>
+
+    <!-- Role Labels -->
+    <string name="settings_role_athlete">Athlete</string>
+
+    <!-- Activity -->
+    <string name="settings_sessions_attended">%d sessions attended</string>
+
+    <!-- Theme Row -->
+    <string name="settings_dark_theme">Dark Theme</string>
+    <string name="settings_enabled">Enabled</string>
+    <string name="settings_disabled">Disabled</string>
 </resources>

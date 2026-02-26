@@ -32,6 +32,23 @@
     <string name="settings_theme_light">Claro</string>
     <string name="settings_theme_dark">Oscuro</string>
 
+    <!-- Notifications -->
+    <string name="settings_notifications">Notificaciones</string>
+    <string name="settings_notifications_description">Gestionar preferencias de notificación</string>
+    <string name="settings_notifications_title">Notificaciones</string>
+    <string name="settings_notifications_section_sessions">Sesiones</string>
+    <string name="settings_notifications_section_club">Club</string>
+    <string name="settings_notifications_session_reminders">Recordatorios de Sesión</string>
+    <string name="settings_notifications_session_reminders_desc">Recibe avisos antes de que comiencen tus sesiones</string>
+    <string name="settings_notifications_booking_confirmed">Confirmaciones de Reserva</string>
+    <string name="settings_notifications_booking_confirmed_desc">Notificado cuando una reserva es confirmada o cancelada</string>
+    <string name="settings_notifications_new_sessions">Nuevas Sesiones Disponibles</string>
+    <string name="settings_notifications_new_sessions_desc">Sé el primero en saber cuando se publican nuevas sesiones</string>
+    <string name="settings_notifications_announcements">Anuncios del Club</string>
+    <string name="settings_notifications_announcements_desc">Noticias y actualizaciones del club</string>
+    <string name="settings_notifications_session_cancelled">Cancelaciones de Sesión</string>
+    <string name="settings_notifications_session_cancelled_desc">Alerta cuando una sesión que reservaste es cancelada</string>
+
     <!-- Booking History -->
     <string name="settings_booking_history">Mi Historial de Reservas</string>
     <string name="settings_booking_attended">Asistidas</string>
@@ -63,4 +80,19 @@
     <string name="settings_profile_picture">Foto de perfil</string>
     <string name="settings_no_name">Sin nombre establecido</string>
     <string name="settings_no_email">Sin correo establecido</string>
+
+    <!-- Section Headers (additional) -->
+    <string name="settings_section_profile">PERFIL</string>
+    <string name="settings_section_activity">ACTIVIDAD</string>
+
+    <!-- Role Labels -->
+    <string name="settings_role_athlete">Atleta</string>
+
+    <!-- Activity -->
+    <string name="settings_sessions_attended">%d sesiones asistidas</string>
+
+    <!-- Theme Row -->
+    <string name="settings_dark_theme">Tema Oscuro</string>
+    <string name="settings_enabled">Activado</string>
+    <string name="settings_disabled">Desactivado</string>
 </resources>

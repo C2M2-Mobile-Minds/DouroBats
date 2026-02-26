@@ -5,6 +5,8 @@ import pt.dourobats.app.core.domain.usecase.BookSessionUseCase
 import pt.dourobats.app.core.domain.usecase.BookSessionUseCaseImpl
 import pt.dourobats.app.core.domain.usecase.CancelBookingUseCase
 import pt.dourobats.app.core.domain.usecase.CancelBookingUseCaseImpl
+import pt.dourobats.app.core.domain.usecase.GetAllSessionsUseCase
+import pt.dourobats.app.core.domain.usecase.GetAllSessionsUseCaseImpl
 import pt.dourobats.app.core.domain.usecase.GetAvailableSessionsUseCase
 import pt.dourobats.app.core.domain.usecase.GetAvailableSessionsUseCaseImpl
 import pt.dourobats.app.core.domain.usecase.GetUserBookedSessionsUseCase
@@ -32,6 +34,7 @@ val domainModule = module {
     factory<LogoutUseCase> { LogoutUseCaseImpl(get()) }
 
     // Session management use cases
+    factory<GetAllSessionsUseCase> { GetAllSessionsUseCaseImpl(get()) }
     factory<GetAvailableSessionsUseCase> { GetAvailableSessionsUseCaseImpl(get()) }
     factory<GetUserBookedSessionsUseCase> { GetUserBookedSessionsUseCaseImpl(get()) }
     factory<BookSessionUseCase> { BookSessionUseCaseImpl(get()) }

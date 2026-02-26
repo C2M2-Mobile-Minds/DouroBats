@@ -6,19 +6,23 @@
 
     <!-- Form Fields -->
     <string name="login_email_label">E-mail</string>
-    <string name="login_email_placeholder">utilizador@dourobats.com</string>
+    <string name="login_email_placeholder">o.seu.email@exemplo.com</string>
     <string name="login_password_label">Palavra-passe</string>
+    <string name="login_password_placeholder">••••••••</string>
     <string name="login_password_show">Mostrar palavra-passe</string>
     <string name="login_password_hide">Ocultar palavra-passe</string>
 
     <!-- Buttons -->
     <string name="login_button">Entrar</string>
-    <string name="login_divider">OU</string>
+    <string name="login_divider">Ou continue com</string>
+    <string name="login_forgot_password">Esqueceu-se da palavra-passe?</string>
+    <string name="login_no_account">Não tem uma conta?</string>
+    <string name="login_sign_up">Registe-se</string>
 
     <!-- Social Login -->
-    <string name="login_google">Continuar com Google</string>
-    <string name="login_facebook">Continuar com Facebook</string>
-    <string name="login_apple">Continuar com Apple</string>
+    <string name="login_google">Google</string>
+    <string name="login_facebook">Facebook</string>
+    <string name="login_apple">Apple</string>
 
     <!-- Development -->
     <string name="login_test_credentials_title">Credenciais de Teste</string>

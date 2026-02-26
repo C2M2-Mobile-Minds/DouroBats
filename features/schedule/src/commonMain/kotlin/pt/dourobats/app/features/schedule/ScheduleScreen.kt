@@ -1,60 +1,51 @@
 package pt.dourobats.app.features.schedule
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import kotlinx.coroutines.launch
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import dourobats.features.schedule.generated.resources.*
 import dourobats.features.schedule.generated.resources.Res
-import kotlinx.datetime.DayOfWeek
-import kotlinx.datetime.Month
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.todayIn
+import kotlinx.coroutines.launch
+import kotlinx.datetime.*
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import pt.dourobats.app.core.ui.theme.LocalSpacing
+import pt.dourobats.app.core.ui.components.DetailRow
+import pt.dourobats.app.core.ui.components.StatusBadge
+import pt.dourobats.app.core.ui.components.AppHeader
 import pt.dourobats.app.core.ui.components.calendar.MonthCalendar
 import pt.dourobats.app.core.ui.components.calendar.WeekCalendar
 import pt.dourobats.app.core.ui.components.calendar.YearMonth
-import pt.dourobats.app.core.ui.components.SessionListSection
+import pt.dourobats.app.core.ui.model.SessionDisplayData
+import pt.dourobats.app.core.ui.theme.LocalSpacing
+import pt.dourobats.app.core.ui.theme.subtleOutlineBorder
 
-/**
- * Training schedule screen with week and month calendar views.
- *
- * Displays a switchable calendar view (week or month) for browsing dates
- * and selecting training sessions. Users can toggle between views using
- * a button in the top-right corner.
- *
- * Now uses ViewModel following clean architecture:
- * - UI observes state from ViewModel
- * - Business logic handled by use cases
- * - Ready for API integration
- */
 @Composable
 fun ScheduleScreen(
     modifier: Modifier = Modifier,
     viewModel: ScheduleViewModel = koinViewModel()
 ) {
-    val spacing = LocalSpacing.current
     val uiState by viewModel.uiState.collectAsState()
-    val snackbarHostState = remember { SnackbarHostState() }
+    val spacing = LocalSpacing.current
+    val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+
+    val cal = rememberCalendarLocalization()
+    val today = kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault())
 
     var currentYearMonth by remember {
         mutableStateOf(YearMonth(uiState.selectedDate.year, uiState.selectedDate.month))
@@ -64,163 +55,347 @@ fun ScheduleScreen(
     LaunchedEffect(uiState.successMessage, uiState.errorMessage) {
         uiState.successMessage?.let { message ->
             scope.launch {
-                snackbarHostState.showSnackbar(message)
+                snackBarHostState.showSnackbar(message)
                 viewModel.clearMessages()
             }
         }
         uiState.errorMessage?.let { message ->
             scope.launch {
-                snackbarHostState.showSnackbar(message)
+                snackBarHostState.showSnackbar(message)
                 viewModel.clearMessages()
             }
         }
     }
 
-    // Localized calendar strings
-    val dayNames = mapOf(
-        DayOfWeek.MONDAY to stringResource(Res.string.day_monday_short),
-        DayOfWeek.TUESDAY to stringResource(Res.string.day_tuesday_short),
-        DayOfWeek.WEDNESDAY to stringResource(Res.string.day_wednesday_short),
-        DayOfWeek.THURSDAY to stringResource(Res.string.day_thursday_short),
-        DayOfWeek.FRIDAY to stringResource(Res.string.day_friday_short),
-        DayOfWeek.SATURDAY to stringResource(Res.string.day_saturday_short),
-        DayOfWeek.SUNDAY to stringResource(Res.string.day_sunday_short)
-    )
-
-    val monthNames = mapOf(
-        Month.JANUARY to stringResource(Res.string.month_january),
-        Month.FEBRUARY to stringResource(Res.string.month_february),
-        Month.MARCH to stringResource(Res.string.month_march),
-        Month.APRIL to stringResource(Res.string.month_april),
-        Month.MAY to stringResource(Res.string.month_may),
-        Month.JUNE to stringResource(Res.string.month_june),
-        Month.JULY to stringResource(Res.string.month_july),
-        Month.AUGUST to stringResource(Res.string.month_august),
-        Month.SEPTEMBER to stringResource(Res.string.month_september),
-        Month.OCTOBER to stringResource(Res.string.month_october),
-        Month.NOVEMBER to stringResource(Res.string.month_november),
-        Month.DECEMBER to stringResource(Res.string.month_december)
-    )
-
-    val today = kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault())
-
     Scaffold(
         modifier = modifier,
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        contentWindowInsets = WindowInsets(0),
+        snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { paddingValues ->
-        // Show loading indicator
-        if (uiState.isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-            return@Scaffold
-        }
-
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
-                .padding(top = spacing.standard),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .background(MaterialTheme.colorScheme.background)
         ) {
-        // View Mode Toggle
-        item {
+            // Universal Header matching design
+            AppHeader(
+                title = stringResource(Res.string.training_title),
+                content = {
+                    // Month Selector (Centered below title) — only in MONTH view
+                    if (uiState.viewMode == CalendarViewMode.MONTH) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            IconButton(onClick = { currentYearMonth = currentYearMonth.minusMonths(1) }) {
+                                Icon(Icons.Default.ChevronLeft, null, tint = MaterialTheme.colorScheme.onPrimary)
+                            }
+                            Text(
+                                text = "${cal.monthNames[currentYearMonth.month]} ${currentYearMonth.year}",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(horizontal = spacing.medium)
+                            )
+                            IconButton(onClick = { currentYearMonth = currentYearMonth.plusMonths(1) }) {
+                                Icon(Icons.Default.ChevronRight, null, tint = MaterialTheme.colorScheme.onPrimary)
+                            }
+                        }
+                    }
+                }
+            )
+
+            // View mode toggle — outside the header, right-aligned
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = spacing.screenHorizontal),
+                    .padding(horizontal = spacing.standard, vertical = spacing.small),
                 horizontalArrangement = Arrangement.End
             ) {
-                TextButton(onClick = { viewModel.toggleViewMode() }) {
+                Surface(
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier.clickable { viewModel.toggleViewMode() }
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = if (uiState.viewMode == CalendarViewMode.WEEK) Icons.Default.CalendarMonth else Icons.Default.ViewWeek,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = if (uiState.viewMode == CalendarViewMode.WEEK)
+                                stringResource(Res.string.view_mode_month)
+                            else
+                                stringResource(Res.string.view_mode_week),
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    }
+                }
+            }
+
+            if (uiState.isLoading) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            } else {
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    item {
+                        when (uiState.viewMode) {
+                            CalendarViewMode.WEEK -> WeekCalendar(
+                                selectedDate = uiState.selectedDate,
+                                today = today,
+                                onDateSelected = viewModel::selectDate,
+                                dayNames = cal.dayNames,
+                                sessionDates = uiState.allSessionDates,
+                                todayLabel = stringResource(Res.string.schedule_today)
+                            )
+                            CalendarViewMode.MONTH -> MonthCalendar(
+                                yearMonth = currentYearMonth,
+                                selectedDate = uiState.selectedDate,
+                                today = today,
+                                onDateSelected = viewModel::selectDate,
+                                dayNames = cal.dayNames,
+                                sessionDates = uiState.allSessionDates,
+                                todayLabel = stringResource(Res.string.schedule_today),
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
+
+                    item {
+                        val dateStr = "${uiState.selectedDate.day} ${cal.monthNames[uiState.selectedDate.month]?.uppercase()}"
+                        Text(
+                            text = dateStr,
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(horizontal = spacing.screenHorizontal, vertical = spacing.standard)
+                        )
+                    }
+
+                    if (uiState.sessionsForSelectedDate.isEmpty()) {
+                        item {
+                            Text(
+                                text = stringResource(Res.string.sessions_available_empty),
+                                modifier = Modifier.padding(spacing.screenHorizontal),
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                    } else {
+                        items(uiState.sessionsForSelectedDate) { sessionData ->
+                            SessionScheduleCard(
+                                sessionData = sessionData,
+                                isLoading = uiState.sessionLoadingStates[sessionData.session.id] ?: false,
+                                onBook = { viewModel.bookSession(it) },
+                                onCancel = { viewModel.cancelBooking(it) }
+                            )
+                            Spacer(modifier = Modifier.height(spacing.small))
+                        }
+                    }
+
+                    item {
+                        Spacer(modifier = Modifier.height(spacing.large))
+                        Text(
+                            text = stringResource(Res.string.sessions_my_schedule_title),
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(horizontal = spacing.screenHorizontal)
+                        )
+                        Spacer(modifier = Modifier.height(spacing.standard))
+                    }
+
+                    if (uiState.upcomingBookedSessions.isEmpty()) {
+                        item {
+                            Text(
+                                text = stringResource(Res.string.sessions_my_schedule_empty),
+                                modifier = Modifier.padding(spacing.screenHorizontal),
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                    } else {
+                        items(uiState.upcomingBookedSessions) { sessionData ->
+                            UpcomingBookedCard(
+                                sessionData = sessionData,
+                                onCancel = { viewModel.cancelBooking(it) }
+                            )
+                            Spacer(modifier = Modifier.height(spacing.small))
+                        }
+                    }
+
+                    item { Spacer(modifier = Modifier.height(spacing.huge)) }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SessionScheduleCard(
+    sessionData: SessionDisplayData,
+    isLoading: Boolean,
+    onBook: (String) -> Unit,
+    onCancel: (String) -> Unit
+) {
+    val spacing = LocalSpacing.current
+    val session = sessionData.session
+    val isFull = session.currentAttendees >= session.capacity
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = spacing.screenHorizontal),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = subtleOutlineBorder()
+    ) {
+        Column(modifier = Modifier.padding(spacing.standard)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(48.dp)
+                            .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(sessionData.sportIcon, fontSize = 24.sp)
+                    }
+                    Spacer(modifier = Modifier.width(spacing.standard))
+                    Column {
+                        Text(
+                            text = sessionData.sportName,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = "Coach Pedro", // Adjusted to match design
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+                
+                if (sessionData.isUserBooked) {
+                    StatusBadge(text = stringResource(Res.string.session_booked_badge), color = Color(0xFF4CAF50))
+                } else if (isFull) {
+                    StatusBadge(text = stringResource(Res.string.session_full_badge), color = MaterialTheme.colorScheme.outline)
+                }
+            }
+
+            Spacer(modifier = Modifier.height(spacing.standard))
+
+            DetailRow(icon = Icons.Default.AccessTime, text = formatTimeRange(session.dateTime, session.duration.inWholeMinutes.toInt()))
+            DetailRow(icon = Icons.Default.LocationOn, text = sessionData.venueName)
+            DetailRow(icon = Icons.Default.Groups, text = stringResource(Res.string.session_participants_label, session.currentAttendees, session.capacity))
+
+            Spacer(modifier = Modifier.height(spacing.standard))
+
+            when {
+                isLoading -> Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) { CircularProgressIndicator(Modifier.size(24.dp)) }
+                sessionData.isUserBooked -> {
+                    OutlinedButton(
+                        onClick = { onCancel(session.id) },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text(stringResource(Res.string.session_button_cancel))
+                    }
+                }
+                isFull -> {
+                    Button(
+                        onClick = {},
+                        enabled = false,
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(disabledContainerColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f))
+                    ) {
+                        Text(stringResource(Res.string.session_button_full), color = Color.White)
+                    }
+                }
+                else -> {
+                    Button(
+                        onClick = { onBook(session.id) },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                    ) {
+                        Text(stringResource(Res.string.session_button_book), fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun UpcomingBookedCard(
+    sessionData: SessionDisplayData,
+    onCancel: (String) -> Unit
+) {
+    val spacing = LocalSpacing.current
+    val session = sessionData.session
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = spacing.screenHorizontal),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f))
+    ) {
+        Row(
+            modifier = Modifier.padding(spacing.standard),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .background(MaterialTheme.colorScheme.surface, CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(sessionData.sportIcon, fontSize = 24.sp)
+            }
+            Spacer(modifier = Modifier.width(spacing.standard))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(sessionData.sportName, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                Text(
+                    text = "${session.dateTime.day} ${session.dateTime.month.name.take(3)} • ${formatLocalTime(session.dateTime.time)} • ${sessionData.venueName}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(spacing.small))
+                Surface(
+                    shape = RoundedCornerShape(8.dp),
+                    color = MaterialTheme.colorScheme.surface,
+                    modifier = Modifier.clickable { onCancel(session.id) },
+                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                ) {
                     Text(
-                        text = if (uiState.viewMode == CalendarViewMode.WEEK)
-                            stringResource(Res.string.view_mode_month)
-                        else
-                            stringResource(Res.string.view_mode_week),
-                        style = MaterialTheme.typography.labelLarge
+                        text = stringResource(Res.string.session_button_cancel_short),
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }
         }
-
-        item {
-            Spacer(modifier = Modifier.height(spacing.small))
-        }
-
-        // Conditional calendar display
-        item {
-            when (uiState.viewMode) {
-                CalendarViewMode.WEEK -> WeekCalendar(
-                    selectedDate = uiState.selectedDate,
-                    today = today,
-                    onDateSelected = { date -> viewModel.selectDate(date) },
-                    dayNames = dayNames
-                )
-                CalendarViewMode.MONTH -> MonthCalendar(
-                    yearMonth = currentYearMonth,
-                    selectedDate = uiState.selectedDate,
-                    today = today,
-                    onDateSelected = { date -> viewModel.selectDate(date) },
-                    onMonthChange = { yearMonth -> currentYearMonth = yearMonth },
-                    monthNames = monthNames,
-                    dayNames = dayNames,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(spacing.large))
-        }
-
-        // Section 1: Available sessions on selected date
-        item {
-            SessionListSection(
-                title = stringResource(Res.string.sessions_available_title),
-                sessions = uiState.sessionsForSelectedDate,
-                emptyMessage = stringResource(Res.string.sessions_available_empty),
-                showDate = false,  // Don't show date - all sessions are on selected date
-                bookedBadgeText = stringResource(Res.string.session_booked_badge),
-                sessionLoadingStates = uiState.sessionLoadingStates,
-                onBookSession = { sessionId -> viewModel.bookSession(sessionId) },
-                onCancelBooking = { sessionId -> viewModel.cancelBooking(sessionId) },
-                bookButtonText = stringResource(Res.string.session_button_book),
-                cancelButtonText = stringResource(Res.string.session_button_cancel),
-                attendingText = stringResource(Res.string.session_attending_label),
-                fullButtonText = stringResource(Res.string.session_button_full)
-            )
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(spacing.large))
-        }
-
-        // Section 2: User's upcoming booked sessions
-        item {
-            SessionListSection(
-                title = stringResource(Res.string.sessions_my_schedule_title),
-                sessions = uiState.upcomingBookedSessions,
-                emptyMessage = stringResource(Res.string.sessions_my_schedule_empty),
-                showDate = true,  // Show date - sessions can be on different dates
-                bookedBadgeText = stringResource(Res.string.session_booked_badge),
-                sessionLoadingStates = uiState.sessionLoadingStates,
-                onBookSession = { sessionId -> viewModel.bookSession(sessionId) },
-                onCancelBooking = { sessionId -> viewModel.cancelBooking(sessionId) },
-                bookButtonText = stringResource(Res.string.session_button_book),
-                cancelButtonText = stringResource(Res.string.session_button_cancel),
-                attendingText = stringResource(Res.string.session_attending_label),
-                fullButtonText = stringResource(Res.string.session_button_full)
-            )
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(spacing.large))
-        }
-        }
     }
+}
+
+private fun formatTimeRange(start: LocalDateTime, durationMin: Int): String {
+    val end = start.toInstant(TimeZone.currentSystemDefault()).plus(durationMin.toLong() * 60, kotlinx.datetime.DateTimeUnit.SECOND).toLocalDateTime(TimeZone.currentSystemDefault())
+    return "${formatLocalTime(start.time)} - ${formatLocalTime(end.time)}"
+}
+
+private fun formatLocalTime(time: LocalTime): String {
+    return "${time.hour.toString().padStart(2, '0')}:${time.minute.toString().padStart(2, '0')}"
 }

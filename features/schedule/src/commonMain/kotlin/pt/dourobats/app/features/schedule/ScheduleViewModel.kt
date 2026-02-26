@@ -13,6 +13,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 import pt.dourobats.app.core.model.Session
+import pt.dourobats.app.core.domain.usecase.GetAllSessionsUseCase
 import pt.dourobats.app.core.domain.usecase.GetAvailableSessionsUseCase
 import pt.dourobats.app.core.domain.usecase.GetUserBookedSessionsUseCase
 import pt.dourobats.app.core.domain.usecase.BookSessionUseCase
@@ -28,6 +29,7 @@ import kotlin.time.Clock
 class ScheduleViewModel(
     private val getAvailableSessionsUseCase: GetAvailableSessionsUseCase,
     private val getUserBookedSessionsUseCase: GetUserBookedSessionsUseCase,
+    private val getAllSessionsUseCase: GetAllSessionsUseCase,
     private val bookSessionUseCase: BookSessionUseCase,
     private val cancelBookingUseCase: CancelBookingUseCase
 ) : ViewModel() {
@@ -53,14 +55,15 @@ class ScheduleViewModel(
         viewModelScope.launch {
             combine(
                 getAvailableSessionsUseCase(_uiState.value.selectedDate),
-                getUserBookedSessionsUseCase(today)
-            ) { sessionsForDate, bookedSessions ->
+                getUserBookedSessionsUseCase(today),
+                getAllSessionsUseCase()
+            ) { sessionsForDate, bookedSessions, allSessions ->
                 Triple(
                     sessionsForDate.map { (session, isBooked) ->
                         session.toDisplayData(isBooked)
                     },
                     bookedSessions.map { it.toDisplayData(true) },
-                    false // isLoading
+                    allSessions
                 )
             }
                 .catch { error ->
@@ -71,13 +74,16 @@ class ScheduleViewModel(
                         )
                     }
                 }
-                .collect { (sessionsForDate, bookedSessions, isLoading) ->
+                .collect { (sessionsForDate, bookedSessions, allSessions) ->
                     _uiState.update {
                         it.copy(
                             sessionsForSelectedDate = sessionsForDate,
                             upcomingBookedSessions = bookedSessions,
-                            isLoading = isLoading,
-                            errorMessage = null
+                            isLoading = false,
+                            errorMessage = null,
+                            allSessionDates = allSessions.map { s ->
+                                s.dateTime.date
+                            }.toSet()
                         )
                     }
                 }
