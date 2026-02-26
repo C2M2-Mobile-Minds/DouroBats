@@ -84,7 +84,11 @@ class SettingsRepositoryImpl(
             preferences[displayNameKey] = profile.displayName
             preferences[emailKey] = profile.email
             preferences[phoneNumberKey] = profile.phoneNumber
-            profile.profileImageUrl?.let { preferences[profileImageUrlKey] = it }
+            if (profile.profileImageUrl != null) {
+                preferences[profileImageUrlKey] = profile.profileImageUrl
+            } else {
+                preferences.remove(profileImageUrlKey)
+            }
             preferences[rolesKey] = profile.roles.joinToString(",") { it.name }
         }
     }
