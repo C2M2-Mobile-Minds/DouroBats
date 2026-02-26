@@ -84,8 +84,9 @@ class SettingsRepositoryImpl(
             preferences[displayNameKey] = profile.displayName
             preferences[emailKey] = profile.email
             preferences[phoneNumberKey] = profile.phoneNumber
-            if (profile.profileImageUrl != null) {
-                preferences[profileImageUrlKey] = profile.profileImageUrl
+            val imageUrl = profile.profileImageUrl
+            if (imageUrl != null) {
+                preferences[profileImageUrlKey] = imageUrl
             } else {
                 preferences.remove(profileImageUrlKey)
             }
