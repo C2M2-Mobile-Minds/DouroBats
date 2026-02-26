@@ -37,11 +37,33 @@ class SettingsViewModel(
     // Validation errors state
     private val _validationErrors = MutableStateFlow(SettingsUiState.ValidationErrors())
 
-    // Combine all flows into single UI state
+    // Share each upstream flow once to avoid duplicate DataStore subscriptions
+    private val profileState: StateFlow<UserProfile?> = observeUserProfile()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = null
+        )
+
+    val currentLanguage: StateFlow<Language> = observeLanguage()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = Language.ENGLISH_US
+        )
+
+    private val themeState: StateFlow<Theme> = observeTheme()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = Theme.LIGHT
+        )
+
+    // Combine shared flows into a single UI state
     val uiState: StateFlow<SettingsUiState> = combine(
-        observeUserProfile(),
-        observeLanguage(),
-        observeTheme(),
+        profileState,
+        currentLanguage,
+        themeState,
         _validationErrors
     ) { profile, language, theme, validationErrors ->
         SettingsUiState(
@@ -56,14 +78,6 @@ class SettingsViewModel(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = SettingsUiState()
     )
-
-    // Separate StateFlow for backward compatibility
-    val currentLanguage: StateFlow<Language> = observeLanguage()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = Language.ENGLISH_US
-        )
 
     fun setLanguage(language: Language) {
         viewModelScope.launch { setLanguageUseCase(language) }
