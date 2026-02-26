@@ -24,6 +24,7 @@ import dourobats.core.ui.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 import pt.dourobats.app.core.model.AuthState
 import pt.dourobats.app.core.model.Language
 import pt.dourobats.app.core.model.Theme
@@ -33,6 +34,7 @@ import pt.dourobats.app.core.ui.localization.LocalLanguage
 import pt.dourobats.app.core.ui.localization.changeLanguage
 import pt.dourobats.app.core.ui.theme.AppTheme
 import pt.dourobats.app.features.home.HomeScreen
+import pt.dourobats.app.features.home.HomeViewModel
 import pt.dourobats.app.features.schedule.ScheduleScreen
 import pt.dourobats.app.features.settings.SettingsScreen
 
@@ -104,7 +106,11 @@ private fun MainApp(
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
             when (selectedScreen) {
-                Screen.Home -> HomeScreen()
+                Screen.Home -> {
+                    val homeViewModel = koinViewModel<HomeViewModel>()
+                    val homeUiState by homeViewModel.uiState.collectAsState()
+                    HomeScreen(isCommitteeUser = homeUiState.isCommitteeUser)
+                }
                 Screen.Training -> ScheduleScreen()
                 Screen.Settings -> SettingsScreen()
             }

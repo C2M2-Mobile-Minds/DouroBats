@@ -32,6 +32,7 @@ import pt.dourobats.app.core.ui.theme.subtleOutlineBorder
 
 @Composable
 fun HomeScreen(
+    isCommitteeUser: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     val spacing = LocalSpacing.current
@@ -62,11 +63,13 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(spacing.large))
 
-            // Management Portal Section
-            SectionTitle(title = stringResource(Res.string.home_management_portal))
-            ManagementPortalGrid()
+            // Management Portal Section (committee members only)
+            if (isCommitteeUser) {
+                SectionTitle(title = stringResource(Res.string.home_management_portal))
+                ManagementPortalGrid()
 
-            Spacer(modifier = Modifier.height(spacing.large))
+                Spacer(modifier = Modifier.height(spacing.large))
+            }
 
             // Latest News Section
             SectionTitle(title = stringResource(Res.string.home_latest_news))
