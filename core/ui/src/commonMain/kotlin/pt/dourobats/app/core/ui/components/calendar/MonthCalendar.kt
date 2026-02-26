@@ -199,6 +199,7 @@ private fun MonthDateItem(
             isSelected = isSelected,
             isToday = isToday,
             hasSession = isCurrentMonth && hasSession,
+            enabled = isCurrentMonth,
             fontWeight = fontWeight,
             textColor = textColor,
             backgroundColor = backgroundColor,

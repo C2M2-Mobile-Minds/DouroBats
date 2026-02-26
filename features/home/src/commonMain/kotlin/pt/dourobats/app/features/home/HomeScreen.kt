@@ -33,6 +33,7 @@ import pt.dourobats.app.core.ui.theme.subtleOutlineBorder
 @Composable
 fun HomeScreen(
     isCommitteeUser: Boolean = false,
+    userName: String = "",
     modifier: Modifier = Modifier
 ) {
     val spacing = LocalSpacing.current
@@ -44,7 +45,7 @@ fun HomeScreen(
     ) {
         // Shared Header Component
         AppHeader(
-            title = stringResource(Res.string.home_welcome, "John"),
+            title = stringResource(Res.string.home_welcome, userName),
             subtitle = stringResource(Res.string.home_subtitle)
         )
 

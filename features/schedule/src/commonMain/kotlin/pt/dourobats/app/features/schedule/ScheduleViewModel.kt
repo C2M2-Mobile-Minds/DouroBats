@@ -2,11 +2,15 @@ package pt.dourobats.app.features.schedule
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
@@ -41,31 +45,38 @@ class ScheduleViewModel(
     )
     val uiState: StateFlow<ScheduleUiState> = _uiState.asStateFlow()
 
+    private var sessionsJob: Job? = null
+
     init {
         loadSessions()
     }
 
     /**
      * Load sessions for selected date and user's booked sessions.
-     * Combines both flows to update UI state reactively.
+     * Uses flatMapLatest to react to selectedDate changes and cancels any previous collector.
      */
     private fun loadSessions() {
+        sessionsJob?.cancel()
         val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
-
-        viewModelScope.launch {
-            combine(
-                getAvailableSessionsUseCase(_uiState.value.selectedDate),
-                getUserBookedSessionsUseCase(today),
-                getAllSessionsUseCase()
-            ) { sessionsForDate, bookedSessions, allSessions ->
-                Triple(
-                    sessionsForDate.map { (session, isBooked) ->
-                        session.toDisplayData(isBooked)
-                    },
-                    bookedSessions.map { it.toDisplayData(true) },
-                    allSessions
-                )
-            }
+        sessionsJob = viewModelScope.launch {
+            _uiState
+                .map { it.selectedDate }
+                .distinctUntilChanged()
+                .flatMapLatest { date ->
+                    combine(
+                        getAvailableSessionsUseCase(date),
+                        getUserBookedSessionsUseCase(today),
+                        getAllSessionsUseCase()
+                    ) { sessionsForDate, bookedSessions, allSessions ->
+                        Triple(
+                            sessionsForDate.map { (session, isBooked) ->
+                                session.toDisplayData(isBooked)
+                            },
+                            bookedSessions.map { it.toDisplayData(true) },
+                            allSessions
+                        )
+                    }
+                }
                 .catch { error ->
                     _uiState.update {
                         it.copy(
@@ -91,11 +102,10 @@ class ScheduleViewModel(
     }
 
     /**
-     * Update the selected date and reload sessions for that date.
+     * Update the selected date. The sessions flow reacts automatically via flatMapLatest.
      */
     fun selectDate(date: LocalDate) {
         _uiState.update { it.copy(selectedDate = date) }
-        loadSessionsForDate(date)
     }
 
     /**
@@ -110,31 +120,6 @@ class ScheduleViewModel(
                     CalendarViewMode.WEEK
                 }
             )
-        }
-    }
-
-    /**
-     * Load sessions for a specific date.
-     */
-    private fun loadSessionsForDate(date: LocalDate) {
-        viewModelScope.launch {
-            getAvailableSessionsUseCase(date)
-                .catch { error ->
-                    _uiState.update {
-                        it.copy(
-                            errorMessage = error.message ?: "Failed to load sessions"
-                        )
-                    }
-                }
-                .collect { sessions ->
-                    _uiState.update {
-                        it.copy(
-                            sessionsForSelectedDate = sessions.map { (session, isBooked) ->
-                                session.toDisplayData(isBooked)
-                            }
-                        )
-                    }
-                }
         }
     }
 

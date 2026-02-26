@@ -109,7 +109,7 @@ private fun MainApp(
                 Screen.Home -> {
                     val homeViewModel = koinViewModel<HomeViewModel>()
                     val homeUiState by homeViewModel.uiState.collectAsState()
-                    HomeScreen(isCommitteeUser = homeUiState.isCommitteeUser)
+                    HomeScreen(isCommitteeUser = homeUiState.isCommitteeUser, userName = homeUiState.userName)
                 }
                 Screen.Training -> ScheduleScreen()
                 Screen.Settings -> SettingsScreen()

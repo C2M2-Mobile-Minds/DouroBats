@@ -80,8 +80,15 @@ fun SettingsScreen(
             ProfileCard(
                 name = userProfile.displayName,
                 email = userProfile.email,
-                role = stringResource(Res.string.settings_role_athlete), // TODO: Get from profile
-                onEditClick = { showEditDialog = true }
+                role = when (currentRole) {
+                    UserRole.COMMITTEE -> stringResource(Res.string.settings_role_committee)
+                    UserRole.SUPPORTER -> stringResource(Res.string.settings_role_supporter)
+                    else -> stringResource(Res.string.settings_role_athlete)
+                },
+                onEditClick = {
+                    viewModel.enterEditMode()
+                    showEditDialog = true
+                }
             )
 
             Spacer(modifier = Modifier.height(spacing.large))

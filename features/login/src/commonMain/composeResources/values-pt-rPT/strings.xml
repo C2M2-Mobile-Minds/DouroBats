@@ -27,4 +27,6 @@
     <!-- Development -->
     <string name="login_test_credentials_title">Credenciais de Teste</string>
     <string name="login_test_credentials_text">E-mail: utilizador@dourobats.com\nPalavra-passe: 123456</string>
+    <!-- Dismiss -->
+    <string name="login_dismiss">Dispensar</string>
 </resources>

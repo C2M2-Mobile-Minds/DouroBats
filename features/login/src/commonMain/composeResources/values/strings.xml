@@ -27,4 +27,6 @@
     <!-- Development -->
     <string name="login_test_credentials_title">Test Credentials</string>
     <string name="login_test_credentials_text">Email: user@dourobats.com\nPassword: 123456</string>
+    <!-- Dismiss -->
+    <string name="login_dismiss">Dismiss</string>
 </resources>

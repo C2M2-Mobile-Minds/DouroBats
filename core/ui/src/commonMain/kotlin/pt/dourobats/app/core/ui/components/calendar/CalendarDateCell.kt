@@ -31,6 +31,7 @@ import kotlinx.datetime.LocalDate
  * @param isSelected     Whether this cell is the currently selected date.
  * @param isToday        Whether this cell represents today.
  * @param hasSession     Whether a training session exists on this date.
+ * @param enabled        Whether the cell is interactive (clickable). Defaults to true.
  * @param fontWeight     Font weight for the day number.
  * @param textColor      Colour for the day number.
  * @param backgroundColor Background colour of the cell box.
@@ -47,6 +48,7 @@ fun CalendarDateCell(
     isSelected: Boolean,
     isToday: Boolean,
     hasSession: Boolean,
+    enabled: Boolean = true,
     fontWeight: FontWeight,
     textColor: Color,
     backgroundColor: Color,
@@ -62,7 +64,7 @@ fun CalendarDateCell(
             .size(width = 44.dp, height = cellHeight)
             .clip(RoundedCornerShape(12.dp))
             .background(backgroundColor)
-            .clickable { onClick(date) },
+            .clickable(enabled = enabled) { onClick(date) },
         contentAlignment = Alignment.Center
     ) {
         if (isToday) {

@@ -424,7 +424,7 @@ private fun ErrorBanner(
             IconButton(onClick = onDismiss, modifier = Modifier.size(24.dp)) {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = "Dismiss",
+                    contentDescription = stringResource(Res.string.login_dismiss),
                     tint = MaterialTheme.colorScheme.onErrorContainer,
                     modifier = Modifier.size(16.dp)
                 )
