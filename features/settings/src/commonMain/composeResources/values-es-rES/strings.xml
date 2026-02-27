@@ -32,6 +32,23 @@
     <string name="settings_theme_light">Claro</string>
     <string name="settings_theme_dark">Oscuro</string>
 
+    <!-- Notifications -->
+    <string name="settings_notifications">Notificaciones</string>
+    <string name="settings_notifications_description">Gestionar preferencias de notificación</string>
+    <string name="settings_notifications_title">Notificaciones</string>
+    <string name="settings_notifications_section_sessions">Sesiones</string>
+    <string name="settings_notifications_section_club">Club</string>
+    <string name="settings_notifications_session_reminders">Recordatorios de Sesión</string>
+    <string name="settings_notifications_session_reminders_desc">Recibe avisos antes de que comiencen tus sesiones</string>
+    <string name="settings_notifications_booking_confirmed">Confirmaciones de Reserva</string>
+    <string name="settings_notifications_booking_confirmed_desc">Notificado cuando una reserva es confirmada o cancelada</string>
+    <string name="settings_notifications_new_sessions">Nuevas Sesiones Disponibles</string>
+    <string name="settings_notifications_new_sessions_desc">Sé el primero en saber cuando se publican nuevas sesiones</string>
+    <string name="settings_notifications_announcements">Anuncios del Club</string>
+    <string name="settings_notifications_announcements_desc">Noticias y actualizaciones del club</string>
+    <string name="settings_notifications_session_cancelled">Cancelaciones de Sesión</string>
+    <string name="settings_notifications_session_cancelled_desc">Alerta cuando una sesión que reservaste es cancelada</string>
+
     <!-- Booking History -->
     <string name="settings_booking_history">Mi Historial de Reservas</string>
     <string name="settings_booking_attended">Asistidas</string>
@@ -63,4 +80,34 @@
     <string name="settings_profile_picture">Foto de perfil</string>
     <string name="settings_no_name">Sin nombre establecido</string>
     <string name="settings_no_email">Sin correo establecido</string>
+
+    <!-- Section Headers (additional) -->
+    <string name="settings_section_profile">Perfil</string>
+    <string name="settings_section_activity">Actividad</string>
+
+    <!-- Role Labels -->
+    <string name="settings_role_athlete">Atleta</string>
+    <string name="settings_role_supporter">Seguidor</string>
+    <string name="settings_role_committee">Directiva</string>
+    <string name="settings_section_developer">Desarrollador</string>
+    <string name="settings_developer_options">Opciones de Desarrollador</string>
+    <string name="settings_developer_options_description">Simular estado de la app para pruebas</string>
+    <string name="settings_developer_role">Rol simulado</string>
+    <string name="settings_developer_role_description">Define tu rol para previsualizar la UI</string>
+
+    <!-- Activity -->
+    <string name="settings_sessions_attended">%d sesiones asistidas</string>
+
+    <!-- Theme Row -->
+    <string name="settings_dark_theme">Tema Oscuro</string>
+    <string name="settings_enabled">Activado</string>
+    <string name="settings_disabled">Desactivado</string>
+
+    <!-- Profile validation errors -->
+    <string name="settings_error_display_name_blank">El nombre es obligatorio</string>
+    <string name="settings_error_display_name_too_short">El nombre debe tener al menos 2 caracteres</string>
+    <string name="settings_error_email_blank">El correo electrónico es obligatorio</string>
+    <string name="settings_error_email_invalid">Formato de correo electrónico no válido</string>
+    <string name="settings_error_phone_blank">El número de teléfono es obligatorio</string>
+    <string name="settings_error_phone_invalid">Formato de número de teléfono no válido</string>
 </resources>

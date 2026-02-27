@@ -2,59 +2,33 @@ package pt.dourobats.app.features.login
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.ime
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Error
-import androidx.compose.material.icons.filled.Group
-import androidx.compose.material.icons.filled.Language
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.PhoneIphone
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import dourobats.features.login.generated.resources.Res
 import dourobats.features.login.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
@@ -63,18 +37,15 @@ import pt.dourobats.app.core.model.LoginMethod
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 
 /**
- * Modern login screen with Material Design 3 styling.
- *
+ * Modern login screen styled after the provided design reference.
+ * 
  * Features:
- * - Email/password login with validation
- * - Social login buttons (Google, Facebook, Apple)
- * - Password visibility toggle
- * - Loading states
- * - Error handling with animated banner
- * - Test credentials card for development
- *
- * @param modifier Optional modifier for the screen
- * @param viewModel ViewModel managing login state and logic
+ * - Clean layout without a card container
+ * - Custom DB logo with brand colors
+ * - Text fields with labels above
+ * - Bold primary login button
+ * - Social login integration
+ * - Responsive spacing
  */
 @Composable
 fun LoginScreen(
@@ -89,35 +60,45 @@ fun LoginScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .windowInsetsPadding(WindowInsets.statusBars)
-            .windowInsetsPadding(WindowInsets.navigationBars)
-            .padding(horizontal = spacing.screenHorizontal)
+            .windowInsetsPadding(WindowInsets.navigationBars),
+        contentAlignment = Alignment.Center
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = spacing.large),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             Spacer(modifier = Modifier.height(spacing.huge))
 
-            // Logo and Title Section
-            Icon(
-                imageVector = Icons.Default.Lock,
-                contentDescription = null,
-                modifier = Modifier.size(80.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
+            // Brand Logo
+            Box(
+                modifier = Modifier
+                    .size(80.dp)
+                    .background(
+                        color = Color(0xFF4F46E5), // Brand indigo blue
+                        shape = RoundedCornerShape(16.dp)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "DB",
+                    color = Color.White,
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
 
             Spacer(modifier = Modifier.height(spacing.large))
 
             Text(
                 text = stringResource(Res.string.login_app_name),
                 style = MaterialTheme.typography.displaySmall,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.ExtraBold,
                 color = MaterialTheme.colorScheme.onBackground
             )
-
-            Spacer(modifier = Modifier.height(spacing.small))
 
             Text(
                 text = stringResource(Res.string.login_welcome),
@@ -136,123 +117,100 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(spacing.standard))
             }
 
-            // Email Field
-            OutlinedTextField(
+            // Email Section
+            LoginFieldWithLabel(
                 value = uiState.email,
                 onValueChange = { viewModel.updateEmail(it) },
-                label = { Text(stringResource(Res.string.login_email_label)) },
-                placeholder = { Text(stringResource(Res.string.login_email_placeholder)) },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Email,
-                        contentDescription = null
-                    )
-                },
-                isError = uiState.emailError != null,
-                supportingText = uiState.emailError?.let { { Text(it) } },
+                label = stringResource(Res.string.login_email_label),
+                placeholder = stringResource(Res.string.login_email_placeholder),
+                leadingIcon = Icons.Default.Email,
+                error = uiState.emailError,
+                enabled = !uiState.isLoading,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email,
                     imeAction = ImeAction.Next
-                ),
-                singleLine = true,
-                enabled = !uiState.isLoading,
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp)
+                )
             )
 
             Spacer(modifier = Modifier.height(spacing.standard))
 
-            // Password Field
-            OutlinedTextField(
+            // Password Section
+            LoginFieldWithLabel(
                 value = uiState.password,
                 onValueChange = { viewModel.updatePassword(it) },
-                label = { Text(stringResource(Res.string.login_password_label)) },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Lock,
-                        contentDescription = null
-                    )
-                },
-                trailingIcon = {
-                    IconButton(onClick = { viewModel.togglePasswordVisibility() }) {
-                        Icon(
-                            imageVector = if (uiState.isPasswordVisible) {
-                                Icons.Default.Visibility
-                            } else {
-                                Icons.Default.VisibilityOff
-                            },
-                            contentDescription = if (uiState.isPasswordVisible) {
-                                stringResource(Res.string.login_password_hide)
-                            } else {
-                                stringResource(Res.string.login_password_show)
-                            }
-                        )
-                    }
-                },
-                visualTransformation = if (uiState.isPasswordVisible) {
-                    VisualTransformation.None
-                } else {
-                    PasswordVisualTransformation()
-                },
-                isError = uiState.passwordError != null,
-                supportingText = uiState.passwordError?.let { { Text(it) } },
+                label = stringResource(Res.string.login_password_label),
+                placeholder = stringResource(Res.string.login_password_placeholder),
+                leadingIcon = Icons.Default.Lock,
+                error = uiState.passwordError,
+                enabled = !uiState.isLoading,
+                isPassword = true,
+                isPasswordVisible = uiState.isPasswordVisible,
+                onPasswordToggle = { viewModel.togglePasswordVisibility() },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = { if (uiState.isFormValid) viewModel.loginWithEmail() }
-                ),
-                singleLine = true,
-                enabled = !uiState.isLoading,
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp)
+                )
             )
 
             Spacer(modifier = Modifier.height(spacing.extraLarge))
 
-            // Login Button
+            // Main Action Button
             Button(
                 onClick = { viewModel.loginWithEmail() },
                 enabled = uiState.isFormValid && !uiState.isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.onSurface,
+                    contentColor = MaterialTheme.colorScheme.surface
+                )
             ) {
                 if (uiState.isLoading) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(24.dp),
-                        color = MaterialTheme.colorScheme.onPrimary
+                        color = MaterialTheme.colorScheme.surface,
+                        strokeWidth = 2.dp
                     )
                 } else {
                     Text(
                         text = stringResource(Res.string.login_button),
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }
 
             Spacer(modifier = Modifier.height(spacing.large))
 
-            // Divider with "OR"
+            // Social Login Divider
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                HorizontalDivider(modifier = Modifier.weight(1f))
+                HorizontalDivider(
+                    modifier = Modifier.weight(1f),
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                )
                 Text(
                     text = stringResource(Res.string.login_divider),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(horizontal = spacing.standard)
                 )
-                HorizontalDivider(modifier = Modifier.weight(1f))
+                HorizontalDivider(
+                    modifier = Modifier.weight(1f),
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                )
             }
 
             Spacer(modifier = Modifier.height(spacing.large))
 
-            // Social Login Buttons
+            // Social Auth Buttons
             SocialLoginButton(
                 text = stringResource(Res.string.login_google),
                 onClick = { viewModel.loginWithSocial(LoginMethod.GOOGLE) },
@@ -280,16 +238,156 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(spacing.extraLarge))
 
-            // Test Credentials Card
-            TestCredentialsCard()
+            // Footer Links
+            TextButton(onClick = { /* Implement forgot password flow */ }) {
+                Text(
+                    text = stringResource(Res.string.login_forgot_password),
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Medium
+                )
+            }
 
-            Spacer(modifier = Modifier.height(spacing.large))
+            val signUpText = buildAnnotatedString {
+                append(stringResource(Res.string.login_no_account))
+                append(" ")
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)) {
+                    append(stringResource(Res.string.login_sign_up))
+                }
+            }
+            TextButton(onClick = { /* Implement navigation to registration */ }) {
+                Text(text = signUpText, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+            
+            Spacer(modifier = Modifier.height(spacing.huge))
         }
     }
 }
 
 /**
- * Error banner displayed at the top of the form.
+ * Custom text field with label above.
+ */
+@Composable
+private fun LoginFieldWithLabel(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    placeholder: String,
+    leadingIcon: ImageVector,
+    error: String?,
+    enabled: Boolean,
+    modifier: Modifier = Modifier,
+    isPassword: Boolean = false,
+    isPasswordVisible: Boolean = false,
+    onPasswordToggle: () -> Unit = {},
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default
+) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        TextField(
+            value = value,
+            onValueChange = onValueChange,
+            modifier = Modifier.fillMaxWidth(),
+            placeholder = { Text(placeholder, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)) },
+            leadingIcon = {
+                Icon(
+                    imageVector = leadingIcon,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(20.dp)
+                )
+            },
+            trailingIcon = if (isPassword) {
+                {
+                    IconButton(onClick = onPasswordToggle) {
+                        Icon(
+                            imageVector = if (isPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            } else null,
+            visualTransformation = if (isPassword && !isPasswordVisible) PasswordVisualTransformation() else VisualTransformation.None,
+            keyboardOptions = keyboardOptions,
+            keyboardActions = keyboardActions,
+            enabled = enabled,
+            singleLine = true,
+            shape = RoundedCornerShape(12.dp),
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent,
+                errorIndicatorColor = Color.Transparent
+            )
+        )
+        if (error != null) {
+            Text(
+                text = error,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(top = 4.dp, start = 4.dp)
+            )
+        }
+    }
+}
+
+/**
+ * Specialized button for social login providers.
+ */
+@Composable
+private fun SocialLoginButton(
+    text: String,
+    onClick: () -> Unit,
+    enabled: Boolean,
+    icon: ImageVector,
+    modifier: Modifier = Modifier
+) {
+    OutlinedButton(
+        onClick = onClick,
+        enabled = enabled,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(56.dp),
+        shape = RoundedCornerShape(12.dp),
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+        ),
+        border = androidx.compose.foundation.BorderStroke(
+            width = 1.dp,
+            color = MaterialTheme.colorScheme.outlineVariant
+        )
+    ) {
+        Box(modifier = Modifier.fillMaxWidth()) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(20.dp)
+                    .align(Alignment.CenterStart),
+                tint = Color.Unspecified
+            )
+            Text(
+                text = text,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
+    }
+}
+
+/**
+ * Animated error message banner.
  */
 @Composable
 private fun ErrorBanner(
@@ -297,8 +395,6 @@ private fun ErrorBanner(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val spacing = LocalSpacing.current
-
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -309,95 +405,30 @@ private fun ErrorBanner(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(spacing.standard),
-            horizontalArrangement = Arrangement.spacedBy(spacing.small),
+                .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 imageVector = Icons.Default.Error,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.error
+                tint = MaterialTheme.colorScheme.error,
+                modifier = Modifier.size(20.dp)
             )
+            Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = message,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onErrorContainer,
                 modifier = Modifier.weight(1f)
             )
-        }
-    }
-}
-
-/**
- * Social login button with icon and text.
- */
-@Composable
-private fun SocialLoginButton(
-    text: String,
-    onClick: () -> Unit,
-    enabled: Boolean,
-    icon: ImageVector,
-    modifier: Modifier = Modifier
-) {
-    val spacing = LocalSpacing.current
-
-    OutlinedButton(
-        onClick = onClick,
-        enabled = enabled,
-        modifier = modifier
-            .fillMaxWidth()
-            .height(56.dp),
-        shape = RoundedCornerShape(12.dp)
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            modifier = Modifier
-                .size(24.dp)
-                .padding(end = spacing.small)
-        )
-        Text(
-            text = text,
-            style = MaterialTheme.typography.titleMedium
-        )
-    }
-}
-
-/**
- * Card showing test credentials for development.
- */
-@Composable
-private fun TestCredentialsCard(
-    modifier: Modifier = Modifier
-) {
-    val spacing = LocalSpacing.current
-
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer
-        ),
-        shape = RoundedCornerShape(12.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(spacing.standard),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = stringResource(Res.string.login_test_credentials_title),
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSecondaryContainer
-            )
-            Spacer(modifier = Modifier.height(spacing.small))
-            Text(
-                text = stringResource(Res.string.login_test_credentials_text),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                textAlign = TextAlign.Center
-            )
+            IconButton(onClick = onDismiss, modifier = Modifier.size(24.dp)) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Dismiss",
+                    tint = MaterialTheme.colorScheme.onErrorContainer,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
         }
     }
 }

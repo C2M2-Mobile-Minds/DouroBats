@@ -2,8 +2,6 @@ package pt.dourobats.app.features.schedule
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -17,17 +15,14 @@ import kotlinx.datetime.todayIn
 import pt.dourobats.app.core.model.Session
 import pt.dourobats.app.core.model.SessionStatus
 import pt.dourobats.app.core.model.SkillLevel
-import pt.dourobats.app.core.domain.usecase.GetAvailableSessionsUseCase
-import pt.dourobats.app.core.domain.usecase.GetUserBookedSessionsUseCase
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-import kotlin.time.Duration.Companion.hours
-import pt.dourobats.app.core.common.Result
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.hours
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ScheduleViewModelTest {
@@ -35,6 +30,7 @@ class ScheduleViewModelTest {
     private lateinit var viewModel: ScheduleViewModel
     private lateinit var fakeGetAvailableSessionsUseCase: pt.dourobats.app.core.test.fakes.FakeGetAvailableSessionsUseCase
     private lateinit var fakeGetUserBookedSessionsUseCase: pt.dourobats.app.core.test.fakes.FakeGetUserBookedSessionsUseCase
+    private lateinit var fakeGetAllSessionsUseCase: pt.dourobats.app.core.test.fakes.FakeGetAllSessionsUseCase
     private lateinit var fakeBookSessionUseCase: pt.dourobats.app.core.test.fakes.FakeBookSessionUseCase
     private lateinit var fakeCancelBookingUseCase: pt.dourobats.app.core.test.fakes.FakeCancelBookingUseCase
     private val testDispatcher = StandardTestDispatcher()
@@ -44,6 +40,7 @@ class ScheduleViewModelTest {
         Dispatchers.setMain(testDispatcher)
         fakeGetAvailableSessionsUseCase = pt.dourobats.app.core.test.fakes.FakeGetAvailableSessionsUseCase()
         fakeGetUserBookedSessionsUseCase = pt.dourobats.app.core.test.fakes.FakeGetUserBookedSessionsUseCase()
+        fakeGetAllSessionsUseCase = pt.dourobats.app.core.test.fakes.FakeGetAllSessionsUseCase()
         fakeBookSessionUseCase = pt.dourobats.app.core.test.fakes.FakeBookSessionUseCase()
         fakeCancelBookingUseCase = pt.dourobats.app.core.test.fakes.FakeCancelBookingUseCase()
     }
@@ -52,6 +49,7 @@ class ScheduleViewModelTest {
         viewModel = ScheduleViewModel(
             getAvailableSessionsUseCase = fakeGetAvailableSessionsUseCase,
             getUserBookedSessionsUseCase = fakeGetUserBookedSessionsUseCase,
+            getAllSessionsUseCase = fakeGetAllSessionsUseCase,
             bookSessionUseCase = fakeBookSessionUseCase,
             cancelBookingUseCase = fakeCancelBookingUseCase
         )

@@ -1,6 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Home Screen -->
-    <string name="home_welcome">Welcome to DouroBats!</string>
+    <string name="home_welcome">Hello, %s!</string>
+    <string name="home_welcome_fallback">Welcome!</string>
     <string name="home_subtitle">Your volleyball management app</string>
+    <string name="home_next_session">Next Session</string>
+    <string name="home_upcoming_sessions">Upcoming Sessions</string>
+    <string name="home_announcements">Announcements</string>
+    <string name="home_booked">Booked</string>
+    <string name="home_participants">%1$d/%2$d participants</string>
+    <string name="home_management_portal">Management Portal</string>
+    <string name="home_latest_news">Latest News</string>
+
+    <!-- Management Portal Actions -->
+    <string name="home_portal_new_session">New Session</string>
+    <string name="home_portal_reports">Reports</string>
+    <string name="home_portal_members">Members</string>
+    <string name="home_portal_post_news">Post News</string>
+
+    <!-- News Tags -->
+    <string name="home_tag_tournament">Tournament</string>
+    <string name="home_tag_update">Update</string>
+    <string name="home_tag_event">Event</string>
+
+    <!-- News Actions -->
+    <string name="home_read_more">Read More</string>
 </resources>

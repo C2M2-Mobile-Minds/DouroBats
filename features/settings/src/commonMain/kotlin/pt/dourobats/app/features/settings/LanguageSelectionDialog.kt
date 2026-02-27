@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dourobats.features.settings.generated.resources.Res
+import dourobats.features.settings.generated.resources.settings_cancel
 import dourobats.features.settings.generated.resources.settings_language_select
 import org.jetbrains.compose.resources.stringResource
 import pt.dourobats.app.core.model.Language
@@ -40,7 +41,7 @@ fun LanguageSelectionDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(Res.string.settings_cancel))
             }
         },
         modifier = modifier

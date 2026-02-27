@@ -7,12 +7,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 import pt.dourobats.app.core.model.Session
+import pt.dourobats.app.core.domain.usecase.GetAllSessionsUseCase
 import pt.dourobats.app.core.domain.usecase.GetAvailableSessionsUseCase
 import pt.dourobats.app.core.domain.usecase.GetUserBookedSessionsUseCase
 import pt.dourobats.app.core.domain.usecase.BookSessionUseCase
@@ -28,13 +30,18 @@ import kotlin.time.Clock
 class ScheduleViewModel(
     private val getAvailableSessionsUseCase: GetAvailableSessionsUseCase,
     private val getUserBookedSessionsUseCase: GetUserBookedSessionsUseCase,
+    private val getAllSessionsUseCase: GetAllSessionsUseCase,
     private val bookSessionUseCase: BookSessionUseCase,
     private val cancelBookingUseCase: CancelBookingUseCase
 ) : ViewModel() {
 
+    private val _selectedDate = MutableStateFlow(
+        Clock.System.todayIn(TimeZone.currentSystemDefault())
+    )
+
     private val _uiState = MutableStateFlow(
         ScheduleUiState(
-            selectedDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
+            selectedDate = _selectedDate.value
         )
     )
     val uiState: StateFlow<ScheduleUiState> = _uiState.asStateFlow()
@@ -44,23 +51,24 @@ class ScheduleViewModel(
     }
 
     /**
-     * Load sessions for selected date and user's booked sessions.
-     * Combines both flows to update UI state reactively.
+     * Load sessions reactively. Available sessions are derived via flatMapLatest
+     * so they always reflect the current selectedDate without needing a manual reload.
      */
     private fun loadSessions() {
         val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
 
         viewModelScope.launch {
             combine(
-                getAvailableSessionsUseCase(_uiState.value.selectedDate),
-                getUserBookedSessionsUseCase(today)
-            ) { sessionsForDate, bookedSessions ->
+                _selectedDate.flatMapLatest { date -> getAvailableSessionsUseCase(date) },
+                getUserBookedSessionsUseCase(today),
+                getAllSessionsUseCase()
+            ) { sessionsForDate, bookedSessions, allSessions ->
                 Triple(
                     sessionsForDate.map { (session, isBooked) ->
                         session.toDisplayData(isBooked)
                     },
                     bookedSessions.map { it.toDisplayData(true) },
-                    false // isLoading
+                    allSessions
                 )
             }
                 .catch { error ->
@@ -71,13 +79,16 @@ class ScheduleViewModel(
                         )
                     }
                 }
-                .collect { (sessionsForDate, bookedSessions, isLoading) ->
+                .collect { (sessionsForDate, bookedSessions, allSessions) ->
                     _uiState.update {
                         it.copy(
                             sessionsForSelectedDate = sessionsForDate,
                             upcomingBookedSessions = bookedSessions,
-                            isLoading = isLoading,
-                            errorMessage = null
+                            isLoading = false,
+                            errorMessage = null,
+                            allSessionDates = allSessions.map { s ->
+                                s.dateTime.date
+                            }.toSet()
                         )
                     }
                 }
@@ -85,11 +96,12 @@ class ScheduleViewModel(
     }
 
     /**
-     * Update the selected date and reload sessions for that date.
+     * Update the selected date. The flatMapLatest in loadSessions() will
+     * automatically re-subscribe to sessions for the new date.
      */
     fun selectDate(date: LocalDate) {
+        _selectedDate.value = date
         _uiState.update { it.copy(selectedDate = date) }
-        loadSessionsForDate(date)
     }
 
     /**
@@ -104,31 +116,6 @@ class ScheduleViewModel(
                     CalendarViewMode.WEEK
                 }
             )
-        }
-    }
-
-    /**
-     * Load sessions for a specific date.
-     */
-    private fun loadSessionsForDate(date: LocalDate) {
-        viewModelScope.launch {
-            getAvailableSessionsUseCase(date)
-                .catch { error ->
-                    _uiState.update {
-                        it.copy(
-                            errorMessage = error.message ?: "Failed to load sessions"
-                        )
-                    }
-                }
-                .collect { sessions ->
-                    _uiState.update {
-                        it.copy(
-                            sessionsForSelectedDate = sessions.map { (session, isBooked) ->
-                                session.toDisplayData(isBooked)
-                            }
-                        )
-                    }
-                }
         }
     }
 
@@ -177,15 +164,12 @@ class ScheduleViewModel(
             // Handle result
             when (result) {
                 is Result.Success -> {
-                    // Clear loading state and show success
                     _uiState.update {
                         it.copy(
                             sessionLoadingStates = it.sessionLoadingStates - sessionId,
                             successMessage = "Session booked successfully"
                         )
                     }
-                    // Reload sessions to get updated data
-                    loadSessions()
                 }
                 is Result.Error -> {
                     _uiState.update {
@@ -231,8 +215,6 @@ class ScheduleViewModel(
                             successMessage = "Booking cancelled successfully"
                         )
                     }
-                    // Reload sessions to get updated data
-                    loadSessions()
                 }
                 is Result.Error -> {
                     _uiState.update {

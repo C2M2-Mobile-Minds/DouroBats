@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.map
 import pt.dourobats.app.core.model.Language
 import pt.dourobats.app.core.model.Theme
 import pt.dourobats.app.core.model.UserProfile
+import pt.dourobats.app.core.model.UserRole
 import pt.dourobats.app.core.repository.SettingsRepository
 
 class SettingsRepositoryImpl(
@@ -22,6 +23,7 @@ class SettingsRepositoryImpl(
     private val emailKey = stringPreferencesKey("email")
     private val phoneNumberKey = stringPreferencesKey("phone_number")
     private val profileImageUrlKey = stringPreferencesKey("profile_image_url")
+    private val rolesKey = stringPreferencesKey("user_roles")
 
     override val languageFlow: Flow<Language> = dataStore.data.map { preferences ->
         val languageCode = preferences[languageKey]
@@ -62,11 +64,18 @@ class SettingsRepositoryImpl(
     }
 
     override val userProfileFlow: Flow<UserProfile> = dataStore.data.map { preferences ->
+        val rolesString = preferences[rolesKey]
+        val roles = if (!rolesString.isNullOrEmpty()) {
+            rolesString.split(",").mapNotNull { name ->
+                UserRole.entries.find { it.name == name }
+            }
+        } else emptyList()
         UserProfile(
             displayName = preferences[displayNameKey] ?: "",
             email = preferences[emailKey] ?: "",
             phoneNumber = preferences[phoneNumberKey] ?: "",
-            profileImageUrl = preferences[profileImageUrlKey]
+            profileImageUrl = preferences[profileImageUrlKey],
+            roles = roles
         )
     }
 
@@ -75,7 +84,13 @@ class SettingsRepositoryImpl(
             preferences[displayNameKey] = profile.displayName
             preferences[emailKey] = profile.email
             preferences[phoneNumberKey] = profile.phoneNumber
-            profile.profileImageUrl?.let { preferences[profileImageUrlKey] = it }
+            val imageUrl = profile.profileImageUrl
+            if (imageUrl != null) {
+                preferences[profileImageUrlKey] = imageUrl
+            } else {
+                preferences.remove(profileImageUrlKey)
+            }
+            preferences[rolesKey] = profile.roles.joinToString(",") { it.name }
         }
     }
 

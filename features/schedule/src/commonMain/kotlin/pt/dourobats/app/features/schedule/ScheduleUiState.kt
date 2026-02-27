@@ -15,7 +15,8 @@ data class ScheduleUiState(
     val isLoading: Boolean = true,
     val errorMessage: String? = null,
     val sessionLoadingStates: Map<String, Boolean> = emptyMap(),
-    val successMessage: String? = null
+    val successMessage: String? = null,
+    val allSessionDates: Set<LocalDate> = emptySet()
 )
 
 /**

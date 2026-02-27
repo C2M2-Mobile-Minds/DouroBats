@@ -7,16 +7,26 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import pt.dourobats.app.core.model.Language
 import pt.dourobats.app.core.model.Theme
 import pt.dourobats.app.core.model.UserProfile
-import pt.dourobats.app.core.repository.SettingsRepository
+import pt.dourobats.app.core.model.UserRole
 import pt.dourobats.app.core.domain.usecase.LogoutUseCase
+import pt.dourobats.app.core.domain.usecase.ObserveLanguageUseCase
+import pt.dourobats.app.core.domain.usecase.ObserveThemeUseCase
+import pt.dourobats.app.core.domain.usecase.ObserveUserProfileUseCase
+import pt.dourobats.app.core.domain.usecase.SetLanguageUseCase
+import pt.dourobats.app.core.domain.usecase.SetThemeUseCase
+import pt.dourobats.app.core.domain.usecase.UpdateUserProfileUseCase
 
 class SettingsViewModel(
-    private val settingsRepository: SettingsRepository,
+    private val observeUserProfile: ObserveUserProfileUseCase,
+    private val observeLanguage: ObserveLanguageUseCase,
+    private val observeTheme: ObserveThemeUseCase,
+    private val setLanguageUseCase: SetLanguageUseCase,
+    private val setThemeUseCase: SetThemeUseCase,
+    private val updateUserProfileUseCase: UpdateUserProfileUseCase,
     private val logoutUseCase: LogoutUseCase
 ) : ViewModel() {
 
@@ -27,44 +37,54 @@ class SettingsViewModel(
     // Validation errors state
     private val _validationErrors = MutableStateFlow(SettingsUiState.ValidationErrors())
 
-    // Combine all flows into single UI state
-    val uiState: StateFlow<SettingsUiState> = combine(
-        settingsRepository.userProfileFlow,
-        settingsRepository.languageFlow,
-        settingsRepository.themeFlow,
-        _validationErrors
-    ) { profile, language, theme, validationErrors ->
-        SettingsUiState(
-            userProfile = profile,
-            currentLanguage = language,
-            currentTheme = theme,
-            isLoading = false, // Data loaded once flows emit
-            validationErrors = validationErrors
+    // Share each upstream flow once to avoid duplicate DataStore subscriptions
+    private val profileState: StateFlow<UserProfile?> = observeUserProfile()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = null
         )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = SettingsUiState() // Nullable values, isLoading = true
-    )
 
-    // Separate StateFlow for backward compatibility
-    val currentLanguage: StateFlow<Language> = settingsRepository.languageFlow
+    val currentLanguage: StateFlow<Language> = observeLanguage()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = Language.ENGLISH_US
         )
 
+    private val themeState: StateFlow<Theme> = observeTheme()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = Theme.LIGHT
+        )
+
+    // Combine shared flows into a single UI state
+    val uiState: StateFlow<SettingsUiState> = combine(
+        profileState,
+        currentLanguage,
+        themeState,
+        _validationErrors
+    ) { profile, language, theme, validationErrors ->
+        SettingsUiState(
+            userProfile = profile,
+            currentLanguage = language,
+            currentTheme = theme,
+            isLoading = false,
+            validationErrors = validationErrors
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = SettingsUiState()
+    )
+
     fun setLanguage(language: Language) {
-        viewModelScope.launch {
-            settingsRepository.setLanguage(language)
-        }
+        viewModelScope.launch { setLanguageUseCase(language) }
     }
 
     fun setTheme(theme: Theme) {
-        viewModelScope.launch {
-            settingsRepository.setTheme(theme)
-        }
+        viewModelScope.launch { setThemeUseCase(theme) }
     }
 
     fun enterEditMode() {
@@ -93,8 +113,7 @@ class SettingsViewModel(
     }
 
     private fun validateAndUpdateErrors() {
-        val errors = validateProfile(_editState.value)
-        _validationErrors.value = errors
+        _validationErrors.value = validateProfile(_editState.value)
     }
 
     fun saveProfile(onSuccess: () -> Unit = {}) {
@@ -113,12 +132,8 @@ class SettingsViewModel(
                 email = editState.email.trim(),
                 phoneNumber = editState.phoneNumber.trim()
             )
-            settingsRepository.updateUserProfile(updatedProfile)
-
-            // Clear errors after successful save
+            updateUserProfileUseCase(updatedProfile)
             _validationErrors.value = SettingsUiState.ValidationErrors()
-
-            // Notify success
             onSuccess()
         }
     }
@@ -129,26 +144,25 @@ class SettingsViewModel(
     }
 
     private fun validateProfile(editState: ProfileEditState): SettingsUiState.ValidationErrors {
-        // Trim values before validation to match what will be saved
         val trimmedDisplayName = editState.displayName.trim()
         val trimmedEmail = editState.email.trim()
         val trimmedPhoneNumber = editState.phoneNumber.trim()
 
-        val displayNameError = when {
-            trimmedDisplayName.isBlank() -> "Display name is required"
-            trimmedDisplayName.length < 2 -> "Display name must be at least 2 characters"
+        val displayNameError: DisplayNameError? = when {
+            trimmedDisplayName.isBlank() -> DisplayNameError.Blank
+            trimmedDisplayName.length < 2 -> DisplayNameError.TooShort
             else -> null
         }
 
-        val emailError = when {
-            trimmedEmail.isBlank() -> "Email is required"
-            !trimmedEmail.matches(Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) -> "Invalid email format"
+        val emailError: EmailError? = when {
+            trimmedEmail.isBlank() -> EmailError.Blank
+            !trimmedEmail.matches(Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) -> EmailError.InvalidFormat
             else -> null
         }
 
-        val phoneNumberError = when {
-            trimmedPhoneNumber.isBlank() -> "Phone number is required"
-            !isValidPhoneNumber(trimmedPhoneNumber) -> "Invalid phone number format"
+        val phoneNumberError: PhoneError? = when {
+            trimmedPhoneNumber.isBlank() -> PhoneError.Blank
+            !isValidPhoneNumber(trimmedPhoneNumber) -> PhoneError.InvalidFormat
             else -> null
         }
 
@@ -160,26 +174,24 @@ class SettingsViewModel(
     }
 
     private fun isValidPhoneNumber(phone: String): Boolean {
-        // Basic validation - checks if there are 9-15 digits
         val digitsOnly = phone.replace(Regex("[^0-9]"), "")
         return digitsOnly.length in 9..15
+    }
+
+    fun setRole(role: UserRole) {
+        viewModelScope.launch {
+            val currentProfile = uiState.value.userProfile ?: return@launch
+            updateUserProfileUseCase(currentProfile.copy(roles = listOf(role)))
+        }
     }
 
     fun logout() {
         viewModelScope.launch {
             logoutUseCase()
-            // Navigation happens automatically via authStateFlow in App.kt
         }
     }
 
     fun deleteAccount() {
         // TODO: Implement account deletion when backend ready
-        // - Show confirmation dialog (implemented in UI)
-        // - Call API to delete account
-        // - Clear all local data
-        // - Navigate to login screen
-        viewModelScope.launch {
-            // Placeholder - no action yet
-        }
     }
 }
