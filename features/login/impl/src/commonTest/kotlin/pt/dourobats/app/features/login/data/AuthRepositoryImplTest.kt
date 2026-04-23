@@ -11,8 +11,8 @@ import okio.FileSystem
 import okio.Path.Companion.toPath
 import pt.dourobats.app.core.common.Result
 import pt.dourobats.app.core.common.exception.AuthException
-import pt.dourobats.app.features.login.api.AuthState
-import pt.dourobats.app.features.login.api.LoginMethod
+import pt.dourobats.app.features.login.api.model.AuthState
+import pt.dourobats.app.features.login.api.model.LoginMethod
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test

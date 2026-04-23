@@ -10,9 +10,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import pt.dourobats.app.core.common.Result
 import pt.dourobats.app.core.common.exception.AuthException
-import pt.dourobats.app.features.login.api.AuthState
-import pt.dourobats.app.features.login.api.LoginMethod
-import pt.dourobats.app.features.login.api.AuthRepository
+import pt.dourobats.app.features.login.api.model.AuthState
+import pt.dourobats.app.features.login.api.model.LoginMethod
+import pt.dourobats.app.features.login.api.repository.AuthRepository
 
 /**
  * Implementation of AuthRepository using DataStore for persistence.

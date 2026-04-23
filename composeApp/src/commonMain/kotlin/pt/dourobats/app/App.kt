@@ -30,17 +30,18 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
-import pt.dourobats.app.features.login.api.AuthState
-import pt.dourobats.app.features.settings.api.Language
-import pt.dourobats.app.features.settings.api.Theme
-import pt.dourobats.app.features.login.api.AuthRepository
-import pt.dourobats.app.features.settings.api.SettingsRepository
+import pt.dourobats.app.features.login.api.model.AuthState
+import pt.dourobats.app.features.settings.api.model.Language
+import pt.dourobats.app.features.settings.api.model.Theme
+import pt.dourobats.app.features.login.api.repository.AuthRepository
+import pt.dourobats.app.features.settings.api.repository.SettingsRepository
 import pt.dourobats.app.core.ui.localization.LocalLanguage
 import pt.dourobats.app.core.ui.localization.changeLanguage
 import pt.dourobats.app.core.ui.theme.AppTheme
 import pt.dourobats.app.features.home.HomeRoute
 import pt.dourobats.app.features.home.homeGraph
 import pt.dourobats.app.features.login.LoginRoute
+import pt.dourobats.app.features.login.ui.LoginRoute as LoginRouteScreen
 import pt.dourobats.app.features.schedule.ScheduleRoute
 import pt.dourobats.app.features.schedule.scheduleGraph
 import pt.dourobats.app.features.settings.SettingsRoute
@@ -87,7 +88,7 @@ private fun AppContent() {
             when (authState) {
                 is AuthState.Loading -> Box(modifier = Modifier.fillMaxSize())
                 is AuthState.Authenticated -> MainApp()
-                is AuthState.Unauthenticated -> LoginRoute()
+                is AuthState.Unauthenticated -> LoginRouteScreen()
             }
         }
     }

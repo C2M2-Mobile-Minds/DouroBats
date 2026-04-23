@@ -4,7 +4,7 @@ import kotlinx.coroutines.test.runTest
 import pt.dourobats.app.core.common.Result
 import pt.dourobats.app.core.common.exception.NetworkException
 import pt.dourobats.app.core.common.exception.ValidationException
-import pt.dourobats.app.features.login.api.AuthRepository
+import pt.dourobats.app.features.login.api.repository.AuthRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

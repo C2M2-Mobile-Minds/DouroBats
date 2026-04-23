@@ -3,8 +3,8 @@ package pt.dourobats.app.core.domain.usecase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.datetime.LocalDate
-import pt.dourobats.app.features.schedule.api.Session
-import pt.dourobats.app.features.schedule.api.TrainingRepository
+import pt.dourobats.app.features.schedule.api.model.Session
+import pt.dourobats.app.features.schedule.api.repository.TrainingRepository
 
 class GetUserBookedSessionsUseCaseImpl(
     private val trainingRepository: TrainingRepository

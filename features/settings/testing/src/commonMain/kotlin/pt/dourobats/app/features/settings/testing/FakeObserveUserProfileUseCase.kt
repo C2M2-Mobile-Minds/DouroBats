@@ -3,7 +3,7 @@ package pt.dourobats.app.features.settings.testing
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import pt.dourobats.app.core.domain.usecase.ObserveUserProfileUseCase
-import pt.dourobats.app.features.login.api.UserProfile
+import pt.dourobats.app.features.login.api.model.UserProfile
 
 class FakeObserveUserProfileUseCase(
     initialProfile: UserProfile = UserProfile.empty()

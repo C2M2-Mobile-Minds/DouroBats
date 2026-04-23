@@ -1,7 +1,7 @@
 package pt.dourobats.app.core.domain.model
 
-import pt.dourobats.app.features.login.api.UserProfile
-import pt.dourobats.app.features.login.api.UserRole
+import pt.dourobats.app.features.login.api.model.UserProfile
+import pt.dourobats.app.features.login.api.model.UserRole
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull

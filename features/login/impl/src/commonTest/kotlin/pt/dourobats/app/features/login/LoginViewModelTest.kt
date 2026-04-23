@@ -10,7 +10,7 @@ import kotlinx.coroutines.test.setMain
 import pt.dourobats.app.core.common.Result
 import pt.dourobats.app.core.common.exception.AuthException
 import pt.dourobats.app.core.common.exception.ValidationException
-import pt.dourobats.app.features.login.api.LoginMethod
+import pt.dourobats.app.features.login.api.model.LoginMethod
 import pt.dourobats.app.core.domain.usecase.LoginWithEmailUseCase
 import pt.dourobats.app.core.domain.usecase.LoginWithSocialUseCase
 import pt.dourobats.app.features.login.testing.FakeLoginWithEmailUseCase

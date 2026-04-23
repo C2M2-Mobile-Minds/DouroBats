@@ -4,10 +4,10 @@ import org.koin.core.module.dsl.*
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
 import pt.dourobats.app.core.domain.di.domainModule
-import pt.dourobats.app.features.login.LoginErrorMapper
-import pt.dourobats.app.features.login.LoginFormValidator
-import pt.dourobats.app.features.login.LoginViewModel
-import pt.dourobats.app.features.login.api.AuthRepository
+import pt.dourobats.app.features.login.ui.LoginErrorMapper
+import pt.dourobats.app.features.login.ui.LoginFormValidator
+import pt.dourobats.app.features.login.ui.LoginViewModel
+import pt.dourobats.app.features.login.api.repository.AuthRepository
 import pt.dourobats.app.features.login.data.AuthRepositoryImpl
 
 /**

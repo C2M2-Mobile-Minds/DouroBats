@@ -9,10 +9,10 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import pt.dourobats.app.core.common.Result
-import pt.dourobats.app.features.schedule.api.Session
-import pt.dourobats.app.features.schedule.api.SessionStatus
-import pt.dourobats.app.features.schedule.api.SkillLevel
-import pt.dourobats.app.features.schedule.api.TrainingRepository
+import pt.dourobats.app.features.schedule.api.model.Session
+import pt.dourobats.app.features.schedule.api.model.SessionStatus
+import pt.dourobats.app.features.schedule.api.model.SkillLevel
+import pt.dourobats.app.features.schedule.api.repository.TrainingRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

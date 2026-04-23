@@ -1,8 +1,8 @@
 package pt.dourobats.app.core.domain.usecase
 
 import kotlinx.coroutines.flow.Flow
-import pt.dourobats.app.features.login.api.UserProfile
-import pt.dourobats.app.features.settings.api.SettingsRepository
+import pt.dourobats.app.features.login.api.model.UserProfile
+import pt.dourobats.app.features.settings.api.repository.SettingsRepository
 
 /**
  * Use case for observing the current user profile as a continuous stream.

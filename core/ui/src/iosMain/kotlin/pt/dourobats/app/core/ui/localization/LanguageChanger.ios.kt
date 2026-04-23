@@ -1,7 +1,7 @@
 package pt.dourobats.app.core.ui.localization
 
 import platform.Foundation.NSUserDefaults
-import pt.dourobats.app.features.settings.api.Language
+import pt.dourobats.app.features.settings.api.model.Language
 
 actual fun changeLanguage(language: Language) {
     // On iOS, update the AppleLanguages preference

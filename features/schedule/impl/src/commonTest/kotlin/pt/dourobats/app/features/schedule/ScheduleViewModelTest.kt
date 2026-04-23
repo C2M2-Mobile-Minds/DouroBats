@@ -12,9 +12,9 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
-import pt.dourobats.app.features.schedule.api.Session
-import pt.dourobats.app.features.schedule.api.SessionStatus
-import pt.dourobats.app.features.schedule.api.SkillLevel
+import pt.dourobats.app.features.schedule.api.model.Session
+import pt.dourobats.app.features.schedule.api.model.SessionStatus
+import pt.dourobats.app.features.schedule.api.model.SkillLevel
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test

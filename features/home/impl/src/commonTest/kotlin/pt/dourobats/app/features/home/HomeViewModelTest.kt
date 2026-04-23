@@ -8,8 +8,8 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import pt.dourobats.app.features.login.api.UserProfile
-import pt.dourobats.app.features.login.api.UserRole
+import pt.dourobats.app.features.login.api.model.UserProfile
+import pt.dourobats.app.features.login.api.model.UserRole
 import pt.dourobats.app.features.settings.testing.FakeObserveUserProfileUseCase
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest

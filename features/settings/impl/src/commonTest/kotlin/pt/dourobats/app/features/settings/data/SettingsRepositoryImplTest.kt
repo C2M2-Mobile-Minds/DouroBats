@@ -10,9 +10,9 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import okio.FileSystem
-import pt.dourobats.app.features.settings.api.Language
-import pt.dourobats.app.features.settings.api.Theme
-import pt.dourobats.app.features.login.api.UserProfile
+import pt.dourobats.app.features.settings.api.model.Language
+import pt.dourobats.app.features.settings.api.model.Theme
+import pt.dourobats.app.features.login.api.model.UserProfile
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest

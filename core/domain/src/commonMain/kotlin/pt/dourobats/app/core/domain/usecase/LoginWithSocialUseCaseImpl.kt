@@ -1,8 +1,8 @@
 package pt.dourobats.app.core.domain.usecase
 
 import pt.dourobats.app.core.common.Result
-import pt.dourobats.app.features.login.api.LoginMethod
-import pt.dourobats.app.features.login.api.AuthRepository
+import pt.dourobats.app.features.login.api.model.LoginMethod
+import pt.dourobats.app.features.login.api.repository.AuthRepository
 
 class LoginWithSocialUseCaseImpl(
     private val authRepository: AuthRepository

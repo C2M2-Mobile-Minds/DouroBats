@@ -1,7 +1,7 @@
 package pt.dourobats.app.core.ui.localization
 
 import android.os.LocaleList
-import pt.dourobats.app.features.settings.api.Language
+import pt.dourobats.app.features.settings.api.model.Language
 import java.util.Locale
 
 actual fun changeLanguage(language: Language) {

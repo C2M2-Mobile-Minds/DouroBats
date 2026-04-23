@@ -1,7 +1,7 @@
 package pt.dourobats.app.features.settings.testing
 
 import pt.dourobats.app.core.domain.usecase.UpdateUserProfileUseCase
-import pt.dourobats.app.features.login.api.UserProfile
+import pt.dourobats.app.features.login.api.model.UserProfile
 
 class FakeUpdateUserProfileUseCase : UpdateUserProfileUseCase {
     var lastProfile: UserProfile? = null

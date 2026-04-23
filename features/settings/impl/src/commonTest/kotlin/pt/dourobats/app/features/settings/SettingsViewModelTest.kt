@@ -8,9 +8,9 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import pt.dourobats.app.features.settings.api.Language
-import pt.dourobats.app.features.settings.api.Theme
-import pt.dourobats.app.features.login.api.UserProfile
+import pt.dourobats.app.features.settings.api.model.Language
+import pt.dourobats.app.features.settings.api.model.Theme
+import pt.dourobats.app.features.login.api.model.UserProfile
 import pt.dourobats.app.features.login.testing.FakeLogoutUseCase
 import pt.dourobats.app.features.settings.testing.FakeObserveLanguageUseCase
 import pt.dourobats.app.features.settings.testing.FakeObserveThemeUseCase

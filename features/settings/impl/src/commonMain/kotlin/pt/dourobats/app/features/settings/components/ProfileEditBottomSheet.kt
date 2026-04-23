@@ -18,11 +18,11 @@ import dourobats.features.settings.generated.resources.Res
 import dourobats.features.settings.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
 import pt.dourobats.app.core.ui.theme.LocalSpacing
-import pt.dourobats.app.features.settings.DisplayNameError
-import pt.dourobats.app.features.settings.EmailError
-import pt.dourobats.app.features.settings.PhoneError
-import pt.dourobats.app.features.settings.ProfileEditState
-import pt.dourobats.app.features.settings.SettingsUiState
+import pt.dourobats.app.features.settings.ui.DisplayNameError
+import pt.dourobats.app.features.settings.ui.EmailError
+import pt.dourobats.app.features.settings.ui.PhoneError
+import pt.dourobats.app.features.settings.ui.ProfileEditState
+import pt.dourobats.app.features.settings.ui.SettingsUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -1,7 +1,7 @@
 package pt.dourobats.app.features.login.testing
 
 import pt.dourobats.app.core.common.Result
-import pt.dourobats.app.features.login.api.LoginMethod
+import pt.dourobats.app.features.login.api.model.LoginMethod
 import pt.dourobats.app.core.domain.usecase.LoginWithSocialUseCase
 
 class FakeLoginWithSocialUseCase : LoginWithSocialUseCase {

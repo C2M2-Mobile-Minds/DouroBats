@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dourobats.features.settings.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
-import pt.dourobats.app.features.settings.api.Theme
+import pt.dourobats.app.features.settings.api.model.Theme
 
 /**
  * Dialog for selecting application theme.
