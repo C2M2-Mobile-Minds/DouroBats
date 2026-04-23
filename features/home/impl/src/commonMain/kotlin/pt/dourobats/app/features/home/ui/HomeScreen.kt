@@ -27,18 +27,24 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.dourobats.app.core.ui.components.AppHeader
 import pt.dourobats.app.core.ui.components.DetailRow
+import pt.dourobats.app.core.ui.components.SectionTitle
 import pt.dourobats.app.core.ui.theme.LocalSpacing
+import pt.dourobats.app.features.schedule.api.ui.UpcomingSessionItem
 
 @Composable
-fun HomeRoute(
-    modifier: Modifier = Modifier,
-) {
+fun HomeRoute() {
     val viewModel: HomeViewModel = koinViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     HomeScreen(
         state = uiState,
-        onAction = { },
-        modifier = modifier
+        onAction = { action ->
+            when (action) {
+                is HomeAction.OnCreateSessionClick -> { /* TODO: navigate to create session */ }
+                is HomeAction.OnViewReportsClick -> { /* TODO: navigate to reports */ }
+                is HomeAction.OnManageMembersClick -> { /* TODO: navigate to members */ }
+                is HomeAction.OnNewsClick -> { /* TODO: navigate to news detail */ }
+            }
+        }
     )
 }
 
@@ -83,14 +89,14 @@ internal fun HomeScreen(
             // Management Portal Section (committee members only)
             if (state.isCommitteeUser) {
                 SectionTitle(title = stringResource(Res.string.home_management_portal))
-                ManagementPortalGrid()
+                ManagementPortalGrid(onAction = onAction)
 
                 Spacer(modifier = Modifier.height(spacing.large))
             }
 
             // Latest News Section
             SectionTitle(title = stringResource(Res.string.home_latest_news))
-            LatestNewsSection()
+            LatestNewsSection(onAction = onAction)
 
             Spacer(modifier = Modifier.height(spacing.large))
 
@@ -142,7 +148,7 @@ internal fun HomeScreen(
 }
 
 @Composable
-private fun ManagementPortalGrid() {
+private fun ManagementPortalGrid(onAction: (HomeAction) -> Unit) {
     val spacing = LocalSpacing.current
     Column(verticalArrangement = Arrangement.spacedBy(spacing.standard)) {
         Row(
@@ -154,6 +160,7 @@ private fun ManagementPortalGrid() {
                 icon = Icons.Default.Add,
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 iconColor = MaterialTheme.colorScheme.primary,
+                onClick = { onAction(HomeAction.OnCreateSessionClick) },
                 modifier = Modifier.weight(1f)
             )
             PortalItem(
@@ -161,6 +168,7 @@ private fun ManagementPortalGrid() {
                 icon = Icons.Default.PieChart,
                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                 iconColor = MaterialTheme.colorScheme.secondary,
+                onClick = { onAction(HomeAction.OnViewReportsClick) },
                 modifier = Modifier.weight(1f)
             )
         }
@@ -173,6 +181,7 @@ private fun ManagementPortalGrid() {
                 icon = Icons.Default.Groups,
                 containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                 iconColor = MaterialTheme.colorScheme.tertiary,
+                onClick = { onAction(HomeAction.OnManageMembersClick) },
                 modifier = Modifier.weight(1f)
             )
             PortalItem(
@@ -180,6 +189,7 @@ private fun ManagementPortalGrid() {
                 icon = Icons.Default.Campaign,
                 containerColor = MaterialTheme.colorScheme.surfaceVariant,
                 iconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                onClick = { },
                 modifier = Modifier.weight(1f)
             )
         }
@@ -192,10 +202,12 @@ private fun PortalItem(
     icon: ImageVector,
     containerColor: Color,
     iconColor: Color,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val spacing = LocalSpacing.current
     Card(
+        onClick = onClick,
         modifier = modifier.aspectRatio(1.2f),
         shape = RoundedCornerShape(6.dp), // rounded-md for serious athletic tone
         colors = CardDefaults.cardColors(containerColor = containerColor),
@@ -224,13 +236,14 @@ private fun PortalItem(
 }
 
 @Composable
-private fun LatestNewsSection() {
+private fun LatestNewsSection(onAction: (HomeAction) -> Unit) {
     val spacing = LocalSpacing.current
     val newsItems = listOf(
         Triple(stringResource(Res.string.home_tag_tournament), "Summer Championship 2024", "Registration is now open for the annual summer championship. Secure your spot before it fills up!"),
         Triple(stringResource(Res.string.home_tag_update), "New Venue Wing", "We have expanded our facilities with 4 new courts available for booking starting next week."),
         Triple(stringResource(Res.string.home_tag_event), "Community Night", "Join us for our monthly community gathering with friendly matches and refreshments for all members.")
     )
+    val newsIds = listOf("news_1", "news_2", "news_3")
     val pagerState = rememberPagerState(pageCount = { newsItems.size })
 
     Column(verticalArrangement = Arrangement.spacedBy(spacing.small)) {
@@ -241,7 +254,12 @@ private fun LatestNewsSection() {
             modifier = Modifier.fillMaxWidth()
         ) { page ->
             val (tag, title, description) = newsItems[page]
-            NewsCard(tag = tag, title = title, description = description)
+            NewsCard(
+                tag = tag,
+                title = title,
+                description = description,
+                onClick = { onAction(HomeAction.OnNewsClick(newsIds[page])) }
+            )
         }
 
         Row(
@@ -270,10 +288,12 @@ private fun LatestNewsSection() {
 private fun NewsCard(
     tag: String,
     title: String,
-    description: String
+    description: String,
+    onClick: () -> Unit
 ) {
     val spacing = LocalSpacing.current
     Card(
+        onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(6.dp), // rounded-md for serious athletic tone
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest), // Component layer - "Active Card"
@@ -328,18 +348,6 @@ private fun NewsCard(
             }
         }
     }
-}
-
-@Composable
-private fun SectionTitle(title: String) {
-    val spacing = LocalSpacing.current
-    Text(
-        text = title,
-        style = MaterialTheme.typography.titleLarge,
-        fontWeight = FontWeight.Bold,
-        color = MaterialTheme.colorScheme.onBackground,
-        modifier = Modifier.padding(bottom = spacing.small)
-    )
 }
 
 @Composable
@@ -421,70 +429,6 @@ private fun NextSessionCard() {
                 icon = Icons.Default.Groups,
                 text = stringResource(Res.string.home_participants, 5, 12),
                 color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-        }
-    }
-}
-
-@Composable
-private fun UpcomingSessionItem(
-    sport: String,
-    location: String,
-    time: String,
-    participants: String,
-    icon: ImageVector
-) {
-    val spacing = LocalSpacing.current
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(6.dp), // rounded-md for serious athletic tone
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest // Component layer - "Active Card"
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = spacing.cardElevation)
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(spacing.standard)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Surface(
-                    modifier = Modifier.size(44.dp),
-                    shape = CircleShape,
-                    color = MaterialTheme.colorScheme.surfaceVariant
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = icon,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.width(spacing.standard))
-                Column {
-                    Text(
-                        text = sport,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Text(
-                        text = "$location • $time",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-            Text(
-                text = participants,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
             )
         }
     }
