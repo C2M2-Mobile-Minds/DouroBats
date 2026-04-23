@@ -3,6 +3,7 @@ package pt.dourobats.app.features.login.data
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -12,7 +13,6 @@ import okio.Path.Companion.toPath
 import pt.dourobats.app.core.common.Result
 import pt.dourobats.app.features.login.api.exception.AuthException
 import pt.dourobats.app.features.login.api.model.AuthState
-import pt.dourobats.app.features.login.api.model.LoginMethod
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -20,6 +20,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class AuthRepositoryImplTest {
 
     private val testDispatcher = StandardTestDispatcher()
@@ -43,200 +44,93 @@ class AuthRepositoryImplTest {
 
     @AfterTest
     fun tearDown() {
-        // Clean up test file
         try {
             FileSystem.SYSTEM.delete(testFile, mustExist = false)
         } catch (e: Exception) {
-            // Ignore if file doesn't exist
+            // Ignore
         }
     }
 
     @Test
-    fun `loginWithEmail with correct credentials returns success`() = runTest(testDispatcher) {
-        // When
-        val result = repository.loginWithEmail("user@dourobats.com", "123456")
-
-        // Then
+    fun `requestLoginCode always returns success`() = runTest(testDispatcher) {
+        val result = repository.requestLoginCode("any@test.com")
         assertTrue(result is Result.Success)
     }
 
     @Test
-    fun `loginWithEmail with incorrect email returns error`() = runTest(testDispatcher) {
-        // When
-        val result = repository.loginWithEmail("wrong@email.com", "123456")
+    fun `requestLoginCode with any email returns success`() = runTest(testDispatcher) {
+        val result = repository.requestLoginCode("unknown@example.com")
+        assertTrue(result is Result.Success)
+    }
 
-        // Then
+    @Test
+    fun `verifyLoginCode with correct code returns success`() = runTest(testDispatcher) {
+        val result = repository.verifyLoginCode("any@test.com", "123456")
+        assertTrue(result is Result.Success)
+    }
+
+    @Test
+    fun `verifyLoginCode with wrong code returns InvalidCredentials error`() = runTest(testDispatcher) {
+        val result = repository.verifyLoginCode("any@test.com", "wrong")
         assertTrue(result is Result.Error)
         assertTrue(result.exception is AuthException.InvalidCredentials)
     }
 
     @Test
-    fun `loginWithEmail with incorrect password returns error`() = runTest(testDispatcher) {
-        // When
-        val result = repository.loginWithEmail("user@dourobats.com", "wrong_password")
+    fun `verifyLoginCode with correct code persists auth state`() = runTest(testDispatcher) {
+        repository.verifyLoginCode("any@test.com", "123456")
+        advanceUntilIdle()
 
-        // Then
-        assertTrue(result is Result.Error)
-        assertTrue(result.exception is AuthException.InvalidCredentials)
-    }
-
-    @Test
-    fun `loginWithEmail persists auth state to DataStore`() = runTest(testDispatcher) {
-        // When
-        repository.loginWithEmail("user@dourobats.com", "123456")
-
-        // Then
         val authState = repository.authStateFlow.first()
         assertTrue(authState is AuthState.Authenticated)
         assertEquals("mock_user_001", authState.userId)
-        assertEquals("user@dourobats.com", authState.email)
-        assertEquals(LoginMethod.EMAIL, authState.loginMethod)
+        assertEquals("any@test.com", authState.email)
     }
 
     @Test
-    fun `loginWithSocial with Google succeeds`() = runTest(testDispatcher) {
-        // When
-        val result = repository.loginWithSocial(LoginMethod.GOOGLE)
+    fun `verifyLoginCode with wrong code does not persist auth state`() = runTest(testDispatcher) {
+        repository.verifyLoginCode("any@test.com", "wrong")
+        advanceUntilIdle()
 
-        // Then
-        assertTrue(result is Result.Success)
         val authState = repository.authStateFlow.first()
-        assertTrue(authState is AuthState.Authenticated)
-        assertEquals("user@gmail.com", authState.email)
-        assertEquals(LoginMethod.GOOGLE, authState.loginMethod)
+        assertTrue(authState is AuthState.Unauthenticated)
     }
 
     @Test
-    fun `loginWithSocial with Facebook succeeds`() = runTest(testDispatcher) {
-        // When
-        val result = repository.loginWithSocial(LoginMethod.FACEBOOK)
-
-        // Then
-        assertTrue(result is Result.Success)
+    fun `initial auth state is Unauthenticated`() = runTest(testDispatcher) {
         val authState = repository.authStateFlow.first()
-        assertTrue(authState is AuthState.Authenticated)
-        assertEquals("user@facebook.com", authState.email)
-        assertEquals(LoginMethod.FACEBOOK, authState.loginMethod)
-    }
-
-    @Test
-    fun `loginWithSocial with Apple succeeds`() = runTest(testDispatcher) {
-        // When
-        val result = repository.loginWithSocial(LoginMethod.APPLE)
-
-        // Then
-        assertTrue(result is Result.Success)
-        val authState = repository.authStateFlow.first()
-        assertTrue(authState is AuthState.Authenticated)
-        assertEquals("user@apple.com", authState.email)
-        assertEquals(LoginMethod.APPLE, authState.loginMethod)
-    }
-
-    @Test
-    fun `loginWithSocial with EMAIL method returns error`() = runTest(testDispatcher) {
-        // When
-        val result = repository.loginWithSocial(LoginMethod.EMAIL)
-
-        // Then
-        assertTrue(result is Result.Error)
-        assertTrue(result.exception is IllegalArgumentException)
+        assertTrue(authState is AuthState.Unauthenticated)
     }
 
     @Test
     fun `logout clears auth state`() = runTest(testDispatcher) {
-        // Given - login first
-        repository.loginWithEmail("user@dourobats.com", "123456")
+        repository.verifyLoginCode("any@test.com", "123456")
+        advanceUntilIdle()
         assertTrue(repository.authStateFlow.first() is AuthState.Authenticated)
 
-        // When
         repository.logout()
-
-        // Then
-        val authState = repository.authStateFlow.first()
-        assertTrue(authState is AuthState.Unauthenticated)
+        advanceUntilIdle()
+        assertTrue(repository.authStateFlow.first() is AuthState.Unauthenticated)
     }
 
     @Test
-    fun `isAuthenticated returns false initially`() = runTest(testDispatcher) {
-        // When
-        val isAuth = repository.isAuthenticated()
-
-        // Then
-        assertFalse(isAuth)
+    fun `isAuthenticated returns false when not logged in`() = runTest(testDispatcher) {
+        assertFalse(repository.isAuthenticated())
     }
 
     @Test
-    fun `isAuthenticated returns true after login`() = runTest(testDispatcher) {
-        // Given
-        repository.loginWithEmail("user@dourobats.com", "123456")
-
-        // When
-        val isAuth = repository.isAuthenticated()
-
-        // Then
-        assertTrue(isAuth)
+    fun `isAuthenticated returns true after verifyLoginCode with correct code`() = runTest(testDispatcher) {
+        repository.verifyLoginCode("any@test.com", "123456")
+        advanceUntilIdle()
+        assertTrue(repository.isAuthenticated())
     }
 
     @Test
     fun `isAuthenticated returns false after logout`() = runTest(testDispatcher) {
-        // Given - login then logout
-        repository.loginWithEmail("user@dourobats.com", "123456")
+        repository.verifyLoginCode("any@test.com", "123456")
+        advanceUntilIdle()
         repository.logout()
-
-        // When
-        val isAuth = repository.isAuthenticated()
-
-        // Then
-        assertFalse(isAuth)
-    }
-
-    @Test
-    fun `authStateFlow emits Unauthenticated initially`() = runTest(testDispatcher) {
-        // When
-        val authState = repository.authStateFlow.first()
-
-        // Then
-        assertTrue(authState is AuthState.Unauthenticated)
-    }
-
-    @Test
-    fun `authStateFlow emits Authenticated after successful login`() = runTest(testDispatcher) {
-        // Given
-        repository.loginWithEmail("user@dourobats.com", "123456")
-
-        // When
-        val authState = repository.authStateFlow.first()
-
-        // Then
-        assertTrue(authState is AuthState.Authenticated)
-        assertEquals("user@dourobats.com", authState.email)
-    }
-
-    @Test
-    fun `authStateFlow persists across repository instances`() = runTest(testDispatcher) {
-        // Given - login and create new repository instance
-        repository.loginWithEmail("user@dourobats.com", "123456")
-        val newRepository = AuthRepositoryImpl(dataStore)
-
-        // When
-        val authState = newRepository.authStateFlow.first()
-
-        // Then - should still be authenticated
-        assertTrue(authState is AuthState.Authenticated)
-        assertEquals("user@dourobats.com", authState.email)
-    }
-
-    @Test
-    fun `loginWithSocial persists auth state across repository instances`() = runTest(testDispatcher) {
-        // Given - social login and create new repository instance
-        repository.loginWithSocial(LoginMethod.GOOGLE)
-        val newRepository = AuthRepositoryImpl(dataStore)
-
-        // When
-        val authState = newRepository.authStateFlow.first()
-
-        // Then - should still be authenticated
-        assertTrue(authState is AuthState.Authenticated)
-        assertEquals(LoginMethod.GOOGLE, authState.loginMethod)
+        advanceUntilIdle()
+        assertFalse(repository.isAuthenticated())
     }
 }

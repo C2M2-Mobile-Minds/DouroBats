@@ -1,32 +1,16 @@
 package pt.dourobats.app.features.login.ui
 
-/**
- * UI state for the login screen.
- *
- * @property email Current email input value
- * @property password Current password input value
- * @property isPasswordVisible Whether the password is visible or masked
- * @property isLoading Whether a login request is in progress
- * @property errorMessage General error message to display
- * @property emailError Validation error for email field
- * @property passwordError Validation error for password field
- */
 internal data class LoginUiState(
     val email: String = "",
-    val password: String = "",
-    val isPasswordVisible: Boolean = false,
+    val code: String = "",
+    val step: LoginStep = LoginStep.EMAIL,
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
     val emailError: String? = null,
-    val passwordError: String? = null
+    val codeError: String? = null,
 ) {
-    /**
-     * Checks if the form is valid for submission.
-     * Valid when both fields have no errors and are not empty.
-     */
-    val isFormValid: Boolean
-        get() = email.isNotBlank() &&
-                password.isNotBlank() &&
-                emailError == null &&
-                passwordError == null
+    enum class LoginStep { EMAIL, VERIFY_CODE }
+
+    val isEmailValid: Boolean get() = email.isNotBlank() && emailError == null
+    val isCodeValid: Boolean get() = code.length == 6 && codeError == null
 }

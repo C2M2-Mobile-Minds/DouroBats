@@ -9,11 +9,12 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import pt.dourobats.app.core.common.Result
 import pt.dourobats.app.features.login.api.exception.AuthException
-import pt.dourobats.app.features.login.api.model.LoginMethod
-import pt.dourobats.app.features.login.testing.FakeLoginWithEmailUseCase
-import pt.dourobats.app.features.login.testing.FakeLoginWithSocialUseCase
+import pt.dourobats.app.features.login.testing.FakeRequestLoginCodeUseCase
+import pt.dourobats.app.features.login.testing.FakeVerifyLoginCodeUseCase
+import pt.dourobats.app.features.login.ui.LoginAction
 import pt.dourobats.app.features.login.ui.LoginErrorMapper
 import pt.dourobats.app.features.login.ui.LoginFormValidator
+import pt.dourobats.app.features.login.ui.LoginUiState.LoginStep
 import pt.dourobats.app.features.login.ui.LoginViewModel
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -27,30 +28,24 @@ import kotlin.test.assertTrue
 class LoginViewModelTest {
 
     private lateinit var viewModel: LoginViewModel
-    private lateinit var fakeLoginWithEmail: FakeLoginWithEmailUseCase
-    private lateinit var fakeLoginWithSocial: FakeLoginWithSocialUseCase
-    private lateinit var validator: LoginFormValidator
-    private lateinit var errorMapper: LoginErrorMapper
-
+    private lateinit var fakeRequestLoginCode: FakeRequestLoginCodeUseCase
+    private lateinit var fakeVerifyLoginCode: FakeVerifyLoginCodeUseCase
     private val testDispatcher = StandardTestDispatcher()
 
     @BeforeTest
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        fakeLoginWithEmail = FakeLoginWithEmailUseCase().apply {
-            invoke = { _, _ -> Result.Success(Unit) }
-        }
-        fakeLoginWithSocial = FakeLoginWithSocialUseCase().apply {
+        fakeRequestLoginCode = FakeRequestLoginCodeUseCase().apply {
             invoke = { _ -> Result.Success(Unit) }
         }
-        validator = LoginFormValidator()
-        errorMapper = LoginErrorMapper()
-
+        fakeVerifyLoginCode = FakeVerifyLoginCodeUseCase().apply {
+            invoke = { _, _ -> Result.Success(Unit) }
+        }
         viewModel = LoginViewModel(
-            loginWithEmailUseCase = fakeLoginWithEmail.build(),
-            loginWithSocialUseCase = fakeLoginWithSocial.build(),
-            validator = validator,
-            errorMapper = errorMapper
+            requestLoginCode = fakeRequestLoginCode.build(),
+            verifyLoginCode = fakeVerifyLoginCode.build(),
+            validator = LoginFormValidator(),
+            errorMapper = LoginErrorMapper(),
         )
     }
 
@@ -59,215 +54,155 @@ class LoginViewModelTest {
         Dispatchers.resetMain()
     }
 
-    // Initial State Tests
     @Test
-    fun `initial state is correct`() {
+    fun `initial state is EMAIL step`() {
         val state = viewModel.uiState.value
-
+        assertEquals(LoginStep.EMAIL, state.step)
         assertEquals("", state.email)
-        assertEquals("", state.password)
-        assertFalse(state.isPasswordVisible)
+        assertEquals("", state.code)
         assertFalse(state.isLoading)
         assertNull(state.errorMessage)
-        assertNull(state.emailError)
-        assertNull(state.passwordError)
-        assertFalse(state.isFormValid)
     }
 
-    // Email Update Tests
     @Test
-    fun `updateEmail updates email field`() {
-        viewModel.updateEmail("test@example.com")
-
+    fun `UpdateEmail updates email field`() {
+        viewModel.onAction(LoginAction.UpdateEmail("test@example.com"))
         assertEquals("test@example.com", viewModel.uiState.value.email)
     }
 
     @Test
-    fun `updateEmail with invalid format shows error`() {
-        viewModel.updateEmail("invalid-email")
-
+    fun `UpdateEmail with invalid format shows error`() {
+        viewModel.onAction(LoginAction.UpdateEmail("invalid-email"))
         assertEquals("Invalid email format", viewModel.uiState.value.emailError)
     }
 
     @Test
-    fun `updateEmail with valid format clears error`() {
-        viewModel.updateEmail("test@example.com")
-
+    fun `UpdateEmail with valid format clears emailError`() {
+        viewModel.onAction(LoginAction.UpdateEmail("test@example.com"))
         assertNull(viewModel.uiState.value.emailError)
     }
 
     @Test
-    fun `updateEmail clears general error message`() {
-        fakeLoginWithEmail.invoke = { _, _ -> Result.Error(AuthException.InvalidCredentials()) }
-        viewModel.updateEmail("test@example.com")
-        viewModel.updatePassword("password123")
-        viewModel.loginWithEmail()
-        testDispatcher.scheduler.advanceUntilIdle()
+    fun `UpdateEmail clears general error message`() = runTest(testDispatcher) {
+        fakeRequestLoginCode = FakeRequestLoginCodeUseCase().apply {
+            invoke = { _ -> Result.Error(AuthException.Unknown()) }
+        }
+        viewModel = LoginViewModel(
+            requestLoginCode = fakeRequestLoginCode.build(),
+            verifyLoginCode = fakeVerifyLoginCode.build(),
+            validator = LoginFormValidator(),
+            errorMapper = LoginErrorMapper(),
+        )
+        viewModel.onAction(LoginAction.UpdateEmail("test@example.com"))
+        viewModel.onAction(LoginAction.SubmitEmail)
+        advanceUntilIdle()
+        assertTrue(viewModel.uiState.value.errorMessage != null)
 
-        viewModel.updateEmail("new@example.com")
-
+        viewModel.onAction(LoginAction.UpdateEmail("new@example.com"))
         assertNull(viewModel.uiState.value.errorMessage)
     }
 
-    // Password Update Tests
     @Test
-    fun `updatePassword updates password field`() {
-        viewModel.updatePassword("password123")
-
-        assertEquals("password123", viewModel.uiState.value.password)
-    }
-
-    @Test
-    fun `updatePassword with short password shows error`() {
-        viewModel.updatePassword("12345")
-
-        assertEquals("Password must be at least 6 characters", viewModel.uiState.value.passwordError)
-    }
-
-    @Test
-    fun `updatePassword with valid length clears error`() {
-        viewModel.updatePassword("password123")
-
-        assertNull(viewModel.uiState.value.passwordError)
-    }
-
-    // Password Visibility Tests
-    @Test
-    fun `togglePasswordVisibility changes visibility state`() {
-        assertFalse(viewModel.uiState.value.isPasswordVisible)
-
-        viewModel.togglePasswordVisibility()
-        assertTrue(viewModel.uiState.value.isPasswordVisible)
-
-        viewModel.togglePasswordVisibility()
-        assertFalse(viewModel.uiState.value.isPasswordVisible)
-    }
-
-    // Form Validation Tests
-    @Test
-    fun `form is invalid when email is empty`() {
-        viewModel.updatePassword("password123")
-
-        assertFalse(viewModel.uiState.value.isFormValid)
-    }
-
-    @Test
-    fun `form is invalid when password is empty`() {
-        viewModel.updateEmail("test@example.com")
-
-        assertFalse(viewModel.uiState.value.isFormValid)
-    }
-
-    @Test
-    fun `form is valid when email and password are valid`() {
-        viewModel.updateEmail("test@example.com")
-        viewModel.updatePassword("password123")
-
-        assertTrue(viewModel.uiState.value.isFormValid)
-    }
-
-    // Login Success Tests
-    @Test
-    fun `successful email login clears password and loading state`() = runTest {
-        fakeLoginWithEmail.invoke = { _, _ -> Result.Success(Unit) }
-
-        viewModel.updateEmail("test@example.com")
-        viewModel.updatePassword("password123")
-        viewModel.loginWithEmail()
-
+    fun `SubmitEmail on success transitions to VERIFY_CODE step`() = runTest(testDispatcher) {
+        viewModel.onAction(LoginAction.UpdateEmail("test@example.com"))
+        viewModel.onAction(LoginAction.SubmitEmail)
         advanceUntilIdle()
-
-        val state = viewModel.uiState.value
-        assertEquals("", state.password)
-        assertFalse(state.isLoading)
-        assertNull(state.errorMessage)
-    }
-
-    // Login Failure Tests
-    @Test
-    fun `failed email login shows error message`() = runTest {
-        fakeLoginWithEmail.invoke = { _, _ -> Result.Error(AuthException.InvalidCredentials()) }
-
-        viewModel.updateEmail("test@example.com")
-        viewModel.updatePassword("wrongpassword")
-        viewModel.loginWithEmail()
-
-        advanceUntilIdle()
-
-        val state = viewModel.uiState.value
-        assertEquals("Invalid email or password. Please try again.", state.errorMessage)
-        assertFalse(state.isLoading)
-    }
-
-    @Test
-    fun `login with invalid form does not call use case`() = runTest {
-        var wasCalled = false
-        fakeLoginWithEmail.invoke = { _, _ -> wasCalled = true; Result.Success(Unit) }
-
-        viewModel.updateEmail("invalid-email")
-        viewModel.updatePassword("pass")
-        viewModel.loginWithEmail()
-
-        advanceUntilIdle()
-
-        assertFalse(wasCalled)
-    }
-
-    @Test
-    fun `login sets loading state during execution`() = runTest {
-        fakeLoginWithEmail.invoke = { _, _ -> Result.Success(Unit) }
-
-        viewModel.updateEmail("test@example.com")
-        viewModel.updatePassword("password123")
-        viewModel.loginWithEmail()
-
-        advanceUntilIdle()
-
+        assertEquals(LoginStep.VERIFY_CODE, viewModel.uiState.value.step)
         assertFalse(viewModel.uiState.value.isLoading)
     }
 
-    // Social Login Tests
     @Test
-    fun `successful social login clears loading state`() = runTest {
-        fakeLoginWithSocial.invoke = { _ -> Result.Success(Unit) }
-
-        viewModel.loginWithSocial(LoginMethod.GOOGLE)
-
+    fun `SubmitEmail shows error on failure`() = runTest(testDispatcher) {
+        fakeRequestLoginCode = FakeRequestLoginCodeUseCase().apply {
+            invoke = { _ -> Result.Error(AuthException.Unknown()) }
+        }
+        viewModel = LoginViewModel(
+            requestLoginCode = fakeRequestLoginCode.build(),
+            verifyLoginCode = fakeVerifyLoginCode.build(),
+            validator = LoginFormValidator(),
+            errorMapper = LoginErrorMapper(),
+        )
+        viewModel.onAction(LoginAction.UpdateEmail("test@example.com"))
+        viewModel.onAction(LoginAction.SubmitEmail)
         advanceUntilIdle()
-
-        val state = viewModel.uiState.value
-        assertFalse(state.isLoading)
-        assertNull(state.errorMessage)
-    }
-
-    @Test
-    fun `failed social login shows error message`() = runTest {
-        fakeLoginWithSocial.invoke = { _ -> Result.Error(AuthException.Unknown()) }
-
-        viewModel.loginWithSocial(LoginMethod.FACEBOOK)
-
-        advanceUntilIdle()
-
-        val state = viewModel.uiState.value
-        assertEquals("Authentication failed. Please try again.", state.errorMessage)
-        assertFalse(state.isLoading)
-    }
-
-    // Error Clearing Tests
-    @Test
-    fun `clearError removes error message`() = runTest {
-        fakeLoginWithEmail.invoke = { _, _ -> Result.Error(AuthException.InvalidCredentials()) }
-
-        viewModel.updateEmail("test@example.com")
-        viewModel.updatePassword("wrongpassword")
-        viewModel.loginWithEmail()
-
-        advanceUntilIdle()
-
+        assertEquals(LoginStep.EMAIL, viewModel.uiState.value.step)
         assertTrue(viewModel.uiState.value.errorMessage != null)
+        assertFalse(viewModel.uiState.value.isLoading)
+    }
 
-        viewModel.clearError()
+    @Test
+    fun `SubmitEmail sets loading false after request completes`() = runTest(testDispatcher) {
+        viewModel.onAction(LoginAction.UpdateEmail("test@example.com"))
+        viewModel.onAction(LoginAction.SubmitEmail)
+        advanceUntilIdle()
+        assertFalse(viewModel.uiState.value.isLoading)
+    }
 
+    @Test
+    fun `UpdateCode updates code field`() {
+        viewModel.onAction(LoginAction.UpdateCode("123456"))
+        assertEquals("123456", viewModel.uiState.value.code)
+    }
+
+    @Test
+    fun `UpdateCode with partial code shows error`() {
+        viewModel.onAction(LoginAction.UpdateCode("123"))
+        assertEquals("Enter 6 digits", viewModel.uiState.value.codeError)
+    }
+
+    @Test
+    fun `UpdateCode with 6 digits clears codeError`() {
+        viewModel.onAction(LoginAction.UpdateCode("123456"))
+        assertNull(viewModel.uiState.value.codeError)
+    }
+
+    @Test
+    fun `SubmitCode calls verifyLoginCode`() = runTest(testDispatcher) {
+        var capturedCode: String? = null
+        fakeVerifyLoginCode = FakeVerifyLoginCodeUseCase().apply {
+            invoke = { _, code -> capturedCode = code; Result.Success(Unit) }
+        }
+        viewModel = LoginViewModel(
+            requestLoginCode = fakeRequestLoginCode.build(),
+            verifyLoginCode = fakeVerifyLoginCode.build(),
+            validator = LoginFormValidator(),
+            errorMapper = LoginErrorMapper(),
+        )
+        viewModel.onAction(LoginAction.UpdateCode("123456"))
+        viewModel.onAction(LoginAction.SubmitCode)
+        advanceUntilIdle()
+        assertEquals("123456", capturedCode)
+    }
+
+    @Test
+    fun `SubmitCode shows error on wrong code`() = runTest(testDispatcher) {
+        fakeVerifyLoginCode = FakeVerifyLoginCodeUseCase().apply {
+            invoke = { _, _ -> Result.Error(AuthException.InvalidCredentials()) }
+        }
+        viewModel = LoginViewModel(
+            requestLoginCode = fakeRequestLoginCode.build(),
+            verifyLoginCode = fakeVerifyLoginCode.build(),
+            validator = LoginFormValidator(),
+            errorMapper = LoginErrorMapper(),
+        )
+        viewModel.onAction(LoginAction.UpdateCode("000000"))
+        viewModel.onAction(LoginAction.SubmitCode)
+        advanceUntilIdle()
+        assertTrue(viewModel.uiState.value.errorMessage != null)
+        assertFalse(viewModel.uiState.value.isLoading)
+    }
+
+    @Test
+    fun `BackToEmail resets to EMAIL step`() = runTest(testDispatcher) {
+        viewModel.onAction(LoginAction.UpdateEmail("test@example.com"))
+        viewModel.onAction(LoginAction.SubmitEmail)
+        advanceUntilIdle()
+        assertEquals(LoginStep.VERIFY_CODE, viewModel.uiState.value.step)
+
+        viewModel.onAction(LoginAction.BackToEmail)
+        assertEquals(LoginStep.EMAIL, viewModel.uiState.value.step)
+        assertEquals("", viewModel.uiState.value.code)
+        assertNull(viewModel.uiState.value.codeError)
         assertNull(viewModel.uiState.value.errorMessage)
     }
 }

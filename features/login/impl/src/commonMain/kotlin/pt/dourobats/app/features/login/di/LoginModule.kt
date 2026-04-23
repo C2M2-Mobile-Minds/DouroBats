@@ -1,27 +1,27 @@
 package pt.dourobats.app.features.login.di
 
-import org.koin.core.module.dsl.*
 import org.koin.core.module.dsl.factoryOf
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
-import pt.dourobats.app.features.login.api.usecase.LoginWithEmailUseCase
-import pt.dourobats.app.features.login.api.usecase.LoginWithSocialUseCase
 import pt.dourobats.app.features.login.api.usecase.LogoutUseCase
 import pt.dourobats.app.features.login.api.usecase.ObserveAuthStateUseCase
+import pt.dourobats.app.features.login.api.usecase.RequestLoginCodeUseCase
+import pt.dourobats.app.features.login.api.usecase.VerifyLoginCodeUseCase
 import pt.dourobats.app.features.login.data.AuthRepositoryImpl
 import pt.dourobats.app.features.login.repository.AuthRepository
 import pt.dourobats.app.features.login.ui.LoginErrorMapper
 import pt.dourobats.app.features.login.ui.LoginFormValidator
 import pt.dourobats.app.features.login.ui.LoginViewModel
-import pt.dourobats.app.features.login.usecase.LoginWithEmailUseCaseImpl
-import pt.dourobats.app.features.login.usecase.LoginWithSocialUseCaseImpl
 import pt.dourobats.app.features.login.usecase.LogoutUseCaseImpl
 import pt.dourobats.app.features.login.usecase.ObserveAuthStateUseCaseImpl
+import pt.dourobats.app.features.login.usecase.RequestLoginCodeUseCaseImpl
+import pt.dourobats.app.features.login.usecase.VerifyLoginCodeUseCaseImpl
 
 val loginModule = module {
     single<AuthRepository> { AuthRepositoryImpl(get()) }
 
-    factory<LoginWithEmailUseCase> { LoginWithEmailUseCaseImpl(get()) }
-    factory<LoginWithSocialUseCase> { LoginWithSocialUseCaseImpl(get()) }
+    factory<RequestLoginCodeUseCase> { RequestLoginCodeUseCaseImpl(get()) }
+    factory<VerifyLoginCodeUseCase> { VerifyLoginCodeUseCaseImpl(get()) }
     factory<LogoutUseCase> { LogoutUseCaseImpl(get()) }
     factory<ObserveAuthStateUseCase> { ObserveAuthStateUseCaseImpl(get()) }
 
@@ -30,10 +30,10 @@ val loginModule = module {
 
     viewModel {
         LoginViewModel(
-            loginWithEmailUseCase = get(),
-            loginWithSocialUseCase = get(),
+            requestLoginCode = get(),
+            verifyLoginCode = get(),
             validator = get(),
-            errorMapper = get()
+            errorMapper = get(),
         )
     }
 }
