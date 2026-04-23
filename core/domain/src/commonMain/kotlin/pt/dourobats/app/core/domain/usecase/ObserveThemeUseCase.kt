@@ -1,8 +1,8 @@
 package pt.dourobats.app.core.domain.usecase
 
 import kotlinx.coroutines.flow.Flow
-import pt.dourobats.app.core.model.Theme
-import pt.dourobats.app.core.repository.SettingsRepository
+import pt.dourobats.app.features.settings.api.Theme
+import pt.dourobats.app.features.settings.api.SettingsRepository
 
 /**
  * Use case for observing the current theme setting as a continuous stream.

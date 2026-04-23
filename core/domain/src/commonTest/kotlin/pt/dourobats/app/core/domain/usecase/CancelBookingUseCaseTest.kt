@@ -7,8 +7,8 @@ import kotlinx.datetime.LocalDate
 import pt.dourobats.app.core.common.Result
 import pt.dourobats.app.core.common.exception.NetworkException
 import pt.dourobats.app.core.common.exception.ValidationException
-import pt.dourobats.app.core.model.Session
-import pt.dourobats.app.core.repository.TrainingRepository
+import pt.dourobats.app.features.schedule.api.Session
+import pt.dourobats.app.features.schedule.api.TrainingRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

@@ -2,8 +2,8 @@ package pt.dourobats.app.core.domain.usecase
 
 import kotlinx.coroutines.test.runTest
 import pt.dourobats.app.core.common.Result
-import pt.dourobats.app.core.model.LoginMethod
-import pt.dourobats.app.core.repository.AuthRepository
+import pt.dourobats.app.features.login.api.LoginMethod
+import pt.dourobats.app.features.login.api.AuthRepository
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -62,7 +62,7 @@ class LogoutUseCaseTest {
             return false
         }
 
-        override val authStateFlow: kotlinx.coroutines.flow.Flow<pt.dourobats.app.core.model.AuthState>
-            get() = kotlinx.coroutines.flow.flowOf(pt.dourobats.app.core.model.AuthState.Unauthenticated)
+        override val authStateFlow: kotlinx.coroutines.flow.Flow<pt.dourobats.app.features.login.api.AuthState>
+            get() = kotlinx.coroutines.flow.flowOf(pt.dourobats.app.features.login.api.AuthState.Unauthenticated)
     }
 }

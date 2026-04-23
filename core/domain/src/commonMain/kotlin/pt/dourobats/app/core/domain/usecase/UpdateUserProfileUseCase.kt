@@ -1,7 +1,7 @@
 package pt.dourobats.app.core.domain.usecase
 
-import pt.dourobats.app.core.model.UserProfile
-import pt.dourobats.app.core.repository.SettingsRepository
+import pt.dourobats.app.features.login.api.UserProfile
+import pt.dourobats.app.features.settings.api.SettingsRepository
 
 /**
  * Use case for saving an updated user profile.

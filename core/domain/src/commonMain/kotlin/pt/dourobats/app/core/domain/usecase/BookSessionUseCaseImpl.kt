@@ -2,7 +2,7 @@ package pt.dourobats.app.core.domain.usecase
 
 import pt.dourobats.app.core.common.Result
 import pt.dourobats.app.core.common.exception.ValidationException
-import pt.dourobats.app.core.repository.TrainingRepository
+import pt.dourobats.app.features.schedule.api.TrainingRepository
 
 class BookSessionUseCaseImpl(
     private val trainingRepository: TrainingRepository

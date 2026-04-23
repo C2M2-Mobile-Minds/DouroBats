@@ -1,6 +1,6 @@
 package pt.dourobats.app.core.domain.usecase
 
-import pt.dourobats.app.core.repository.AuthRepository
+import pt.dourobats.app.features.login.api.AuthRepository
 
 class LogoutUseCaseImpl(
     private val authRepository: AuthRepository

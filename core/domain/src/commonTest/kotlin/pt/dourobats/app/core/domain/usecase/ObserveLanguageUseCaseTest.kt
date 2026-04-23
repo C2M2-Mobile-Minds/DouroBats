@@ -4,10 +4,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import pt.dourobats.app.core.model.Language
-import pt.dourobats.app.core.model.Theme
-import pt.dourobats.app.core.model.UserProfile
-import pt.dourobats.app.core.repository.SettingsRepository
+import pt.dourobats.app.features.settings.api.Language
+import pt.dourobats.app.features.settings.api.Theme
+import pt.dourobats.app.features.login.api.UserProfile
+import pt.dourobats.app.features.settings.api.SettingsRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

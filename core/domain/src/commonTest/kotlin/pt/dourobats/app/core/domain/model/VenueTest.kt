@@ -1,5 +1,7 @@
-package pt.dourobats.app.core.model
+package pt.dourobats.app.core.domain.model
 
+import pt.dourobats.app.features.schedule.api.Sport
+import pt.dourobats.app.features.schedule.api.Venue
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull

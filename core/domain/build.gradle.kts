@@ -6,9 +6,10 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.core.model)
+            implementation(projects.features.login.api)
+            implementation(projects.features.schedule.api)
+            implementation(projects.features.settings.api)
             implementation(projects.core.common)
-            implementation(projects.core.repository)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)
             implementation(libs.koin.core)
@@ -16,6 +17,9 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutines.test)
+            implementation(projects.features.login.api)
+            implementation(projects.features.schedule.api)
+            implementation(projects.features.settings.api)
         }
     }
 }

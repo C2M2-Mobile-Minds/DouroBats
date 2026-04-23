@@ -4,7 +4,7 @@ import kotlinx.coroutines.test.runTest
 import pt.dourobats.app.core.common.Result
 import pt.dourobats.app.core.common.exception.NetworkException
 import pt.dourobats.app.core.common.exception.ValidationException
-import pt.dourobats.app.core.repository.AuthRepository
+import pt.dourobats.app.features.login.api.AuthRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -182,7 +182,7 @@ class LoginWithEmailUseCaseTest {
             }
         }
 
-        override suspend fun loginWithSocial(method: pt.dourobats.app.core.model.LoginMethod): Result<Unit> {
+        override suspend fun loginWithSocial(method: pt.dourobats.app.features.login.api.LoginMethod): Result<Unit> {
             return Result.Success(Unit)
         }
 
@@ -194,7 +194,7 @@ class LoginWithEmailUseCaseTest {
             return false
         }
 
-        override val authStateFlow: kotlinx.coroutines.flow.Flow<pt.dourobats.app.core.model.AuthState>
-            get() = kotlinx.coroutines.flow.flowOf(pt.dourobats.app.core.model.AuthState.Unauthenticated)
+        override val authStateFlow: kotlinx.coroutines.flow.Flow<pt.dourobats.app.features.login.api.AuthState>
+            get() = kotlinx.coroutines.flow.flowOf(pt.dourobats.app.features.login.api.AuthState.Unauthenticated)
     }
 }

@@ -1,5 +1,6 @@
-package pt.dourobats.app.core.model
+package pt.dourobats.app.core.domain.model
 
+import pt.dourobats.app.features.login.api.UserProfile
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull

@@ -1,5 +1,7 @@
-package pt.dourobats.app.core.model
+package pt.dourobats.app.core.domain.model
 
+import pt.dourobats.app.features.schedule.api.Booking
+import pt.dourobats.app.features.schedule.api.BookingStatus
 import kotlinx.datetime.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
