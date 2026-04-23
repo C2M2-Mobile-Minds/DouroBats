@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
@@ -29,88 +30,76 @@ import dourobats.core.ui.generated.resources.*
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.koinInject
-import pt.dourobats.app.features.login.api.usecase.ObserveAuthStateUseCase
-import pt.dourobats.app.features.settings.api.usecase.ObserveLanguageUseCase
-import pt.dourobats.app.features.settings.api.usecase.ObserveThemeUseCase
-import pt.dourobats.app.features.login.api.model.AuthState
-import pt.dourobats.app.features.settings.api.model.Language
-import pt.dourobats.app.features.settings.api.model.Theme
-import pt.dourobats.app.core.ui.localization.LocalLanguage
-import pt.dourobats.app.core.ui.localization.changeLanguage
-import pt.dourobats.app.core.ui.theme.AppTheme
+import org.koin.compose.viewmodel.koinViewModel
 import pt.dourobats.app.features.home.HomeRoute
 import pt.dourobats.app.features.home.homeGraph
 import pt.dourobats.app.features.login.LoginRoute
-import pt.dourobats.app.features.login.ui.LoginRoute as LoginRouteScreen
+import pt.dourobats.app.features.login.loginGraph
+import pt.dourobats.app.features.login.api.model.AuthState
 import pt.dourobats.app.features.schedule.ScheduleRoute
 import pt.dourobats.app.features.schedule.scheduleGraph
 import pt.dourobats.app.features.settings.SettingsRoute
 import pt.dourobats.app.features.settings.settingsGraph
+import pt.dourobats.app.core.ui.localization.LocalLanguage
+import pt.dourobats.app.core.ui.localization.changeLanguage
+import pt.dourobats.app.core.ui.theme.AppTheme
 
 @Composable
 @Preview
 fun App() {
-    AppContent()
-}
+    val viewModel: MainViewModel = koinViewModel()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-@Composable
-private fun AppContent() {
-    val observeLanguage: ObserveLanguageUseCase = koinInject()
-    val observeTheme: ObserveThemeUseCase = koinInject()
-    val observeAuthState: ObserveAuthStateUseCase = koinInject()
-
-    var preferencesLoaded by remember { mutableStateOf(false) }
-
-    val savedLanguage by remember { observeLanguage() }.collectAsState(initial = null)
-    val savedTheme by remember { observeTheme() }.collectAsState(initial = null)
-    val authState by remember { observeAuthState() }.collectAsState(initial = AuthState.Loading)
-
-    LaunchedEffect(savedLanguage, savedTheme, authState) {
-        if (savedLanguage != null && savedTheme != null && authState !is AuthState.Loading) {
-            preferencesLoaded = true
-        }
-    }
-
-    if (!preferencesLoaded) {
+    if (!uiState.isReady) {
         Box(modifier = Modifier.fillMaxSize())
         return
     }
 
-    val currentLanguage = savedLanguage ?: Language.ENGLISH_US
-    val useDarkTheme = when (savedTheme ?: Theme.LIGHT) {
-        Theme.LIGHT -> false
-        Theme.DARK -> true
-    }
+    remember(uiState.language) { changeLanguage(uiState.language) }
 
-    remember(currentLanguage) { changeLanguage(currentLanguage) }
-
-    AppTheme(darkTheme = useDarkTheme) {
-        CompositionLocalProvider(LocalLanguage provides currentLanguage) {
-            when (authState) {
-                is AuthState.Loading -> Box(modifier = Modifier.fillMaxSize())
-                is AuthState.Authenticated -> MainApp()
-                is AuthState.Unauthenticated -> LoginRouteScreen()
-            }
+    AppTheme(darkTheme = uiState.useDarkTheme) {
+        CompositionLocalProvider(LocalLanguage provides uiState.language) {
+            DouroBatsNavigation(authState = uiState.authState)
         }
     }
 }
 
 @Composable
-private fun MainApp() {
+private fun DouroBatsNavigation(authState: AuthState) {
     val navController = rememberNavController()
+    val startDestination = if (authState is AuthState.Authenticated) HomeRoute else LoginRoute
+
+    LaunchedEffect(authState) {
+        when (authState) {
+            is AuthState.Authenticated -> navController.navigate(HomeRoute) {
+                popUpTo(0) { inclusive = true }
+            }
+            is AuthState.Unauthenticated -> navController.navigate(LoginRoute) {
+                popUpTo(0) { inclusive = true }
+            }
+            is AuthState.Loading -> Unit
+        }
+    }
+
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val isOnAuthenticatedRoute = bottomNavItems.any {
+        backStackEntry?.destination?.hasRoute(it.route::class) == true
+    }
 
     Scaffold(
         contentWindowInsets = WindowInsets(0),
         bottomBar = {
-            AppBottomNavBar(navController = navController)
+            if (isOnAuthenticatedRoute) {
+                AppBottomNavBar(navController = navController)
+            }
         }
     ) { paddingValues ->
         NavHost(
             navController = navController,
-            startDestination = HomeRoute,
+            startDestination = startDestination,
             modifier = Modifier.padding(paddingValues)
         ) {
+            loginGraph()
             homeGraph()
             scheduleGraph()
             settingsGraph()
