@@ -11,7 +11,6 @@ compose.resources {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(projects.features.home.api)
             implementation(projects.features.login.api)
             implementation(projects.core.common)
             implementation(projects.core.ui)
