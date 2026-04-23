@@ -70,10 +70,10 @@ fun SessionCard(
 
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        shape = RoundedCornerShape(6.dp), // rounded-md (0.375rem) for serious athletic tone
+        elevation = CardDefaults.cardElevation(defaultElevation = spacing.cardElevation),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest // Component layer - "Active Card"
         )
     ) {
         Column(
@@ -106,22 +106,22 @@ fun SessionCard(
                     Box(
                         modifier = Modifier
                             .background(
-                                color = MaterialTheme.colorScheme.primary,
-                                shape = RoundedCornerShape(8.dp)
+                                color = MaterialTheme.colorScheme.secondaryContainer, // Pitch Green for "Attending"
+                                shape = RoundedCornerShape(6.dp) // rounded-md for consistency
                             )
                             .padding(horizontal = spacing.small, vertical = spacing.extraSmall)
                     ) {
                         Text(
                             text = bookedBadgeText,
                             style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onPrimary,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer,
                             fontWeight = FontWeight.Bold
                         )
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(spacing.small))
+            Spacer(modifier = Modifier.height(spacing.medium))
 
             // Date (only shown when showDate = true)
             if (showDate) {
@@ -192,7 +192,7 @@ fun SessionCard(
                 )
             }
 
-            Spacer(modifier = Modifier.height(spacing.small))
+            Spacer(modifier = Modifier.height(spacing.medium))
 
             // Action button
             when {

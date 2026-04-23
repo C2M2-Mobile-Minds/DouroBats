@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Training/Schedule Screen -->
+    <string name="training_title">Calendario de Entrenamientos</string>
+    <string name="training_coming_soon">Vista de calendario próximamente...</string>
+
+    <!-- Calendar - Day Names (Short) -->
+    <string name="day_monday_short">Lun</string>
+    <string name="day_tuesday_short">Mar</string>
+    <string name="day_wednesday_short">Mié</string>
+    <string name="day_thursday_short">Jue</string>
+    <string name="day_friday_short">Vie</string>
+    <string name="day_saturday_short">Sáb</string>
+    <string name="day_sunday_short">Dom</string>
+
+    <!-- Calendar - View Mode -->
+    <string name="view_mode_week">Semana</string>
+    <string name="view_mode_month">Mes</string>
+
+    <!-- Calendar - Month Names (Full) -->
+    <string name="month_january">Enero</string>
+    <string name="month_february">Febrero</string>
+    <string name="month_march">Marzo</string>
+    <string name="month_april">Abril</string>
+    <string name="month_may">Mayo</string>
+    <string name="month_june">Junio</string>
+    <string name="month_july">Julio</string>
+    <string name="month_august">Agosto</string>
+    <string name="month_september">Septiembre</string>
+    <string name="month_october">Octubre</string>
+    <string name="month_november">Noviembre</string>
+    <string name="month_december">Diciembre</string>
+
+    <!-- Session Lists -->
+    <string name="sessions_available_title">Sesiones Disponibles</string>
+    <string name="sessions_my_schedule_title">Mi Agenda</string>
+    <string name="sessions_available_empty">No hay sesiones disponibles en esta fecha</string>
+    <string name="sessions_my_schedule_empty">No tienes sesiones programadas</string>
+    <string name="session_booked_badge">Reservado</string>
+    <string name="session_full_badge">Completo</string>
+
+    <!-- Session Actions -->
+    <string name="session_button_book">Reservar Sesión</string>
+    <string name="session_button_cancel">Cancelar Reserva</string>
+    <string name="session_button_cancel_short">Cancelar</string>
+    <string name="session_button_full">Completo</string>
+    <string name="session_participants_label">%1$d/%2$d participantes</string>
+    <string name="session_book_success">Sesión reservada con éxito</string>
+    <string name="session_cancel_success">Reserva cancelada con éxito</string>
+    <string name="session_book_error">Error al reservar la sesión</string>
+    <string name="session_cancel_error">Error al cancelar la reserva</string>
+    <string name="schedule_today">Hoy</string>
+</resources>

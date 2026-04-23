@@ -7,13 +7,18 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 /**
- * Design tokens for spacing based on Material Design's 8dp grid system.
+ * Kinetic Precision Spacing System
  *
- * This spacing system provides:
- * - Consistent spacing across the entire app
- * - Responsive spacing that adapts to different screen sizes
- * - Semantic naming for better code readability
- * - Easy global adjustments (change once, updates everywhere)
+ * Based on Material Design's 8dp grid, enhanced with editorial design principles.
+ *
+ * ## Philosophy: Tonal Layering
+ *
+ * Spacing creates depth without borders. Use whitespace as a functional tool to define
+ * boundaries. If elements feel crowded, increase spacing using the 8 or 10 scale.
+ *
+ * - Cards "float" 0.5rem (small = 8dp) above their parent surface
+ * - Use spacing.large (24dp) vertical whitespace to separate list items (NO DIVIDERS)
+ * - Overlap elements intentionally to create editorial depth
  *
  * ## Usage
  *
@@ -35,19 +40,20 @@ import androidx.compose.ui.unit.dp
  * ## Spacing Scale (8dp Grid)
  *
  * - **extraSmall (4dp)**: Micro spacing, icon padding, chips
- * - **small (8dp)**: Between related items
+ * - **small (8dp)**: Card elevation effect, between related items
  * - **medium (12dp)**: Card internal padding (small)
  * - **standard (16dp)**: Base screen margin, card spacing
- * - **large (24dp)**: Section spacing
- * - **extraLarge (32dp)**: Major section spacing
+ * - **large (24dp)**: List item separation (replaces dividers), section spacing
+ * - **extraLarge (32dp)**: Major section spacing, ambient shadow blur
  * - **huge (48dp)**: Empty states, hero sections
  *
  * ## Semantic Tokens
  *
  * - **screenHorizontal**: Left/right screen margins (responsive)
  * - **cardPadding**: Internal padding for cards (responsive)
- * - **itemSpacing**: Spacing between list items
+ * - **itemSpacing**: Spacing between related items (NO dividers)
  * - **sectionSpacing**: Spacing between major sections
+ * - **cardElevation**: Visual elevation for floating cards
  *
  * @see createResponsiveSpacing for screen size adaptive spacing
  */
@@ -65,7 +71,10 @@ data class AppSpacing(
     val screenHorizontal: Dp = 16.dp,
     val cardPadding: Dp = 16.dp,
     val itemSpacing: Dp = 8.dp,
-    val sectionSpacing: Dp = 24.dp
+    val sectionSpacing: Dp = 24.dp,
+
+    // Kinetic Precision tokens
+    val cardElevation: Dp = 8.dp  // 0.5rem - cards float above parent surface
 )
 
 /**

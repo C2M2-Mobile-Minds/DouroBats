@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home Screen -->
+    <string name="home_welcome">Olá, %s!</string>
+    <string name="home_welcome_fallback">Bem-vindo!</string>
+    <string name="home_subtitle">Seu app de gestão de vôlei</string>
+    <string name="home_next_session">Próxima Sessão</string>
+    <string name="home_upcoming_sessions">Próximas Sessões</string>
+    <string name="home_announcements">Anúncios</string>
+    <string name="home_booked">Reservado</string>
+    <string name="home_participants">%1$d/%2$d participantes</string>
+    <string name="home_management_portal">Portal de Gestão</string>
+    <string name="home_latest_news">Últimas Notícias</string>
+
+    <!-- Management Portal Actions -->
+    <string name="home_portal_new_session">Nova Sessão</string>
+    <string name="home_portal_reports">Relatórios</string>
+    <string name="home_portal_members">Membros</string>
+    <string name="home_portal_post_news">Publicar Notícia</string>
+
+    <!-- News Tags -->
+    <string name="home_tag_tournament">Torneio</string>
+    <string name="home_tag_update">Atualização</string>
+    <string name="home_tag_event">Evento</string>
+
+    <!-- News Actions -->
+    <string name="home_read_more">Ler Mais</string>
+</resources>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Settings Screen -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_subtitle">Profile and preferences</string>
+
+    <!-- Section Headers -->
+    <string name="settings_section_account">Account</string>
+    <string name="settings_section_preferences">Preferences</string>
+    <string name="settings_section_actions">Actions</string>
+
+    <!-- Account Section -->
+    <string name="settings_display_name">Display Name</string>
+    <string name="settings_email">Email</string>
+    <string name="settings_phone">Phone Number</string>
+    <string name="settings_not_set">Not set</string>
+
+    <!-- Profile Editing -->
+    <string name="settings_edit_profile">Edit Profile</string>
+    <string name="settings_save">Save</string>
+    <string name="settings_save_changes">Save Changes</string>
+    <string name="settings_cancel">Cancel</string>
+
+    <!-- Language Settings -->
+    <string name="settings_language">Language</string>
+    <string name="settings_language_select">Select Language</string>
+    <string name="settings_language_description">Change app display language</string>
+
+    <!-- Theme Settings -->
+    <string name="settings_theme">Theme</string>
+    <string name="settings_theme_select">Select Theme</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_dark_theme">Dark Theme</string>
+    <string name="settings_enabled">Enabled</string>
+    <string name="settings_disabled">Disabled</string>
+
+    <!-- Notifications -->
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_notifications_description">Manage your notification preferences</string>
+    <string name="settings_notifications_title">Notifications</string>
+    <string name="settings_notifications_section_sessions">Sessions</string>
+    <string name="settings_notifications_section_club">Club</string>
+    <string name="settings_notifications_session_reminders">Session Reminders</string>
+    <string name="settings_notifications_session_reminders_desc">Get reminded before your sessions start</string>
+    <string name="settings_notifications_booking_confirmed">Booking Confirmations</string>
+    <string name="settings_notifications_booking_confirmed_desc">Notified when a booking is confirmed or cancelled</string>
+    <string name="settings_notifications_new_sessions">New Sessions Available</string>
+    <string name="settings_notifications_new_sessions_desc">Be the first to know when new sessions are posted</string>
+    <string name="settings_notifications_announcements">Club Announcements</string>
+    <string name="settings_notifications_announcements_desc">News and updates from the club</string>
+    <string name="settings_notifications_session_cancelled">Session Cancellations</string>
+    <string name="settings_notifications_session_cancelled_desc">Alert when a session you booked is cancelled</string>
+
+    <!-- Booking History -->
+    <string name="settings_booking_history">My Booking History</string>
+    <string name="settings_booking_attended">Attended</string>
+    <string name="settings_booking_canceled">Cancelled</string>
+    <string name="settings_booking_upcoming">Upcoming</string>
+
+    <!-- Committee Tools -->
+    <string name="settings_committee_tools">Committee Tools</string>
+    <string name="settings_committee_manage_sessions">Manage Sessions</string>
+    <string name="settings_committee_manage_sessions_description">View and manage committee sessions</string>
+    <string name="settings_committee_view_reports">View Reports</string>
+    <string name="settings_committee_view_reports_description">Access committee reports and analytics</string>
+    <string name="settings_committee_settings">Committee Settings</string>
+    <string name="settings_committee_settings_description">Configure committee preferences</string>
+
+    <!-- Actions -->
+    <string name="settings_logout">Logout</string>
+    <string name="settings_delete_account">Delete Account</string>
+    <string name="settings_delete_account_confirm">Are you sure you want to delete your account? This action cannot be undone.</string>
+    <string name="settings_delete">Delete</string>
+
+    <!-- Validation Errors -->
+    <string name="error_display_name_empty">Display name cannot be empty</string>
+    <string name="error_display_name_short">Must be at least 2 characters</string>
+    <string name="error_phone_empty">Phone number cannot be empty</string>
+    <string name="error_phone_invalid">Invalid phone number format</string>
+
+    <!-- Profile Header -->
+    <string name="settings_profile_picture">Profile picture</string>
+    <string name="settings_no_name">No name set</string>
+    <string name="settings_no_email">No email set</string>
+
+    <!-- Section Headers (additional) -->
+    <string name="settings_section_profile">Profile</string>
+    <string name="settings_section_activity">Activity</string>
+
+    <!-- Role Labels -->
+    <string name="settings_role_athlete">Athlete</string>
+    <string name="settings_role_supporter">Supporter</string>
+    <string name="settings_role_committee">Committee</string>
+    <string name="settings_section_developer">Developer</string>
+    <string name="settings_developer_options">Developer Options</string>
+    <string name="settings_developer_options_description">Mock app state for testing</string>
+    <string name="settings_developer_role">Simulated Role</string>
+    <string name="settings_developer_role_description">Set your role to preview role-based UI</string>
+
+    <!-- Activity -->
+    <string name="settings_sessions_attended">%d sessions attended</string>
+
+    <!-- Profile validation errors -->
+    <string name="settings_error_display_name_blank">Display name is required</string>
+    <string name="settings_error_display_name_too_short">Display name must be at least 2 characters</string>
+    <string name="settings_error_email_blank">Email is required</string>
+    <string name="settings_error_email_invalid">Invalid email format</string>
+    <string name="settings_error_phone_blank">Phone number is required</string>
+    <string name="settings_error_phone_invalid">Invalid phone number format</string>
+</resources>

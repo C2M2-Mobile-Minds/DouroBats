@@ -16,17 +16,15 @@ import androidx.compose.ui.unit.dp
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 
 /**
- * Reusable card container for grouping related content.
+ * Kinetic Precision Section Card
  *
- * Generic, isolated component that can be used across any feature.
- * Provides consistent styling with Material Design 3.
+ * Reusable card container following the "No-Line Rule" and tonal layering principles.
  *
- * ## Features
- * - Rounded corners (configurable)
- * - Elevated surface for better visibility in dark mode (configurable)
- * - Surface color background with tonal elevation
+ * ## Design Principles
+ * - Uses surfaceContainerLowest for the "Active Card" layer
+ * - Rounded corners (rounded-md = 6dp) for serious athletic tone
+ * - Tonal elevation through background shifts, not heavy shadows
  * - Responsive padding using design tokens
- * - Optional section title
  *
  * ## Usage
  *
@@ -39,28 +37,29 @@ import pt.dourobats.app.core.ui.theme.LocalSpacing
  *
  * @param title Optional section title displayed at the top of the card
  * @param modifier Optional modifier for the card
- * @param cornerRadius Corner radius for the card (default: 12.dp)
- * @param elevation Elevation for the card (default: 4.dp for better visibility in dark mode)
+ * @param cornerRadius Corner radius for the card (default: 6dp for rounded-md)
+ * @param elevation Elevation for the card (default: cardElevation from spacing)
  * @param content Card content
  */
 @Composable
 fun SectionCard(
     title: String? = null,
     modifier: Modifier = Modifier,
-    cornerRadius: Dp = 12.dp,
-    elevation: Dp = 4.dp,
+    cornerRadius: Dp = 6.dp, // rounded-md for serious athletic tone
+    elevation: Dp? = null, // Will use spacing.cardElevation by default
     content: @Composable ColumnScope.() -> Unit
 ) {
     val spacing = LocalSpacing.current
+    val cardElevation = elevation ?: spacing.cardElevation
 
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(cornerRadius),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest // Component layer - "Active Card"
         ),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = elevation
+            defaultElevation = cardElevation
         )
     ) {
         Column(
@@ -74,7 +73,7 @@ fun SectionCard(
                     text = it,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(bottom = spacing.small)
+                    modifier = Modifier.padding(bottom = spacing.medium)
                 )
             }
 

@@ -1,7 +1,7 @@
 package pt.dourobats.app.core.ui.localization
 
 import androidx.compose.runtime.staticCompositionLocalOf
-import pt.dourobats.app.core.model.Language
+import pt.dourobats.app.features.settings.api.Language
 
 /**
  * CompositionLocal for the current language.

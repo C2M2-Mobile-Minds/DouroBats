@@ -7,7 +7,8 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.core.model)
+            implementation(projects.features.schedule.api)
+            implementation(projects.features.settings.api)
             api(libs.kotlinx.datetime)  // API because we expose kotlinx.datetime types in public API
         }
     }
