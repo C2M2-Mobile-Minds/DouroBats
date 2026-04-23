@@ -69,21 +69,31 @@ private fun DouroBatsNavigation(authState: AuthState) {
     val navController = rememberNavController()
     val startDestination = if (authState is AuthState.Authenticated) HomeRoute else LoginRoute
 
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = backStackEntry?.destination
+
     LaunchedEffect(authState) {
         when (authState) {
-            is AuthState.Authenticated -> navController.navigate(HomeRoute) {
-                popUpTo(0) { inclusive = true }
+            is AuthState.Authenticated -> {
+                if (currentDestination != null && currentDestination.hasRoute(LoginRoute::class)) {
+                    navController.navigate(HomeRoute) {
+                        popUpTo(LoginRoute) { inclusive = true }
+                    }
+                }
             }
-            is AuthState.Unauthenticated -> navController.navigate(LoginRoute) {
-                popUpTo(0) { inclusive = true }
+            is AuthState.Unauthenticated -> {
+                if (currentDestination != null && !currentDestination.hasRoute(LoginRoute::class)) {
+                    navController.navigate(LoginRoute) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
             }
             is AuthState.Loading -> Unit
         }
     }
 
-    val backStackEntry by navController.currentBackStackEntryAsState()
     val isOnAuthenticatedRoute = bottomNavItems.any {
-        backStackEntry?.destination?.hasRoute(it.route::class) == true
+        currentDestination?.hasRoute(it.route::class) == true
     }
 
     Scaffold(
