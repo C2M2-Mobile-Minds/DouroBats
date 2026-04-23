@@ -3,35 +3,31 @@ package pt.dourobats.app.features.login.di
 import org.koin.core.module.dsl.*
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
-import pt.dourobats.app.core.domain.di.domainModule
+import pt.dourobats.app.core.domain.usecase.LoginWithEmailUseCase
+import pt.dourobats.app.core.domain.usecase.LoginWithSocialUseCase
+import pt.dourobats.app.core.domain.usecase.LogoutUseCase
+import pt.dourobats.app.core.domain.usecase.ObserveAuthStateUseCase
+import pt.dourobats.app.features.login.data.AuthRepositoryImpl
+import pt.dourobats.app.features.login.repository.AuthRepository
 import pt.dourobats.app.features.login.ui.LoginErrorMapper
 import pt.dourobats.app.features.login.ui.LoginFormValidator
 import pt.dourobats.app.features.login.ui.LoginViewModel
-import pt.dourobats.app.features.login.api.repository.AuthRepository
-import pt.dourobats.app.features.login.data.AuthRepositoryImpl
+import pt.dourobats.app.features.login.usecase.LoginWithEmailUseCaseImpl
+import pt.dourobats.app.features.login.usecase.LoginWithSocialUseCaseImpl
+import pt.dourobats.app.features.login.usecase.LogoutUseCaseImpl
+import pt.dourobats.app.features.login.usecase.ObserveAuthStateUseCaseImpl
 
-/**
- * Koin module for the login feature.
- *
- * Registers:
- * - Use cases (domain layer business logic)
- * - Validators (UI-level validation)
- * - Error mappers (domain to UI error translation)
- * - ViewModels (presentation layer orchestration)
- *
- * Following Clean Architecture, dependencies flow inward:
- * ViewModel -> Use Cases -> Repository
- */
 val loginModule = module {
-    includes(domainModule)
-
     single<AuthRepository> { AuthRepositoryImpl(get()) }
 
-    // Utilities (presentation layer) - created fresh for each use
+    factory<LoginWithEmailUseCase> { LoginWithEmailUseCaseImpl(get()) }
+    factory<LoginWithSocialUseCase> { LoginWithSocialUseCaseImpl(get()) }
+    factory<LogoutUseCase> { LogoutUseCaseImpl(get()) }
+    factory<ObserveAuthStateUseCase> { ObserveAuthStateUseCaseImpl(get()) }
+
     factoryOf(::LoginFormValidator)
     factoryOf(::LoginErrorMapper)
 
-    // ViewModel (presentation layer) - created fresh for each screen instance
     viewModel {
         LoginViewModel(
             loginWithEmailUseCase = get(),

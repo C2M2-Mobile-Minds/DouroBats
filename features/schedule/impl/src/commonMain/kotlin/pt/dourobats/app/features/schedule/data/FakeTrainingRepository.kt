@@ -13,7 +13,7 @@ import pt.dourobats.app.core.common.exception.NetworkException
 import pt.dourobats.app.features.schedule.api.model.Session
 import pt.dourobats.app.features.schedule.api.model.SessionStatus
 import pt.dourobats.app.features.schedule.api.model.SkillLevel
-import pt.dourobats.app.features.schedule.api.repository.TrainingRepository
+import pt.dourobats.app.features.schedule.repository.TrainingRepository
 import kotlin.time.Duration.Companion.hours
 
 /**

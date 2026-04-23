@@ -1,8 +1,6 @@
 package pt.dourobats.app.core.domain.usecase
 
 import pt.dourobats.app.core.common.Result
-import pt.dourobats.app.core.common.exception.ValidationException
-import pt.dourobats.app.features.login.api.repository.AuthRepository
 
 /**
  * Use case for authenticating a user with email and password.

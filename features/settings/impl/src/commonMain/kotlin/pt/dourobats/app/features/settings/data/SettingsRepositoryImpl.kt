@@ -11,7 +11,7 @@ import pt.dourobats.app.features.settings.api.model.Language
 import pt.dourobats.app.features.settings.api.model.Theme
 import pt.dourobats.app.features.login.api.model.UserProfile
 import pt.dourobats.app.features.login.api.model.UserRole
-import pt.dourobats.app.features.settings.api.repository.SettingsRepository
+import pt.dourobats.app.features.settings.repository.SettingsRepository
 
 internal class SettingsRepositoryImpl(
     private val dataStore: DataStore<Preferences>

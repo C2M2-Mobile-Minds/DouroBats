@@ -30,11 +30,12 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
+import pt.dourobats.app.core.domain.usecase.ObserveAuthStateUseCase
+import pt.dourobats.app.core.domain.usecase.ObserveLanguageUseCase
+import pt.dourobats.app.core.domain.usecase.ObserveThemeUseCase
 import pt.dourobats.app.features.login.api.model.AuthState
 import pt.dourobats.app.features.settings.api.model.Language
 import pt.dourobats.app.features.settings.api.model.Theme
-import pt.dourobats.app.features.login.api.repository.AuthRepository
-import pt.dourobats.app.features.settings.api.repository.SettingsRepository
 import pt.dourobats.app.core.ui.localization.LocalLanguage
 import pt.dourobats.app.core.ui.localization.changeLanguage
 import pt.dourobats.app.core.ui.theme.AppTheme
@@ -55,14 +56,15 @@ fun App() {
 
 @Composable
 private fun AppContent() {
-    val settingsRepository: SettingsRepository = koinInject()
-    val authRepository: AuthRepository = koinInject()
+    val observeLanguage: ObserveLanguageUseCase = koinInject()
+    val observeTheme: ObserveThemeUseCase = koinInject()
+    val observeAuthState: ObserveAuthStateUseCase = koinInject()
 
     var preferencesLoaded by remember { mutableStateOf(false) }
 
-    val savedLanguage by settingsRepository.languageFlow.collectAsState(initial = null)
-    val savedTheme by settingsRepository.themeFlow.collectAsState(initial = null)
-    val authState by authRepository.authStateFlow.collectAsState(initial = AuthState.Loading)
+    val savedLanguage by remember { observeLanguage() }.collectAsState(initial = null)
+    val savedTheme by remember { observeTheme() }.collectAsState(initial = null)
+    val authState by remember { observeAuthState() }.collectAsState(initial = AuthState.Loading)
 
     LaunchedEffect(savedLanguage, savedTheme, authState) {
         if (savedLanguage != null && savedTheme != null && authState !is AuthState.Loading) {

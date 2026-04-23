@@ -1,0 +1,11 @@
+package pt.dourobats.app.features.settings.usecase
+
+import pt.dourobats.app.core.domain.usecase.SetLanguageUseCase
+import pt.dourobats.app.features.settings.api.model.Language
+import pt.dourobats.app.features.settings.repository.SettingsRepository
+
+internal class SetLanguageUseCaseImpl(
+    private val settingsRepository: SettingsRepository
+) : SetLanguageUseCase {
+    override suspend fun invoke(language: Language) = settingsRepository.setLanguage(language)
+}

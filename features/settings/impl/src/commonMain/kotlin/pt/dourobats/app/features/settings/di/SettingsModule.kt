@@ -2,12 +2,31 @@ package pt.dourobats.app.features.settings.di
 
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
-import pt.dourobats.app.features.settings.ui.SettingsViewModel
-import pt.dourobats.app.features.settings.api.repository.SettingsRepository
+import pt.dourobats.app.core.domain.usecase.ObserveLanguageUseCase
+import pt.dourobats.app.core.domain.usecase.ObserveThemeUseCase
+import pt.dourobats.app.core.domain.usecase.ObserveUserProfileUseCase
+import pt.dourobats.app.core.domain.usecase.SetLanguageUseCase
+import pt.dourobats.app.core.domain.usecase.SetThemeUseCase
+import pt.dourobats.app.core.domain.usecase.UpdateUserProfileUseCase
 import pt.dourobats.app.features.settings.data.SettingsRepositoryImpl
+import pt.dourobats.app.features.settings.repository.SettingsRepository
+import pt.dourobats.app.features.settings.ui.SettingsViewModel
+import pt.dourobats.app.features.settings.usecase.ObserveLanguageUseCaseImpl
+import pt.dourobats.app.features.settings.usecase.ObserveThemeUseCaseImpl
+import pt.dourobats.app.features.settings.usecase.ObserveUserProfileUseCaseImpl
+import pt.dourobats.app.features.settings.usecase.SetLanguageUseCaseImpl
+import pt.dourobats.app.features.settings.usecase.SetThemeUseCaseImpl
+import pt.dourobats.app.features.settings.usecase.UpdateUserProfileUseCaseImpl
 
 val settingsModule = module {
     single<SettingsRepository> { SettingsRepositoryImpl(get()) }
+
+    factory<ObserveLanguageUseCase> { ObserveLanguageUseCaseImpl(get()) }
+    factory<ObserveThemeUseCase> { ObserveThemeUseCaseImpl(get()) }
+    factory<ObserveUserProfileUseCase> { ObserveUserProfileUseCaseImpl(get()) }
+    factory<SetLanguageUseCase> { SetLanguageUseCaseImpl(get()) }
+    factory<SetThemeUseCase> { SetThemeUseCaseImpl(get()) }
+    factory<UpdateUserProfileUseCase> { UpdateUserProfileUseCaseImpl(get()) }
 
     viewModel {
         SettingsViewModel(
