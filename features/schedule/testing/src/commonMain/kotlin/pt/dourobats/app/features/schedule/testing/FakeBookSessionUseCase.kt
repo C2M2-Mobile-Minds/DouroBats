@@ -2,7 +2,7 @@ package pt.dourobats.app.features.schedule.testing
 
 import pt.dourobats.app.core.common.Result
 import pt.dourobats.app.core.common.exception.ValidationException
-import pt.dourobats.app.core.domain.usecase.BookSessionUseCase
+import pt.dourobats.app.features.schedule.api.usecase.BookSessionUseCase
 
 class FakeBookSessionUseCase : BookSessionUseCase {
     var shouldFail: Boolean = false

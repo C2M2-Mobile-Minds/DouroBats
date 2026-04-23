@@ -1,6 +1,6 @@
 package pt.dourobats.app.features.settings.testing
 
-import pt.dourobats.app.core.domain.usecase.SetLanguageUseCase
+import pt.dourobats.app.features.settings.api.usecase.SetLanguageUseCase
 import pt.dourobats.app.features.settings.api.model.Language
 
 class FakeSetLanguageUseCase : SetLanguageUseCase {

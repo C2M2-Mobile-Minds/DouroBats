@@ -1,7 +1,7 @@
 package pt.dourobats.app.features.login.testing
 
 import pt.dourobats.app.core.common.Result
-import pt.dourobats.app.core.domain.usecase.LoginWithEmailUseCase
+import pt.dourobats.app.features.login.api.usecase.LoginWithEmailUseCase
 
 class FakeLoginWithEmailUseCase : LoginWithEmailUseCase {
     var result: Result<Unit> = Result.Success(Unit)

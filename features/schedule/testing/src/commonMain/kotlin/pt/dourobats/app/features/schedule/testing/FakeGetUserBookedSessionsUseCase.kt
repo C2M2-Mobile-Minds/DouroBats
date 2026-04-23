@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.datetime.LocalDate
 import pt.dourobats.app.features.schedule.api.model.Session
-import pt.dourobats.app.core.domain.usecase.GetUserBookedSessionsUseCase
+import pt.dourobats.app.features.schedule.api.usecase.GetUserBookedSessionsUseCase
 
 class FakeGetUserBookedSessionsUseCase : GetUserBookedSessionsUseCase {
     var sessions: List<Session> = emptyList()

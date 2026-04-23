@@ -2,11 +2,11 @@ package pt.dourobats.app.features.schedule.di
 
 import org.koin.core.module.dsl.*
 import org.koin.dsl.module
-import pt.dourobats.app.core.domain.usecase.BookSessionUseCase
-import pt.dourobats.app.core.domain.usecase.CancelBookingUseCase
-import pt.dourobats.app.core.domain.usecase.GetAllSessionsUseCase
-import pt.dourobats.app.core.domain.usecase.GetAvailableSessionsUseCase
-import pt.dourobats.app.core.domain.usecase.GetUserBookedSessionsUseCase
+import pt.dourobats.app.features.schedule.api.usecase.BookSessionUseCase
+import pt.dourobats.app.features.schedule.api.usecase.CancelBookingUseCase
+import pt.dourobats.app.features.schedule.api.usecase.GetAllSessionsUseCase
+import pt.dourobats.app.features.schedule.api.usecase.GetAvailableSessionsUseCase
+import pt.dourobats.app.features.schedule.api.usecase.GetUserBookedSessionsUseCase
 import pt.dourobats.app.features.schedule.data.FakeTrainingRepository
 import pt.dourobats.app.features.schedule.repository.TrainingRepository
 import pt.dourobats.app.features.schedule.ui.ScheduleViewModel

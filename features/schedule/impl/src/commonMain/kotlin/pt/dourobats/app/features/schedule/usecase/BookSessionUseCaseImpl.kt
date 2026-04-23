@@ -2,7 +2,7 @@ package pt.dourobats.app.features.schedule.usecase
 
 import pt.dourobats.app.core.common.Result
 import pt.dourobats.app.core.common.exception.ValidationException
-import pt.dourobats.app.core.domain.usecase.BookSessionUseCase
+import pt.dourobats.app.features.schedule.api.usecase.BookSessionUseCase
 import pt.dourobats.app.features.schedule.repository.TrainingRepository
 
 internal class BookSessionUseCaseImpl(

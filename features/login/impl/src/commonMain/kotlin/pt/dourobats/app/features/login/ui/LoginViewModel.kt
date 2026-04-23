@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import pt.dourobats.app.core.common.Result
 import pt.dourobats.app.features.login.api.model.LoginMethod
-import pt.dourobats.app.core.domain.usecase.LoginWithEmailUseCase
-import pt.dourobats.app.core.domain.usecase.LoginWithSocialUseCase
+import pt.dourobats.app.features.login.api.usecase.LoginWithEmailUseCase
+import pt.dourobats.app.features.login.api.usecase.LoginWithSocialUseCase
 
 /**
  * ViewModel for the login screen.

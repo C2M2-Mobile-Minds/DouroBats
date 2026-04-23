@@ -2,7 +2,7 @@ package pt.dourobats.app.features.login.usecase
 
 import pt.dourobats.app.core.common.Result
 import pt.dourobats.app.core.common.exception.ValidationException
-import pt.dourobats.app.core.domain.usecase.LoginWithEmailUseCase
+import pt.dourobats.app.features.login.api.usecase.LoginWithEmailUseCase
 import pt.dourobats.app.features.login.repository.AuthRepository
 
 internal class LoginWithEmailUseCaseImpl(

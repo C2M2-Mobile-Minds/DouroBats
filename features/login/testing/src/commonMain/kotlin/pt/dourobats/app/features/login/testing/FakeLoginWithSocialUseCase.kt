@@ -2,7 +2,7 @@ package pt.dourobats.app.features.login.testing
 
 import pt.dourobats.app.core.common.Result
 import pt.dourobats.app.features.login.api.model.LoginMethod
-import pt.dourobats.app.core.domain.usecase.LoginWithSocialUseCase
+import pt.dourobats.app.features.login.api.usecase.LoginWithSocialUseCase
 
 class FakeLoginWithSocialUseCase : LoginWithSocialUseCase {
     var result: Result<Unit> = Result.Success(Unit)

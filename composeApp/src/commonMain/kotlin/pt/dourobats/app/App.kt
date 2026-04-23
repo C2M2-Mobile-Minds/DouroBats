@@ -30,9 +30,9 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
-import pt.dourobats.app.core.domain.usecase.ObserveAuthStateUseCase
-import pt.dourobats.app.core.domain.usecase.ObserveLanguageUseCase
-import pt.dourobats.app.core.domain.usecase.ObserveThemeUseCase
+import pt.dourobats.app.features.login.api.usecase.ObserveAuthStateUseCase
+import pt.dourobats.app.features.settings.api.usecase.ObserveLanguageUseCase
+import pt.dourobats.app.features.settings.api.usecase.ObserveThemeUseCase
 import pt.dourobats.app.features.login.api.model.AuthState
 import pt.dourobats.app.features.settings.api.model.Language
 import pt.dourobats.app.features.settings.api.model.Theme

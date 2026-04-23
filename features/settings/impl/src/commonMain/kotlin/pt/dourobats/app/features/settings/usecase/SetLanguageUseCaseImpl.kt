@@ -1,6 +1,6 @@
 package pt.dourobats.app.features.settings.usecase
 
-import pt.dourobats.app.core.domain.usecase.SetLanguageUseCase
+import pt.dourobats.app.features.settings.api.usecase.SetLanguageUseCase
 import pt.dourobats.app.features.settings.api.model.Language
 import pt.dourobats.app.features.settings.repository.SettingsRepository
 

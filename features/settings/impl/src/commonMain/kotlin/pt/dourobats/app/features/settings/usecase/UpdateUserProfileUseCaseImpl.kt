@@ -1,6 +1,6 @@
 package pt.dourobats.app.features.settings.usecase
 
-import pt.dourobats.app.core.domain.usecase.UpdateUserProfileUseCase
+import pt.dourobats.app.features.settings.api.usecase.UpdateUserProfileUseCase
 import pt.dourobats.app.features.login.api.model.UserProfile
 import pt.dourobats.app.features.settings.repository.SettingsRepository
 

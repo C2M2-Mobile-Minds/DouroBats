@@ -12,7 +12,6 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.features.settings.api)
-            implementation(projects.core.domain)
             implementation(projects.core.data)
             implementation(projects.core.common)
             implementation(projects.core.ui)

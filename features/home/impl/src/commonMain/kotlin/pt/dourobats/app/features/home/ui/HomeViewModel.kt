@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import pt.dourobats.app.features.login.api.model.UserRole
-import pt.dourobats.app.core.domain.usecase.ObserveUserProfileUseCase
+import pt.dourobats.app.features.settings.api.usecase.ObserveUserProfileUseCase
 
 internal class HomeViewModel(
     private val observeUserProfile: ObserveUserProfileUseCase

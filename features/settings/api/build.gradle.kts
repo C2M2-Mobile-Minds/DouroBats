@@ -11,6 +11,9 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core)
             api(projects.features.login.api)
         }
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+        }
     }
 }
 

@@ -8,7 +8,6 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.features.settings.api)
             implementation(projects.features.login.api)
-            implementation(projects.core.domain)
             implementation(projects.core.common)
             implementation(libs.kotlinx.coroutines.core)
         }

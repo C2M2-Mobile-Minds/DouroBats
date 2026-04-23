@@ -11,6 +11,9 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core)
             implementation(projects.core.common)
         }
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+        }
     }
 }
 

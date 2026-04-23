@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.datetime.LocalDate
 import pt.dourobats.app.features.schedule.api.model.Session
-import pt.dourobats.app.core.domain.usecase.GetAvailableSessionsUseCase
+import pt.dourobats.app.features.schedule.api.usecase.GetAvailableSessionsUseCase
 
 class FakeGetAvailableSessionsUseCase : GetAvailableSessionsUseCase {
     var sessions: List<Pair<Session, Boolean>> = emptyList()

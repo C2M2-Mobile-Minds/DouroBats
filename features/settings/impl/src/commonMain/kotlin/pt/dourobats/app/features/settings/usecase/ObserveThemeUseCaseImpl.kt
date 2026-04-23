@@ -1,7 +1,7 @@
 package pt.dourobats.app.features.settings.usecase
 
 import kotlinx.coroutines.flow.Flow
-import pt.dourobats.app.core.domain.usecase.ObserveThemeUseCase
+import pt.dourobats.app.features.settings.api.usecase.ObserveThemeUseCase
 import pt.dourobats.app.features.settings.api.model.Theme
 import pt.dourobats.app.features.settings.repository.SettingsRepository
 

@@ -14,11 +14,11 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 import pt.dourobats.app.features.schedule.api.model.Session
-import pt.dourobats.app.core.domain.usecase.GetAllSessionsUseCase
-import pt.dourobats.app.core.domain.usecase.GetAvailableSessionsUseCase
-import pt.dourobats.app.core.domain.usecase.GetUserBookedSessionsUseCase
-import pt.dourobats.app.core.domain.usecase.BookSessionUseCase
-import pt.dourobats.app.core.domain.usecase.CancelBookingUseCase
+import pt.dourobats.app.features.schedule.api.usecase.GetAllSessionsUseCase
+import pt.dourobats.app.features.schedule.api.usecase.GetAvailableSessionsUseCase
+import pt.dourobats.app.features.schedule.api.usecase.GetUserBookedSessionsUseCase
+import pt.dourobats.app.features.schedule.api.usecase.BookSessionUseCase
+import pt.dourobats.app.features.schedule.api.usecase.CancelBookingUseCase
 import pt.dourobats.app.core.common.Result
 import pt.dourobats.app.features.schedule.api.ui.SessionDisplayData
 import kotlin.time.Clock

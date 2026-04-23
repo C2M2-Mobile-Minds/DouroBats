@@ -1,6 +1,6 @@
 package pt.dourobats.app.features.login.testing
 
-import pt.dourobats.app.core.domain.usecase.LogoutUseCase
+import pt.dourobats.app.features.login.api.usecase.LogoutUseCase
 
 class FakeLogoutUseCase : LogoutUseCase {
     var invoked = false

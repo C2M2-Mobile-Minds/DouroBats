@@ -12,7 +12,6 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.features.schedule.api)
-            implementation(projects.core.domain)
             implementation(projects.core.common)
             implementation(projects.core.ui)
             implementation(libs.koin.core)

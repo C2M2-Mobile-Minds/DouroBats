@@ -1,6 +1,6 @@
 package pt.dourobats.app.features.settings.usecase
 
-import pt.dourobats.app.core.domain.usecase.SetThemeUseCase
+import pt.dourobats.app.features.settings.api.usecase.SetThemeUseCase
 import pt.dourobats.app.features.settings.api.model.Theme
 import pt.dourobats.app.features.settings.repository.SettingsRepository
 

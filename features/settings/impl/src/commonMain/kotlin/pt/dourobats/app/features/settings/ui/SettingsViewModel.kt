@@ -12,13 +12,13 @@ import pt.dourobats.app.features.settings.api.model.Language
 import pt.dourobats.app.features.settings.api.model.Theme
 import pt.dourobats.app.features.login.api.model.UserProfile
 import pt.dourobats.app.features.login.api.model.UserRole
-import pt.dourobats.app.core.domain.usecase.LogoutUseCase
-import pt.dourobats.app.core.domain.usecase.ObserveLanguageUseCase
-import pt.dourobats.app.core.domain.usecase.ObserveThemeUseCase
-import pt.dourobats.app.core.domain.usecase.ObserveUserProfileUseCase
-import pt.dourobats.app.core.domain.usecase.SetLanguageUseCase
-import pt.dourobats.app.core.domain.usecase.SetThemeUseCase
-import pt.dourobats.app.core.domain.usecase.UpdateUserProfileUseCase
+import pt.dourobats.app.features.login.api.usecase.LogoutUseCase
+import pt.dourobats.app.features.settings.api.usecase.ObserveLanguageUseCase
+import pt.dourobats.app.features.settings.api.usecase.ObserveThemeUseCase
+import pt.dourobats.app.features.settings.api.usecase.ObserveUserProfileUseCase
+import pt.dourobats.app.features.settings.api.usecase.SetLanguageUseCase
+import pt.dourobats.app.features.settings.api.usecase.SetThemeUseCase
+import pt.dourobats.app.features.settings.api.usecase.UpdateUserProfileUseCase
 
 internal class SettingsViewModel(
     private val observeUserProfile: ObserveUserProfileUseCase,
