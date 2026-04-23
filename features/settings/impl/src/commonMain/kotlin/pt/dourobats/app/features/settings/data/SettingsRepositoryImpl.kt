@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import pt.dourobats.app.core.ui.localization.getSystemLocaleLanguage
 import pt.dourobats.app.features.settings.api.model.Language
 import pt.dourobats.app.features.settings.api.model.Theme
 import pt.dourobats.app.features.login.api.model.UserProfile
@@ -27,11 +28,7 @@ internal class SettingsRepositoryImpl(
 
     override val languageFlow: Flow<Language> = dataStore.data.map { preferences ->
         val languageCode = preferences[languageKey]
-        if (languageCode != null) {
-            Language.fromCode(languageCode)
-        } else {
-            Language.getSystemDefault()
-        }
+        if (languageCode != null) Language.fromCode(languageCode) else getSystemLocaleLanguage()
     }
 
     override suspend fun setLanguage(language: Language) {

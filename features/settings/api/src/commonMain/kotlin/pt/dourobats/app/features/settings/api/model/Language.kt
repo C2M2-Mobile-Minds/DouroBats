@@ -53,9 +53,14 @@ enum class Language(
             return entries.find { it.code == code } ?: ENGLISH_US
         }
 
+        fun fromCodeOrNull(code: String): Language? {
+            return entries.find { it.code.equals(code, ignoreCase = true) }
+                ?: entries.find { code.startsWith(it.code, ignoreCase = true) }
+        }
+
         fun getSystemDefault(): Language {
-            // TODO: Get actual system locale
-            // For now, default to English US
+            // Platform-resolved via getSystemLocaleLanguage() in core:ui.
+            // This fallback is used only in non-UI contexts.
             return ENGLISH_US
         }
     }
