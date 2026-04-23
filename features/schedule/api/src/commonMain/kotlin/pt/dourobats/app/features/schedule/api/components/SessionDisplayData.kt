@@ -1,4 +1,4 @@
-package pt.dourobats.app.core.ui.model
+package pt.dourobats.app.features.schedule.api.components
 
 import pt.dourobats.app.features.schedule.api.Session
 
@@ -7,9 +7,6 @@ import pt.dourobats.app.features.schedule.api.Session
  *
  * Combines Session domain model with presentation-specific information
  * like sport names, icons, venue names, and booking status.
- *
- * This model lives in core:ui to support reusable UI components while
- * keeping feature-specific mapping logic in feature modules.
  *
  * @param session The underlying domain model
  * @param sportName Human-readable sport name (e.g., "Baseball")

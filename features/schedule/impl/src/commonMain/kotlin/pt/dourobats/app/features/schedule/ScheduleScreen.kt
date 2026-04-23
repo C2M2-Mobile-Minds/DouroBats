@@ -28,10 +28,10 @@ import org.koin.compose.viewmodel.koinViewModel
 import pt.dourobats.app.core.ui.components.DetailRow
 import pt.dourobats.app.core.ui.components.StatusBadge
 import pt.dourobats.app.core.ui.components.AppHeader
-import pt.dourobats.app.core.ui.components.calendar.MonthCalendar
-import pt.dourobats.app.core.ui.components.calendar.WeekCalendar
-import pt.dourobats.app.core.ui.components.calendar.YearMonth
-import pt.dourobats.app.core.ui.model.SessionDisplayData
+import pt.dourobats.app.features.schedule.calendar.MonthCalendar
+import pt.dourobats.app.features.schedule.calendar.WeekCalendar
+import pt.dourobats.app.features.schedule.calendar.YearMonth
+import pt.dourobats.app.features.schedule.api.components.SessionDisplayData
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 
 @Composable

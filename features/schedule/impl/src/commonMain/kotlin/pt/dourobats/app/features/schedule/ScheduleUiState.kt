@@ -1,7 +1,7 @@
 package pt.dourobats.app.features.schedule
 
 import kotlinx.datetime.LocalDate
-import pt.dourobats.app.core.ui.model.SessionDisplayData
+import pt.dourobats.app.features.schedule.api.components.SessionDisplayData
 
 /**
  * UI state for the schedule screen.

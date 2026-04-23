@@ -1,4 +1,4 @@
-package pt.dourobats.app.core.ui.components.calendar
+package pt.dourobats.app.features.schedule.calendar
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +20,9 @@ import androidx.compose.ui.unit.dp
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import pt.dourobats.app.core.ui.theme.LocalSpacing
+import pt.dourobats.app.features.schedule.utils.defaultDayNames
+import pt.dourobats.app.features.schedule.utils.minusDays
+import pt.dourobats.app.features.schedule.utils.plusDays
 
 @Composable
 fun WeekCalendar(

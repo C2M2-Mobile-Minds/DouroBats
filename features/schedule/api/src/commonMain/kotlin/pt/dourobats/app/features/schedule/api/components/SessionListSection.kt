@@ -1,4 +1,4 @@
-package pt.dourobats.app.core.ui.components
+package pt.dourobats.app.features.schedule.api.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import pt.dourobats.app.core.ui.theme.LocalSpacing
-import pt.dourobats.app.core.ui.model.SessionDisplayData
 
 /**
  * Section component for displaying a list of sessions.

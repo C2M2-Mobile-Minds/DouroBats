@@ -1,4 +1,4 @@
-package pt.dourobats.app.core.ui.components.calendar
+package pt.dourobats.app.features.schedule.calendar
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.*
@@ -17,6 +17,9 @@ import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import pt.dourobats.app.core.ui.theme.LocalSpacing
+import pt.dourobats.app.features.schedule.utils.defaultDayNames
+import pt.dourobats.app.features.schedule.utils.minusDays
+import pt.dourobats.app.features.schedule.utils.plusDays
 
 /**
  * Year/Month data class for calendar navigation.

@@ -1,4 +1,4 @@
-package pt.dourobats.app.core.ui.components
+package pt.dourobats.app.features.schedule.api.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +27,6 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.number
 import pt.dourobats.app.core.ui.theme.LocalSpacing
-import pt.dourobats.app.core.ui.model.SessionDisplayData
 
 /**
  * Session card component displaying session details.

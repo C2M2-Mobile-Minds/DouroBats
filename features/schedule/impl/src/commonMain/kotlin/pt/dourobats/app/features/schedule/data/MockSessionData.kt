@@ -6,7 +6,7 @@ import kotlinx.datetime.LocalTime
 import pt.dourobats.app.features.schedule.api.Session
 import pt.dourobats.app.features.schedule.api.SessionStatus
 import pt.dourobats.app.features.schedule.api.SkillLevel
-import pt.dourobats.app.core.ui.model.SessionDisplayData
+import pt.dourobats.app.features.schedule.api.components.SessionDisplayData
 import kotlin.time.Duration.Companion.hours
 
 /**

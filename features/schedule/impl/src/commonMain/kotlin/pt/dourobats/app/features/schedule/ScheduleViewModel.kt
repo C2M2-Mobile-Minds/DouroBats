@@ -20,7 +20,7 @@ import pt.dourobats.app.core.domain.usecase.GetUserBookedSessionsUseCase
 import pt.dourobats.app.core.domain.usecase.BookSessionUseCase
 import pt.dourobats.app.core.domain.usecase.CancelBookingUseCase
 import pt.dourobats.app.core.common.Result
-import pt.dourobats.app.core.ui.model.SessionDisplayData
+import pt.dourobats.app.features.schedule.api.components.SessionDisplayData
 import kotlin.time.Clock
 
 /**
