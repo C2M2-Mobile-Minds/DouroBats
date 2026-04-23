@@ -9,12 +9,12 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import pt.dourobats.app.core.common.Result
 import pt.dourobats.app.core.common.exception.AuthException
-import pt.dourobats.app.core.common.exception.ValidationException
 import pt.dourobats.app.features.login.api.model.LoginMethod
-import pt.dourobats.app.features.login.api.usecase.LoginWithEmailUseCase
-import pt.dourobats.app.features.login.api.usecase.LoginWithSocialUseCase
 import pt.dourobats.app.features.login.testing.FakeLoginWithEmailUseCase
 import pt.dourobats.app.features.login.testing.FakeLoginWithSocialUseCase
+import pt.dourobats.app.features.login.ui.LoginErrorMapper
+import pt.dourobats.app.features.login.ui.LoginFormValidator
+import pt.dourobats.app.features.login.ui.LoginViewModel
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -27,8 +27,8 @@ import kotlin.test.assertTrue
 class LoginViewModelTest {
 
     private lateinit var viewModel: LoginViewModel
-    private lateinit var fakeLoginWithEmailUseCase: FakeLoginWithEmailUseCase
-    private lateinit var fakeLoginWithSocialUseCase: FakeLoginWithSocialUseCase
+    private lateinit var fakeLoginWithEmail: FakeLoginWithEmailUseCase
+    private lateinit var fakeLoginWithSocial: FakeLoginWithSocialUseCase
     private lateinit var validator: LoginFormValidator
     private lateinit var errorMapper: LoginErrorMapper
 
@@ -37,14 +37,18 @@ class LoginViewModelTest {
     @BeforeTest
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        fakeLoginWithEmailUseCase = FakeLoginWithEmailUseCase()
-        fakeLoginWithSocialUseCase = FakeLoginWithSocialUseCase()
+        fakeLoginWithEmail = FakeLoginWithEmailUseCase().apply {
+            invoke = { _, _ -> Result.Success(Unit) }
+        }
+        fakeLoginWithSocial = FakeLoginWithSocialUseCase().apply {
+            invoke = { _ -> Result.Success(Unit) }
+        }
         validator = LoginFormValidator()
         errorMapper = LoginErrorMapper()
 
         viewModel = LoginViewModel(
-            loginWithEmailUseCase = fakeLoginWithEmailUseCase,
-            loginWithSocialUseCase = fakeLoginWithSocialUseCase,
+            loginWithEmailUseCase = fakeLoginWithEmail.build(),
+            loginWithSocialUseCase = fakeLoginWithSocial.build(),
             validator = validator,
             errorMapper = errorMapper
         )
@@ -94,14 +98,12 @@ class LoginViewModelTest {
 
     @Test
     fun `updateEmail clears general error message`() {
-        // Set an error first
-        fakeLoginWithEmailUseCase.result = Result.Error(AuthException.InvalidCredentials())
+        fakeLoginWithEmail.invoke = { _, _ -> Result.Error(AuthException.InvalidCredentials()) }
         viewModel.updateEmail("test@example.com")
         viewModel.updatePassword("password123")
         viewModel.loginWithEmail()
         testDispatcher.scheduler.advanceUntilIdle()
 
-        // Now update email
         viewModel.updateEmail("new@example.com")
 
         assertNull(viewModel.uiState.value.errorMessage)
@@ -167,7 +169,7 @@ class LoginViewModelTest {
     // Login Success Tests
     @Test
     fun `successful email login clears password and loading state`() = runTest {
-        fakeLoginWithEmailUseCase.result = Result.Success(Unit)
+        fakeLoginWithEmail.invoke = { _, _ -> Result.Success(Unit) }
 
         viewModel.updateEmail("test@example.com")
         viewModel.updatePassword("password123")
@@ -176,7 +178,7 @@ class LoginViewModelTest {
         advanceUntilIdle()
 
         val state = viewModel.uiState.value
-        assertEquals("", state.password) // Password cleared
+        assertEquals("", state.password)
         assertFalse(state.isLoading)
         assertNull(state.errorMessage)
     }
@@ -184,7 +186,7 @@ class LoginViewModelTest {
     // Login Failure Tests
     @Test
     fun `failed email login shows error message`() = runTest {
-        fakeLoginWithEmailUseCase.result = Result.Error(AuthException.InvalidCredentials())
+        fakeLoginWithEmail.invoke = { _, _ -> Result.Error(AuthException.InvalidCredentials()) }
 
         viewModel.updateEmail("test@example.com")
         viewModel.updatePassword("wrongpassword")
@@ -199,37 +201,35 @@ class LoginViewModelTest {
 
     @Test
     fun `login with invalid form does not call use case`() = runTest {
-        viewModel.updateEmail("invalid-email") // Invalid email
-        viewModel.updatePassword("pass") // Too short
+        var wasCalled = false
+        fakeLoginWithEmail.invoke = { _, _ -> wasCalled = true; Result.Success(Unit) }
+
+        viewModel.updateEmail("invalid-email")
+        viewModel.updatePassword("pass")
         viewModel.loginWithEmail()
 
         advanceUntilIdle()
 
-        assertFalse(fakeLoginWithEmailUseCase.wasCalled)
+        assertFalse(wasCalled)
     }
 
     @Test
     fun `login sets loading state during execution`() = runTest {
-        fakeLoginWithEmailUseCase.result = Result.Success(Unit)
+        fakeLoginWithEmail.invoke = { _, _ -> Result.Success(Unit) }
 
         viewModel.updateEmail("test@example.com")
         viewModel.updatePassword("password123")
         viewModel.loginWithEmail()
 
-        // Before advancement, loading should be true
-        // Note: This might not work in all test scenarios due to timing
-        // but demonstrates the intent
-
         advanceUntilIdle()
 
-        // After completion, loading should be false
         assertFalse(viewModel.uiState.value.isLoading)
     }
 
     // Social Login Tests
     @Test
     fun `successful social login clears loading state`() = runTest {
-        fakeLoginWithSocialUseCase.result = Result.Success(Unit)
+        fakeLoginWithSocial.invoke = { _ -> Result.Success(Unit) }
 
         viewModel.loginWithSocial(LoginMethod.GOOGLE)
 
@@ -242,7 +242,7 @@ class LoginViewModelTest {
 
     @Test
     fun `failed social login shows error message`() = runTest {
-        fakeLoginWithSocialUseCase.result = Result.Error(AuthException.Unknown())
+        fakeLoginWithSocial.invoke = { _ -> Result.Error(AuthException.Unknown()) }
 
         viewModel.loginWithSocial(LoginMethod.FACEBOOK)
 
@@ -256,7 +256,7 @@ class LoginViewModelTest {
     // Error Clearing Tests
     @Test
     fun `clearError removes error message`() = runTest {
-        fakeLoginWithEmailUseCase.result = Result.Error(AuthException.InvalidCredentials())
+        fakeLoginWithEmail.invoke = { _, _ -> Result.Error(AuthException.InvalidCredentials()) }
 
         viewModel.updateEmail("test@example.com")
         viewModel.updatePassword("wrongpassword")
@@ -264,13 +264,10 @@ class LoginViewModelTest {
 
         advanceUntilIdle()
 
-        // Error should be present
         assertTrue(viewModel.uiState.value.errorMessage != null)
 
-        // Clear error
         viewModel.clearError()
 
         assertNull(viewModel.uiState.value.errorMessage)
     }
-
 }

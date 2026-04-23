@@ -1,13 +1,17 @@
 package pt.dourobats.app.features.settings.testing
 
-import pt.dourobats.app.features.settings.api.usecase.SetLanguageUseCase
 import pt.dourobats.app.features.settings.api.model.Language
+import pt.dourobats.app.features.settings.api.usecase.SetLanguageUseCase
 
-class FakeSetLanguageUseCase : SetLanguageUseCase {
-    var lastLanguage: Language? = null
-    var invokeCount = 0
-    override suspend fun invoke(language: Language) {
-        lastLanguage = language
-        invokeCount++
-    }
+fun fakeSetLanguageUseCase(builder: FakeSetLanguageUseCase.() -> Unit = {}): SetLanguageUseCase =
+    FakeSetLanguageUseCase().apply(builder).build()
+
+class FakeSetLanguageUseCase {
+    var invoke: suspend (language: Language) -> Unit = { _ -> throw NotImplementedError() }
+
+    fun build(): SetLanguageUseCase =
+        object : SetLanguageUseCase {
+            override suspend fun invoke(language: Language) =
+                this@FakeSetLanguageUseCase.invoke(language)
+        }
 }

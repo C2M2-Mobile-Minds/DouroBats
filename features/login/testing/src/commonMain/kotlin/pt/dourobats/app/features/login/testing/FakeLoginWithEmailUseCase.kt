@@ -3,16 +3,16 @@ package pt.dourobats.app.features.login.testing
 import pt.dourobats.app.core.common.Result
 import pt.dourobats.app.features.login.api.usecase.LoginWithEmailUseCase
 
-class FakeLoginWithEmailUseCase : LoginWithEmailUseCase {
-    var result: Result<Unit> = Result.Success(Unit)
-    var wasCalled = false
-    var lastEmail: String? = null
-    var lastPassword: String? = null
+fun fakeLoginWithEmailUseCase(builder: FakeLoginWithEmailUseCase.() -> Unit = {}): LoginWithEmailUseCase =
+    FakeLoginWithEmailUseCase().apply(builder).build()
 
-    override suspend fun invoke(email: String, password: String): Result<Unit> {
-        wasCalled = true
-        lastEmail = email
-        lastPassword = password
-        return result
-    }
+class FakeLoginWithEmailUseCase {
+    var invoke: suspend (email: String, password: String) -> Result<Unit> =
+        { _, _ -> throw NotImplementedError() }
+
+    fun build(): LoginWithEmailUseCase =
+        object : LoginWithEmailUseCase {
+            override suspend fun invoke(email: String, password: String): Result<Unit> =
+                this@FakeLoginWithEmailUseCase.invoke(email, password)
+        }
 }

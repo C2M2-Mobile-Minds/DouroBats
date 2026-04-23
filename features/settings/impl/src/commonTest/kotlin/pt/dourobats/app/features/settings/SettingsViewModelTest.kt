@@ -2,22 +2,24 @@ package pt.dourobats.app.features.settings
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import pt.dourobats.app.features.settings.api.model.Language
-import pt.dourobats.app.features.settings.api.model.Theme
 import pt.dourobats.app.features.login.api.model.UserProfile
 import pt.dourobats.app.features.login.testing.FakeLogoutUseCase
+import pt.dourobats.app.features.settings.api.model.Language
+import pt.dourobats.app.features.settings.api.model.Theme
 import pt.dourobats.app.features.settings.testing.FakeObserveLanguageUseCase
 import pt.dourobats.app.features.settings.testing.FakeObserveThemeUseCase
 import pt.dourobats.app.features.settings.testing.FakeObserveUserProfileUseCase
 import pt.dourobats.app.features.settings.testing.FakeSetLanguageUseCase
 import pt.dourobats.app.features.settings.testing.FakeSetThemeUseCase
 import pt.dourobats.app.features.settings.testing.FakeUpdateUserProfileUseCase
+import pt.dourobats.app.features.settings.ui.SettingsViewModel
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -37,24 +39,55 @@ class SettingsViewModelTest {
     private lateinit var logoutUseCase: FakeLogoutUseCase
     private lateinit var viewModel: SettingsViewModel
 
+    // Shared flows for observe fakes
+    private val profileFlow = MutableStateFlow(UserProfile.empty())
+    private val languageFlow = MutableStateFlow(Language.ENGLISH_US)
+    private val themeFlow = MutableStateFlow(Theme.LIGHT)
+
+    // Captured state for action fakes
+    private var lastSetLanguage: Language? = null
+    private var setLanguageCount = 0
+    private var lastSetTheme: Theme? = null
+    private var setThemeCount = 0
+    private var lastUpdateProfile: UserProfile? = null
+    private var updateProfileCount = 0
+    private var logoutInvoked = false
+
     @BeforeTest
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        observeUserProfile = FakeObserveUserProfileUseCase()
-        observeLanguage = FakeObserveLanguageUseCase(Language.ENGLISH_US)
-        observeTheme = FakeObserveThemeUseCase(Theme.LIGHT)
-        setLanguage = FakeSetLanguageUseCase()
-        setTheme = FakeSetThemeUseCase()
-        updateUserProfile = FakeUpdateUserProfileUseCase()
-        logoutUseCase = FakeLogoutUseCase()
+
+        // Reset flows and captured state
+        profileFlow.value = UserProfile.empty()
+        languageFlow.value = Language.ENGLISH_US
+        themeFlow.value = Theme.LIGHT
+        lastSetLanguage = null; setLanguageCount = 0
+        lastSetTheme = null; setThemeCount = 0
+        lastUpdateProfile = null; updateProfileCount = 0
+        logoutInvoked = false
+
+        observeUserProfile = FakeObserveUserProfileUseCase().apply { invoke = { profileFlow } }
+        observeLanguage = FakeObserveLanguageUseCase().apply { invoke = { languageFlow } }
+        observeTheme = FakeObserveThemeUseCase().apply { invoke = { themeFlow } }
+        setLanguage = FakeSetLanguageUseCase().apply {
+            invoke = { lang -> lastSetLanguage = lang; setLanguageCount++ }
+        }
+        setTheme = FakeSetThemeUseCase().apply {
+            invoke = { t -> lastSetTheme = t; setThemeCount++ }
+        }
+        updateUserProfile = FakeUpdateUserProfileUseCase().apply {
+            invoke = { p -> lastUpdateProfile = p; updateProfileCount++ }
+        }
+        logoutUseCase = FakeLogoutUseCase().apply { invoke = { logoutInvoked = true } }
+
         viewModel = SettingsViewModel(
-            observeUserProfile = observeUserProfile,
-            observeLanguage = observeLanguage,
-            observeTheme = observeTheme,
-            setLanguageUseCase = setLanguage,
-            setThemeUseCase = setTheme,
-            updateUserProfileUseCase = updateUserProfile,
-            logoutUseCase = logoutUseCase
+            observeUserProfile = observeUserProfile.build(),
+            observeLanguage = observeLanguage.build(),
+            observeTheme = observeTheme.build(),
+            setLanguageUseCase = setLanguage.build(),
+            setThemeUseCase = setTheme.build(),
+            updateUserProfileUseCase = updateUserProfile.build(),
+            logoutUseCase = logoutUseCase.build()
         )
     }
 
@@ -75,15 +108,15 @@ class SettingsViewModelTest {
         viewModel.setLanguage(Language.PORTUGUESE_BR)
         advanceUntilIdle()
 
-        assertEquals(Language.PORTUGUESE_BR, setLanguage.lastLanguage)
-        assertEquals(1, setLanguage.invokeCount)
+        assertEquals(Language.PORTUGUESE_BR, lastSetLanguage)
+        assertEquals(1, setLanguageCount)
     }
 
     @Test
     fun `currentLanguage updates when observeLanguage flow emits`() = runTest(testDispatcher) {
         val collectorJob = launch { viewModel.currentLanguage.collect {} }
 
-        observeLanguage.languageFlow.value = Language.SPANISH
+        languageFlow.value = Language.SPANISH
         advanceUntilIdle()
 
         assertEquals(Language.SPANISH, viewModel.currentLanguage.value)
@@ -97,7 +130,7 @@ class SettingsViewModelTest {
             advanceUntilIdle()
         }
 
-        assertEquals(Language.entries.size, setLanguage.invokeCount)
+        assertEquals(Language.entries.size, setLanguageCount)
     }
 
     @Test
@@ -105,14 +138,14 @@ class SettingsViewModelTest {
         viewModel.setTheme(Theme.DARK)
         advanceUntilIdle()
 
-        assertEquals(Theme.DARK, setTheme.lastTheme)
-        assertEquals(1, setTheme.invokeCount)
+        assertEquals(Theme.DARK, lastSetTheme)
+        assertEquals(1, setThemeCount)
     }
 
     @Test
     fun `uiState contains user profile when flow emits`() = runTest(testDispatcher) {
         val testProfile = UserProfile(displayName = "Test User", email = "test@example.com", phoneNumber = "+351912345678")
-        observeUserProfile.profileFlow.value = testProfile
+        profileFlow.value = testProfile
 
         val collectorJob = launch { viewModel.uiState.collect {} }
         advanceUntilIdle()
@@ -123,7 +156,7 @@ class SettingsViewModelTest {
 
     @Test
     fun `uiState contains theme when flow emits`() = runTest(testDispatcher) {
-        observeTheme.themeFlow.value = Theme.DARK
+        themeFlow.value = Theme.DARK
 
         val collectorJob = launch { viewModel.uiState.collect {} }
         advanceUntilIdle()
@@ -135,7 +168,7 @@ class SettingsViewModelTest {
     @Test
     fun `saveProfile delegates to UpdateUserProfileUseCase when valid data`() = runTest(testDispatcher) {
         val initial = UserProfile(displayName = "Old", email = "old@example.com", phoneNumber = "+351000000000")
-        observeUserProfile.profileFlow.value = initial
+        profileFlow.value = initial
 
         val collectorJob = launch { viewModel.uiState.collect {} }
         advanceUntilIdle()
@@ -147,17 +180,17 @@ class SettingsViewModelTest {
         viewModel.saveProfile()
         advanceUntilIdle()
 
-        assertEquals("João Silva", updateUserProfile.lastProfile?.displayName)
-        assertEquals("joao@example.com", updateUserProfile.lastProfile?.email)
-        assertEquals("+351912345678", updateUserProfile.lastProfile?.phoneNumber)
-        assertEquals(1, updateUserProfile.invokeCount)
+        assertEquals("João Silva", lastUpdateProfile?.displayName)
+        assertEquals("joao@example.com", lastUpdateProfile?.email)
+        assertEquals("+351912345678", lastUpdateProfile?.phoneNumber)
+        assertEquals(1, updateProfileCount)
         collectorJob.cancel()
     }
 
     @Test
     fun `saveProfile does not call use case when display name is blank`() = runTest(testDispatcher) {
         val initial = UserProfile(displayName = "Old", email = "old@example.com", phoneNumber = "+351000000000")
-        observeUserProfile.profileFlow.value = initial
+        profileFlow.value = initial
 
         val collectorJob = launch { viewModel.uiState.collect {} }
         advanceUntilIdle()
@@ -167,14 +200,14 @@ class SettingsViewModelTest {
         viewModel.saveProfile()
         advanceUntilIdle()
 
-        assertEquals(0, updateUserProfile.invokeCount)
+        assertEquals(0, updateProfileCount)
         collectorJob.cancel()
     }
 
     @Test
     fun `saveProfile trims whitespace before delegating`() = runTest(testDispatcher) {
         val initial = UserProfile(displayName = "Old", email = "old@example.com", phoneNumber = "+351000000000")
-        observeUserProfile.profileFlow.value = initial
+        profileFlow.value = initial
 
         val collectorJob = launch { viewModel.uiState.collect {} }
         advanceUntilIdle()
@@ -186,15 +219,15 @@ class SettingsViewModelTest {
         viewModel.saveProfile()
         advanceUntilIdle()
 
-        assertEquals("Ana", updateUserProfile.lastProfile?.displayName)
-        assertEquals("ana@example.com", updateUserProfile.lastProfile?.email)
+        assertEquals("Ana", lastUpdateProfile?.displayName)
+        assertEquals("ana@example.com", lastUpdateProfile?.email)
         collectorJob.cancel()
     }
 
     @Test
     fun `enterEditMode loads current profile into edit state`() = runTest(testDispatcher) {
         val profile = UserProfile(displayName = "Initial", email = "i@test.com", phoneNumber = "+351111111111")
-        observeUserProfile.profileFlow.value = profile
+        profileFlow.value = profile
 
         val collectorJob = launch { viewModel.uiState.collect {} }
         advanceUntilIdle()
@@ -221,6 +254,6 @@ class SettingsViewModelTest {
         viewModel.logout()
         advanceUntilIdle()
 
-        assertTrue(logoutUseCase.invoked)
+        assertTrue(logoutInvoked)
     }
 }

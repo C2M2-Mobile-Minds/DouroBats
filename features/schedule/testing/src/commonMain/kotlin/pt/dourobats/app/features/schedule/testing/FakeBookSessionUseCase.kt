@@ -1,19 +1,18 @@
 package pt.dourobats.app.features.schedule.testing
 
 import pt.dourobats.app.core.common.Result
-import pt.dourobats.app.core.common.exception.ValidationException
 import pt.dourobats.app.features.schedule.api.usecase.BookSessionUseCase
 
-class FakeBookSessionUseCase : BookSessionUseCase {
-    var shouldFail: Boolean = false
-    var lastSessionId: String? = null
+fun fakeBookSessionUseCase(builder: FakeBookSessionUseCase.() -> Unit = {}): BookSessionUseCase =
+    FakeBookSessionUseCase().apply(builder).build()
 
-    override suspend fun invoke(sessionId: String): Result<Unit> {
-        lastSessionId = sessionId
-        return if (shouldFail || sessionId.isBlank()) {
-            Result.Error(ValidationException.RequiredField("Session ID"))
-        } else {
-            Result.Success(Unit)
+class FakeBookSessionUseCase {
+    var invoke: suspend (sessionId: String) -> Result<Unit> =
+        { _ -> throw NotImplementedError() }
+
+    fun build(): BookSessionUseCase =
+        object : BookSessionUseCase {
+            override suspend fun invoke(sessionId: String): Result<Unit> =
+                this@FakeBookSessionUseCase.invoke(sessionId)
         }
-    }
 }

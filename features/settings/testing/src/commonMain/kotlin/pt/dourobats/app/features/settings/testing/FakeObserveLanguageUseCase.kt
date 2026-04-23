@@ -1,13 +1,18 @@
 package pt.dourobats.app.features.settings.testing
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import pt.dourobats.app.features.settings.api.usecase.ObserveLanguageUseCase
 import pt.dourobats.app.features.settings.api.model.Language
+import pt.dourobats.app.features.settings.api.usecase.ObserveLanguageUseCase
 
-class FakeObserveLanguageUseCase(
-    initialLanguage: Language = Language.ENGLISH_US
-) : ObserveLanguageUseCase {
-    val languageFlow = MutableStateFlow(initialLanguage)
-    override fun invoke(): Flow<Language> = languageFlow
+fun fakeObserveLanguageUseCase(builder: FakeObserveLanguageUseCase.() -> Unit = {}): ObserveLanguageUseCase =
+    FakeObserveLanguageUseCase().apply(builder).build()
+
+class FakeObserveLanguageUseCase {
+    var invoke: () -> Flow<Language> = { throw NotImplementedError() }
+
+    fun build(): ObserveLanguageUseCase =
+        object : ObserveLanguageUseCase {
+            override fun invoke(): Flow<Language> =
+                this@FakeObserveLanguageUseCase.invoke()
+        }
 }
