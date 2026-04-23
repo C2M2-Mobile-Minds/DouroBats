@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import pt.dourobats.app.core.common.Result
-import pt.dourobats.app.core.common.exception.AuthException
+import pt.dourobats.app.features.login.api.exception.AuthException
 import pt.dourobats.app.features.login.api.model.AuthState
 import pt.dourobats.app.features.login.api.model.LoginMethod
 import pt.dourobats.app.features.login.repository.AuthRepository

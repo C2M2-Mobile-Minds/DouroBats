@@ -10,7 +10,7 @@ import kotlinx.coroutines.test.runTest
 import okio.FileSystem
 import okio.Path.Companion.toPath
 import pt.dourobats.app.core.common.Result
-import pt.dourobats.app.core.common.exception.AuthException
+import pt.dourobats.app.features.login.api.exception.AuthException
 import pt.dourobats.app.features.login.api.model.AuthState
 import pt.dourobats.app.features.login.api.model.LoginMethod
 import kotlin.test.AfterTest

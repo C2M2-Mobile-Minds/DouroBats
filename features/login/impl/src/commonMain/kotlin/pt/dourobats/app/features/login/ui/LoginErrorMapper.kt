@@ -1,6 +1,6 @@
 package pt.dourobats.app.features.login.ui
 
-import pt.dourobats.app.core.common.exception.AuthException
+import pt.dourobats.app.features.login.api.exception.AuthException
 import pt.dourobats.app.core.common.exception.NetworkException
 import pt.dourobats.app.core.common.exception.ValidationException
 
