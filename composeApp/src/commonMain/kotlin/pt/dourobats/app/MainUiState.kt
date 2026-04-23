@@ -1,7 +1,7 @@
 package pt.dourobats.app
 
 import pt.dourobats.app.features.login.api.model.AuthState
-import pt.dourobats.app.features.settings.api.model.Language
+import pt.dourobats.app.core.localization.Language
 import pt.dourobats.app.features.settings.api.model.Theme
 
 internal data class MainUiState(

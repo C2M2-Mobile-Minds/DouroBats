@@ -1,6 +1,6 @@
 package pt.dourobats.app.features.settings.api.usecase
 
-import pt.dourobats.app.features.settings.api.model.Language
+import pt.dourobats.app.core.localization.Language
 
 /**
  * Use case for persisting the user's language preference.

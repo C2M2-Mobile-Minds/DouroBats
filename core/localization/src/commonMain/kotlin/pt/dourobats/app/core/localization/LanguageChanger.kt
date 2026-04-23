@@ -1,7 +1,6 @@
-package pt.dourobats.app.core.ui.localization
+package pt.dourobats.app.core.localization
 
 import androidx.compose.runtime.staticCompositionLocalOf
-import pt.dourobats.app.features.settings.api.model.Language
 
 val LocalLanguage = staticCompositionLocalOf { Language.ENGLISH_US }
 

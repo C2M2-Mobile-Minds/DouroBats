@@ -1,7 +1,7 @@
 package pt.dourobats.app.features.settings.ui
 
 import pt.dourobats.app.features.login.api.model.UserRole
-import pt.dourobats.app.features.settings.api.model.Language
+import pt.dourobats.app.core.localization.Language
 import pt.dourobats.app.features.settings.api.model.Theme
 
 sealed interface SettingsAction {

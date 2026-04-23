@@ -1,6 +1,6 @@
 package pt.dourobats.app.features.settings.api.model
 
-import pt.dourobats.app.features.settings.api.model.Language
+import pt.dourobats.app.core.localization.Language
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull

@@ -1,7 +1,7 @@
 package pt.dourobats.app.features.settings.api.usecase
 
 import kotlinx.coroutines.flow.Flow
-import pt.dourobats.app.features.settings.api.model.Language
+import pt.dourobats.app.core.localization.Language
 
 /**
  * Use case for observing the current language setting as a continuous stream.

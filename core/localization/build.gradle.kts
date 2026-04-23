@@ -7,15 +7,11 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(libs.kotlinx.datetime)  // API because we expose kotlinx.datetime types in public API
+            implementation(libs.kotlinx.coroutines.core)
         }
     }
 }
 
-compose.resources {
-    publicResClass = true
-}
-
 android {
-    namespace = "pt.dourobats.app.core.ui"
+    namespace = "pt.dourobats.app.core.localization"
 }

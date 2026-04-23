@@ -7,8 +7,8 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import pt.dourobats.app.core.ui.localization.getSystemLocaleLanguage
-import pt.dourobats.app.features.settings.api.model.Language
+import pt.dourobats.app.core.localization.getSystemLocaleLanguage
+import pt.dourobats.app.core.localization.Language
 import pt.dourobats.app.features.settings.api.model.Theme
 import pt.dourobats.app.features.login.api.model.UserProfile
 import pt.dourobats.app.features.login.api.model.UserRole

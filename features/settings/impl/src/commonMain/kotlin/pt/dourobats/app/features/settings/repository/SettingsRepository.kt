@@ -2,7 +2,7 @@ package pt.dourobats.app.features.settings.repository
 
 import kotlinx.coroutines.flow.Flow
 import pt.dourobats.app.features.login.api.model.UserProfile
-import pt.dourobats.app.features.settings.api.model.Language
+import pt.dourobats.app.core.localization.Language
 import pt.dourobats.app.features.settings.api.model.Theme
 
 internal interface SettingsRepository {

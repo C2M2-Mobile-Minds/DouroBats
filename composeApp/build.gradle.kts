@@ -19,6 +19,7 @@ kotlin {
             implementation(projects.core.data)
             implementation(projects.core.network)
             implementation(projects.core.ui)
+            implementation(projects.core.localization)
 
             // Navigation
             implementation(libs.androidx.navigation.compose)

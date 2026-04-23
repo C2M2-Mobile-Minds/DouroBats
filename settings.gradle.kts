@@ -30,6 +30,7 @@ include(":core:common")
 include(":core:data")
 include(":core:network")
 include(":core:ui")
+include(":core:localization")
 // Feature modules
 include(":features:home:api")
 include(":features:home:impl")

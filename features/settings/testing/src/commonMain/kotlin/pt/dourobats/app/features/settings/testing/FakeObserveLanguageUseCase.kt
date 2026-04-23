@@ -1,7 +1,7 @@
 package pt.dourobats.app.features.settings.testing
 
 import kotlinx.coroutines.flow.Flow
-import pt.dourobats.app.features.settings.api.model.Language
+import pt.dourobats.app.core.localization.Language
 import pt.dourobats.app.features.settings.api.usecase.ObserveLanguageUseCase
 
 fun fakeObserveLanguageUseCase(builder: FakeObserveLanguageUseCase.() -> Unit = {}): ObserveLanguageUseCase =

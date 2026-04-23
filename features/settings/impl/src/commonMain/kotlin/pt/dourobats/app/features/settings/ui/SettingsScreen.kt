@@ -25,7 +25,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.dourobats.app.features.settings.api.model.Theme
 import pt.dourobats.app.features.login.api.model.UserRole
-import pt.dourobats.app.features.settings.api.model.Language
+import pt.dourobats.app.core.localization.Language
 import pt.dourobats.app.core.ui.components.layout.AppHeader
 import pt.dourobats.app.core.ui.components.layout.SectionHeader
 import pt.dourobats.app.features.settings.components.SettingsRowItem

@@ -44,8 +44,8 @@ import pt.dourobats.app.features.schedule.ScheduleRoute
 import pt.dourobats.app.features.schedule.scheduleGraph
 import pt.dourobats.app.features.settings.SettingsRoute
 import pt.dourobats.app.features.settings.settingsGraph
-import pt.dourobats.app.core.ui.localization.LocalLanguage
-import pt.dourobats.app.core.ui.localization.changeLanguage
+import pt.dourobats.app.core.localization.LocalLanguage
+import pt.dourobats.app.core.localization.changeLanguage
 import pt.dourobats.app.core.ui.theme.AppTheme
 
 @Composable

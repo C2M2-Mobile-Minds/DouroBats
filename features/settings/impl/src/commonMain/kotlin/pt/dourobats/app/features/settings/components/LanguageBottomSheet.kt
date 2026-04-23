@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import dourobats.features.settings.generated.resources.Res
 import dourobats.features.settings.generated.resources.settings_language_select
 import org.jetbrains.compose.resources.stringResource
-import pt.dourobats.app.features.settings.api.model.Language
+import pt.dourobats.app.core.localization.Language
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 
 @OptIn(ExperimentalMaterial3Api::class)
