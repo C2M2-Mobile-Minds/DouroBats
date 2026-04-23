@@ -1,6 +1,8 @@
 package pt.dourobats.app.features.login.ui
 
 import pt.dourobats.app.features.login.api.exception.AuthException
+import pt.dourobats.app.features.login.api.exception.InvalidEmail
+import pt.dourobats.app.features.login.api.exception.InvalidPassword
 import pt.dourobats.app.core.common.exception.NetworkException
 import pt.dourobats.app.core.common.exception.ValidationException
 
@@ -24,8 +26,8 @@ internal class LoginErrorMapper {
     fun mapToUserMessage(error: Throwable): String {
         return when (error) {
             // Validation errors
-            is ValidationException.InvalidEmail -> "Please enter a valid email address"
-            is ValidationException.InvalidPassword -> "Password must be at least 6 characters"
+            is InvalidEmail -> "Please enter a valid email address"
+            is InvalidPassword -> "Password must be at least 6 characters"
             is ValidationException.RequiredField -> "${error.message}"
             is ValidationException.Generic -> error.message ?: "Please check your input"
 

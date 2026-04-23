@@ -4,6 +4,8 @@ import kotlinx.coroutines.test.runTest
 import pt.dourobats.app.core.common.Result
 import pt.dourobats.app.core.common.exception.NetworkException
 import pt.dourobats.app.core.common.exception.ValidationException
+import pt.dourobats.app.features.login.api.exception.InvalidEmail
+import pt.dourobats.app.features.login.api.exception.InvalidPassword
 import pt.dourobats.app.features.login.repository.AuthRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -68,13 +70,13 @@ class LoginWithEmailUseCaseTest {
 
         // Then
         assertTrue(result1 is Result.Error)
-        assertTrue(result1.exception is ValidationException.InvalidEmail)
+        assertTrue(result1.exception is InvalidEmail)
         assertTrue(result2 is Result.Error)
-        assertTrue(result2.exception is ValidationException.InvalidEmail)
+        assertTrue(result2.exception is InvalidEmail)
         assertTrue(result3 is Result.Error)
-        assertTrue(result3.exception is ValidationException.InvalidEmail)
+        assertTrue(result3.exception is InvalidEmail)
         assertTrue(result4 is Result.Error)
-        assertTrue(result4.exception is ValidationException.InvalidEmail)
+        assertTrue(result4.exception is InvalidEmail)
     }
 
     @Test
@@ -133,7 +135,7 @@ class LoginWithEmailUseCaseTest {
 
         // Then
         assertTrue(result is Result.Error)
-        assertTrue(result.exception is ValidationException.InvalidPassword)
+        assertTrue(result.exception is InvalidPassword)
     }
 
     @Test

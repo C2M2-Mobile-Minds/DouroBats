@@ -2,6 +2,8 @@ package pt.dourobats.app.features.login.usecase
 
 import pt.dourobats.app.core.common.Result
 import pt.dourobats.app.core.common.exception.ValidationException
+import pt.dourobats.app.features.login.api.exception.InvalidEmail
+import pt.dourobats.app.features.login.api.exception.InvalidPassword
 import pt.dourobats.app.features.login.api.usecase.LoginWithEmailUseCase
 import pt.dourobats.app.features.login.repository.AuthRepository
 
@@ -17,7 +19,7 @@ internal class LoginWithEmailUseCaseImpl(
         }
 
         if (!isValidEmailFormat(trimmedEmail)) {
-            return Result.Error(ValidationException.InvalidEmail("Invalid format"))
+            return Result.Error(InvalidEmail("Invalid format"))
         }
 
         if (password.isBlank()) {
@@ -25,7 +27,7 @@ internal class LoginWithEmailUseCaseImpl(
         }
 
         if (password.length < MIN_PASSWORD_LENGTH) {
-            return Result.Error(ValidationException.InvalidPassword("Too short"))
+            return Result.Error(InvalidPassword("Too short"))
         }
 
         return authRepository.loginWithEmail(trimmedEmail, password)
