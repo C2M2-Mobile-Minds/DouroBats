@@ -25,9 +25,9 @@ import androidx.compose.ui.unit.dp
 import dourobats.features.home.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import pt.dourobats.app.core.ui.components.AppHeader
-import pt.dourobats.app.core.ui.components.DetailRow
-import pt.dourobats.app.core.ui.components.SectionTitle
+import pt.dourobats.app.core.ui.components.layout.AppHeader
+import pt.dourobats.app.features.schedule.api.ui.DetailRow
+import pt.dourobats.app.core.ui.components.layout.SectionTitle
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 import pt.dourobats.app.features.schedule.api.ui.UpcomingSessionItem
 

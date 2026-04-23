@@ -1,4 +1,4 @@
-package pt.dourobats.app.core.ui.components
+package pt.dourobats.app.core.ui.components.feedback
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
  * // Skill level chip
  * StatusBadge(
  *     text = "Intermediate",
- *     chipType = ChipType.SKILL_INTERMEDIATE
+ *     chipType = ChipType.TIER_MID
  * )
  * ```
  *
@@ -50,12 +50,12 @@ fun StatusBadge(
     modifier: Modifier = Modifier
 ) {
     val (bgColor, fgColor) = when (chipType) {
-        ChipType.ATTENDING -> MaterialTheme.colorScheme.secondaryContainer to MaterialTheme.colorScheme.onSecondaryContainer
-        ChipType.SKILL_BEGINNER -> MaterialTheme.colorScheme.primaryContainer to MaterialTheme.colorScheme.onPrimaryContainer
-        ChipType.SKILL_INTERMEDIATE -> MaterialTheme.colorScheme.secondaryContainer to MaterialTheme.colorScheme.onSecondaryContainer
-        ChipType.SKILL_ELITE -> MaterialTheme.colorScheme.tertiaryContainer to MaterialTheme.colorScheme.onTertiaryContainer
-        ChipType.FULL -> MaterialTheme.colorScheme.errorContainer to MaterialTheme.colorScheme.onErrorContainer
-        ChipType.ACTION -> MaterialTheme.colorScheme.tertiaryContainer to MaterialTheme.colorScheme.onTertiaryContainer // Clay Orange for high-energy
+        ChipType.POSITIVE -> MaterialTheme.colorScheme.secondaryContainer to MaterialTheme.colorScheme.onSecondaryContainer
+        ChipType.TIER_LOW -> MaterialTheme.colorScheme.primaryContainer to MaterialTheme.colorScheme.onPrimaryContainer
+        ChipType.TIER_MID -> MaterialTheme.colorScheme.secondaryContainer to MaterialTheme.colorScheme.onSecondaryContainer
+        ChipType.TIER_HIGH -> MaterialTheme.colorScheme.tertiaryContainer to MaterialTheme.colorScheme.onTertiaryContainer
+        ChipType.NEGATIVE -> MaterialTheme.colorScheme.errorContainer to MaterialTheme.colorScheme.onErrorContainer
+        ChipType.PROMINENT -> MaterialTheme.colorScheme.tertiaryContainer to MaterialTheme.colorScheme.onTertiaryContainer
         null -> (color ?: MaterialTheme.colorScheme.surfaceVariant) to (textColor ?: MaterialTheme.colorScheme.onSurfaceVariant)
     }
 
@@ -77,18 +77,18 @@ fun StatusBadge(
 /**
  * Predefined chip types following Kinetic Precision design system.
  *
- * - ATTENDING: Pitch Green (#75ff68) for positive attendance state
- * - SKILL_BEGINNER: Primary tint (Midnight Pitch container)
- * - SKILL_INTERMEDIATE: Secondary tint (Pitch Green container)
- * - SKILL_ELITE: Tertiary tint (Clay Orange container)
- * - FULL: Error container for capacity warnings
- * - ACTION: Clay Orange for urgent/important actions
+ * - POSITIVE: Secondary container — positive/attending state
+ * - TIER_LOW: Primary container — low/beginner tier
+ * - TIER_MID: Secondary container — mid/intermediate tier
+ * - TIER_HIGH: Tertiary container — high/elite tier
+ * - NEGATIVE: Error container — capacity warnings or negative states
+ * - PROMINENT: Tertiary container — urgent/important actions
  */
 enum class ChipType {
-    ATTENDING,
-    SKILL_BEGINNER,
-    SKILL_INTERMEDIATE,
-    SKILL_ELITE,
-    FULL,
-    ACTION
+    POSITIVE,
+    TIER_LOW,
+    TIER_MID,
+    TIER_HIGH,
+    NEGATIVE,
+    PROMINENT
 }

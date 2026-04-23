@@ -1,4 +1,4 @@
-package pt.dourobats.app.core.ui.components
+package pt.dourobats.app.core.ui.components.cards
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope

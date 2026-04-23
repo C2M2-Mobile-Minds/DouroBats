@@ -26,9 +26,9 @@ import org.koin.compose.viewmodel.koinViewModel
 import pt.dourobats.app.features.settings.api.model.Theme
 import pt.dourobats.app.features.login.api.model.UserRole
 import pt.dourobats.app.features.settings.api.model.Language
-import pt.dourobats.app.core.ui.components.AppHeader
-import pt.dourobats.app.core.ui.components.SectionHeader
-import pt.dourobats.app.core.ui.components.SettingsRowItem
+import pt.dourobats.app.core.ui.components.layout.AppHeader
+import pt.dourobats.app.core.ui.components.layout.SectionHeader
+import pt.dourobats.app.features.settings.components.SettingsRowItem
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 import pt.dourobats.app.core.common.isDebug
 import pt.dourobats.app.features.settings.components.DeveloperOptionsBottomSheet

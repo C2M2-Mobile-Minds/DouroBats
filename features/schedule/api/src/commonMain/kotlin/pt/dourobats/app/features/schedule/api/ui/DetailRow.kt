@@ -1,4 +1,4 @@
-package pt.dourobats.app.core.ui.components
+package pt.dourobats.app.features.schedule.api.ui
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer

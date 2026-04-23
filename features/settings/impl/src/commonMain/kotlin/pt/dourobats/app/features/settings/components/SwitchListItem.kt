@@ -1,4 +1,4 @@
-package pt.dourobats.app.core.ui.components
+package pt.dourobats.app.features.settings.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -65,7 +65,6 @@ fun SwitchListItem(
             .padding(vertical = spacing.small),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Icon
         Text(
             text = icon,
             style = MaterialTheme.typography.headlineSmall
@@ -73,7 +72,6 @@ fun SwitchListItem(
 
         Spacer(modifier = Modifier.width(spacing.standard))
 
-        // Title and subtitle
         Column(
             modifier = Modifier.weight(1f)
         ) {
@@ -92,7 +90,6 @@ fun SwitchListItem(
             }
         }
 
-        // Switch
         Switch(
             checked = checked,
             onCheckedChange = onCheckedChange,
@@ -132,12 +129,10 @@ fun SwitchListItem(
             .padding(vertical = spacing.small),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Custom icon
         icon()
 
         Spacer(modifier = Modifier.width(spacing.standard))
 
-        // Title and subtitle
         Column(
             modifier = Modifier.weight(1f)
         ) {
@@ -156,7 +151,6 @@ fun SwitchListItem(
             }
         }
 
-        // Switch
         Switch(
             checked = checked,
             onCheckedChange = onCheckedChange,

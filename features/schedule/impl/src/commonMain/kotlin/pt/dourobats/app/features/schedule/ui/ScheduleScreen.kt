@@ -25,9 +25,9 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.*
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import pt.dourobats.app.core.ui.components.DetailRow
-import pt.dourobats.app.core.ui.components.StatusBadge
-import pt.dourobats.app.core.ui.components.AppHeader
+import pt.dourobats.app.features.schedule.api.ui.DetailRow
+import pt.dourobats.app.core.ui.components.feedback.StatusBadge
+import pt.dourobats.app.core.ui.components.layout.AppHeader
 import pt.dourobats.app.features.schedule.calendar.MonthCalendar
 import pt.dourobats.app.features.schedule.calendar.WeekCalendar
 import pt.dourobats.app.features.schedule.calendar.YearMonth
@@ -313,12 +313,12 @@ private fun SessionScheduleCard(
                 if (sessionData.isUserBooked) {
                     StatusBadge(
                         text = stringResource(Res.string.session_booked_badge),
-                        chipType = pt.dourobats.app.core.ui.components.ChipType.ATTENDING
+                        chipType = pt.dourobats.app.core.ui.components.feedback.ChipType.POSITIVE
                     )
                 } else if (isFull) {
                     StatusBadge(
                         text = stringResource(Res.string.session_full_badge),
-                        chipType = pt.dourobats.app.core.ui.components.ChipType.FULL
+                        chipType = pt.dourobats.app.core.ui.components.feedback.ChipType.NEGATIVE
                     )
                 }
             }

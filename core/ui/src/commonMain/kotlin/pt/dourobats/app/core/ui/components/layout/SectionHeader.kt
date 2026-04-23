@@ -1,4 +1,4 @@
-package pt.dourobats.app.core.ui.components
+package pt.dourobats.app.core.ui.components.layout
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme

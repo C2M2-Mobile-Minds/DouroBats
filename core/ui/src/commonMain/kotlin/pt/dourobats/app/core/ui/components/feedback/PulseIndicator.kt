@@ -1,4 +1,4 @@
-package pt.dourobats.app.core.ui.components
+package pt.dourobats.app.core.ui.components.feedback
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background

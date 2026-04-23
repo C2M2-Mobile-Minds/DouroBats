@@ -19,8 +19,8 @@ import androidx.compose.ui.unit.dp
 import dourobats.features.settings.generated.resources.Res
 import dourobats.features.settings.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
-import pt.dourobats.app.core.ui.components.SectionHeader
-import pt.dourobats.app.core.ui.components.SettingsRowItem
+import pt.dourobats.app.core.ui.components.layout.SectionHeader
+import pt.dourobats.app.features.settings.components.SettingsRowItem
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -1,4 +1,4 @@
-package pt.dourobats.app.core.ui.components
+package pt.dourobats.app.core.ui.components.primitives
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

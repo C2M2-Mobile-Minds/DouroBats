@@ -1,4 +1,4 @@
-package pt.dourobats.app.core.ui.components
+package pt.dourobats.app.features.settings.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
