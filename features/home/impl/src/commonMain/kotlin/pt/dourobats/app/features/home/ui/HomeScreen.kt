@@ -32,17 +32,22 @@ import pt.dourobats.app.core.ui.theme.LocalSpacing
 import pt.dourobats.app.features.schedule.api.ui.UpcomingSessionItem
 
 @Composable
-fun HomeRoute() {
+fun HomeRoute(
+    onCreateSession: () -> Unit = {},
+    onViewReports: () -> Unit = {},
+    onManageMembers: () -> Unit = {},
+    onNewsDetail: (String) -> Unit = {},
+) {
     val viewModel: HomeViewModel = koinViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     HomeScreen(
         state = uiState,
         onAction = { action ->
             when (action) {
-                is HomeAction.OnCreateSessionClick -> { /* TODO: navigate to create session */ }
-                is HomeAction.OnViewReportsClick -> { /* TODO: navigate to reports */ }
-                is HomeAction.OnManageMembersClick -> { /* TODO: navigate to members */ }
-                is HomeAction.OnNewsClick -> { /* TODO: navigate to news detail */ }
+                is HomeAction.OnCreateSessionClick -> onCreateSession()
+                is HomeAction.OnViewReportsClick -> onViewReports()
+                is HomeAction.OnManageMembersClick -> onManageMembers()
+                is HomeAction.OnNewsClick -> onNewsDetail(action.newsId)
             }
         }
     )
