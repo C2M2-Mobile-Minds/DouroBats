@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import pt.dourobats.app.core.common.Result
-import pt.dourobats.app.core.model.LoginMethod
+import pt.dourobats.app.features.login.api.LoginMethod
 import pt.dourobats.app.core.domain.usecase.LoginWithEmailUseCase
 import pt.dourobats.app.core.domain.usecase.LoginWithSocialUseCase
 
@@ -30,7 +30,7 @@ import pt.dourobats.app.core.domain.usecase.LoginWithSocialUseCase
  * @property validator Validator for real-time form feedback
  * @property errorMapper Mapper for converting domain errors to UI messages
  */
-class LoginViewModel(
+internal class LoginViewModel(
     private val loginWithEmailUseCase: LoginWithEmailUseCase,
     private val loginWithSocialUseCase: LoginWithSocialUseCase,
     private val validator: LoginFormValidator = LoginFormValidator(),

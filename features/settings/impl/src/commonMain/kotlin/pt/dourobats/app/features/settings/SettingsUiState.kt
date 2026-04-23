@@ -1,8 +1,8 @@
 package pt.dourobats.app.features.settings
 
-import pt.dourobats.app.core.model.Language
-import pt.dourobats.app.core.model.Theme
-import pt.dourobats.app.core.model.UserProfile
+import pt.dourobats.app.features.settings.api.Language
+import pt.dourobats.app.features.settings.api.Theme
+import pt.dourobats.app.features.login.api.UserProfile
 
 /**
  * UI state for the Settings screen.
@@ -13,7 +13,7 @@ import pt.dourobats.app.core.model.UserProfile
  * @property isLoading Whether data is being loaded
  * @property validationErrors Validation errors for profile fields
  */
-data class SettingsUiState(
+internal data class SettingsUiState(
     val userProfile: UserProfile? = null,
     val currentLanguage: Language? = null,
     val currentTheme: Theme? = null,
@@ -56,7 +56,7 @@ data class SettingsUiState(
  * @property phoneNumber Edited phone number
  * @property profileImageUrl Edited profile image URL
  */
-data class ProfileEditState(
+internal data class ProfileEditState(
     val displayName: String = "",
     val email: String = "",
     val phoneNumber: String = "",

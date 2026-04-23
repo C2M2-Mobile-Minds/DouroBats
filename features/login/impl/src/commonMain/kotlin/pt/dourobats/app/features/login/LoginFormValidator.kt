@@ -11,7 +11,7 @@ package pt.dourobats.app.features.login
  *
  * Business-level validation (in use cases) is more comprehensive and strict.
  */
-class LoginFormValidator {
+internal class LoginFormValidator {
 
     /**
      * Result of form validation.

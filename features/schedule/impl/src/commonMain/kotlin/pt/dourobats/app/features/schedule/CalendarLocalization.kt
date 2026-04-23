@@ -7,13 +7,13 @@ import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.Month
 import org.jetbrains.compose.resources.stringResource
 
-data class CalendarLocalization(
+internal data class CalendarLocalization(
     val dayNames: Map<DayOfWeek, String>,
     val monthNames: Map<Month, String>
 )
 
 @Composable
-fun rememberCalendarLocalization(): CalendarLocalization {
+internal fun rememberCalendarLocalization(): CalendarLocalization {
     return CalendarLocalization(
         dayNames = mapOf(
             DayOfWeek.MONDAY to stringResource(Res.string.day_monday_short),

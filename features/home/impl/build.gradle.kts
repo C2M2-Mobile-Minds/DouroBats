@@ -4,24 +4,29 @@ plugins {
     id("pt.dourobats.app.compose")
 }
 
+compose.resources {
+    packageOfResClass = "dourobats.features.home.generated.resources"
+}
+
 kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.features.home.api)
             implementation(projects.core.domain)
-            implementation(projects.core.model)
+            implementation(projects.features.login.api)
             implementation(projects.core.common)
             implementation(projects.core.ui)
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.androidx.navigation.compose)
+            implementation(libs.androidx.lifecycle.runtimeCompose)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.koin.test)
             implementation(libs.kotlinx.coroutines.test)
-            implementation(projects.core.test)
+            implementation(projects.features.settings.testing)
         }
     }
 }

@@ -12,6 +12,7 @@ import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,8 +23,9 @@ import dourobats.features.settings.generated.resources.Res
 import dourobats.features.settings.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import pt.dourobats.app.core.model.Theme
-import pt.dourobats.app.core.model.UserRole
+import pt.dourobats.app.features.settings.api.Theme
+import pt.dourobats.app.features.login.api.UserRole
+import pt.dourobats.app.features.settings.api.Language
 import pt.dourobats.app.core.ui.components.AppHeader
 import pt.dourobats.app.core.ui.components.SectionHeader
 import pt.dourobats.app.core.ui.components.SettingsRowItem
@@ -35,13 +37,41 @@ import pt.dourobats.app.features.settings.components.NotificationsBottomSheet
 import pt.dourobats.app.features.settings.components.ProfileEditBottomSheet
 
 @Composable
-fun SettingsScreen(
+fun SettingsRoute(
     modifier: Modifier = Modifier,
-    viewModel: SettingsViewModel = koinViewModel()
+) {
+    val viewModel: SettingsViewModel = koinViewModel()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val editState by viewModel.editState.collectAsStateWithLifecycle()
+
+    SettingsScreen(
+        uiState = uiState,
+        editState = editState,
+        onAction = { action ->
+            when (action) {
+                is SettingsAction.SetLanguage -> viewModel.setLanguage(action.language)
+                is SettingsAction.SetTheme -> viewModel.setTheme(action.theme)
+                is SettingsAction.UpdateDisplayName -> viewModel.updateDisplayName(action.displayName)
+                is SettingsAction.UpdateEmail -> viewModel.updateEmail(action.email)
+                is SettingsAction.UpdatePhoneNumber -> viewModel.updatePhoneNumber(action.phoneNumber)
+                is SettingsAction.SaveProfile -> viewModel.saveProfile()
+                is SettingsAction.CancelEdit -> viewModel.cancelEdit()
+                is SettingsAction.SetRole -> viewModel.setRole(action.role)
+                is SettingsAction.Logout -> viewModel.logout()
+            }
+        },
+        modifier = modifier,
+    )
+}
+
+@Composable
+internal fun SettingsScreen(
+    uiState: SettingsUiState,
+    editState: ProfileEditState,
+    onAction: (SettingsAction) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val spacing = LocalSpacing.current
-    val uiState by viewModel.uiState.collectAsState()
-    val editState by viewModel.editState.collectAsState()
     var showLanguageSheet by remember { mutableStateOf(false) }
     var showEditDialog by remember { mutableStateOf(false) }
     var showNotificationsSheet by remember { mutableStateOf(false) }
@@ -133,7 +163,7 @@ fun SettingsScreen(
                         trailing = {
                             Switch(
                                 checked = currentTheme == Theme.DARK,
-                                onCheckedChange = { viewModel.setTheme(if (it) Theme.DARK else Theme.LIGHT) }
+                                onCheckedChange = { onAction(SettingsAction.SetTheme(if (it) Theme.DARK else Theme.LIGHT)) }
                             )
                         }
                     )
@@ -175,7 +205,7 @@ fun SettingsScreen(
 
             // Logout Button
             OutlinedButton(
-                onClick = { viewModel.logout() },
+                onClick = { onAction(SettingsAction.Logout) },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
                 shape = RoundedCornerShape(6.dp), // rounded-md for serious athletic tone
                 colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error),
@@ -196,7 +226,7 @@ fun SettingsScreen(
     if (showLanguageSheet) {
         LanguageBottomSheet(
             currentLanguage = currentLanguage,
-            onLanguageSelected = { viewModel.setLanguage(it); showLanguageSheet = false },
+            onLanguageSelected = { onAction(SettingsAction.SetLanguage(it)); showLanguageSheet = false },
             onDismiss = { showLanguageSheet = false }
         )
     }
@@ -205,11 +235,11 @@ fun SettingsScreen(
         ProfileEditBottomSheet(
             editState = editState,
             validationErrors = uiState.validationErrors,
-            onDisplayNameChange = viewModel::updateDisplayName,
-            onEmailChange = viewModel::updateEmail,
-            onPhoneNumberChange = viewModel::updatePhoneNumber,
-            onSave = { viewModel.saveProfile { showEditDialog = false } },
-            onDismiss = { viewModel.cancelEdit(); showEditDialog = false }
+            onDisplayNameChange = { onAction(SettingsAction.UpdateDisplayName(it)) },
+            onEmailChange = { onAction(SettingsAction.UpdateEmail(it)) },
+            onPhoneNumberChange = { onAction(SettingsAction.UpdatePhoneNumber(it)) },
+            onSave = { onAction(SettingsAction.SaveProfile) },
+            onDismiss = { onAction(SettingsAction.CancelEdit); showEditDialog = false }
         )
     }
 
@@ -223,7 +253,7 @@ fun SettingsScreen(
         DeveloperOptionsBottomSheet(
             currentRole = currentRole,
             onRoleSelected = { role ->
-                viewModel.setRole(role)
+                onAction(SettingsAction.SetRole(role))
                 showDeveloperSheet = false
             },
             onDismiss = { showDeveloperSheet = false }

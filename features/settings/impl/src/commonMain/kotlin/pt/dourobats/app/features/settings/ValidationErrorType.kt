@@ -1,16 +1,16 @@
 package pt.dourobats.app.features.settings
 
-sealed class DisplayNameError {
+internal sealed class DisplayNameError {
     object Blank : DisplayNameError()
     object TooShort : DisplayNameError()
 }
 
-sealed class EmailError {
+internal sealed class EmailError {
     object Blank : EmailError()
     object InvalidFormat : EmailError()
 }
 
-sealed class PhoneError {
+internal sealed class PhoneError {
     object Blank : PhoneError()
     object InvalidFormat : PhoneError()
 }

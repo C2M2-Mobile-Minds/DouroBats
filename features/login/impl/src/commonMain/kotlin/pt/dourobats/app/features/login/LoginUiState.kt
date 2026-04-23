@@ -11,7 +11,7 @@ package pt.dourobats.app.features.login
  * @property emailError Validation error for email field
  * @property passwordError Validation error for password field
  */
-data class LoginUiState(
+internal data class LoginUiState(
     val email: String = "",
     val password: String = "",
     val isPasswordVisible: Boolean = false,

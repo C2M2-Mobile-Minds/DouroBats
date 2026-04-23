@@ -12,8 +12,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,27 +33,38 @@ import dourobats.features.login.generated.resources.Res
 import dourobats.features.login.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import pt.dourobats.app.core.model.LoginMethod
+import pt.dourobats.app.features.login.api.LoginMethod
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 
-/**
- * Modern login screen styled after the provided design reference.
- * 
- * Features:
- * - Clean layout without a card container
- * - Custom DB logo with brand colors
- * - Text fields with labels above
- * - Bold primary login button
- * - Social login integration
- * - Responsive spacing
- */
 @Composable
-fun LoginScreen(
+fun LoginRoute(
+    modifier: Modifier = Modifier
+) {
+    val viewModel: LoginViewModel = koinViewModel()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    LoginScreen(
+        uiState = uiState,
+        onAction = { action ->
+            when (action) {
+                is LoginAction.ClearError -> viewModel.clearError()
+                is LoginAction.UpdateEmail -> viewModel.updateEmail(action.email)
+                is LoginAction.UpdatePassword -> viewModel.updatePassword(action.password)
+                is LoginAction.TogglePasswordVisibility -> viewModel.togglePasswordVisibility()
+                is LoginAction.LoginWithEmail -> viewModel.loginWithEmail()
+                is LoginAction.LoginWithSocial -> viewModel.loginWithSocial(action.method)
+            }
+        },
+        modifier = modifier,
+    )
+}
+
+@Composable
+internal fun LoginScreen(
+    uiState: LoginUiState,
+    onAction: (LoginAction) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: LoginViewModel = koinViewModel()
 ) {
     val spacing = LocalSpacing.current
-    val uiState by viewModel.uiState.collectAsState()
 
     Box(
         modifier = modifier
@@ -112,7 +123,7 @@ fun LoginScreen(
             AnimatedVisibility(visible = uiState.errorMessage != null) {
                 ErrorBanner(
                     message = uiState.errorMessage ?: "",
-                    onDismiss = { viewModel.clearError() }
+                    onDismiss = { onAction(LoginAction.ClearError) }
                 )
                 Spacer(modifier = Modifier.height(spacing.standard))
             }
@@ -120,7 +131,7 @@ fun LoginScreen(
             // Email Section
             LoginFieldWithLabel(
                 value = uiState.email,
-                onValueChange = { viewModel.updateEmail(it) },
+                onValueChange = { onAction(LoginAction.UpdateEmail(it)) },
                 label = stringResource(Res.string.login_email_label),
                 placeholder = stringResource(Res.string.login_email_placeholder),
                 leadingIcon = Icons.Default.Email,
@@ -137,7 +148,7 @@ fun LoginScreen(
             // Password Section
             LoginFieldWithLabel(
                 value = uiState.password,
-                onValueChange = { viewModel.updatePassword(it) },
+                onValueChange = { onAction(LoginAction.UpdatePassword(it)) },
                 label = stringResource(Res.string.login_password_label),
                 placeholder = stringResource(Res.string.login_password_placeholder),
                 leadingIcon = Icons.Default.Lock,
@@ -145,13 +156,13 @@ fun LoginScreen(
                 enabled = !uiState.isLoading,
                 isPassword = true,
                 isPasswordVisible = uiState.isPasswordVisible,
-                onPasswordToggle = { viewModel.togglePasswordVisibility() },
+                onPasswordToggle = { onAction(LoginAction.TogglePasswordVisibility) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(
-                    onDone = { if (uiState.isFormValid) viewModel.loginWithEmail() }
+                    onDone = { if (uiState.isFormValid) onAction(LoginAction.LoginWithEmail) }
                 )
             )
 
@@ -159,7 +170,7 @@ fun LoginScreen(
 
             // Main Action Button
             Button(
-                onClick = { viewModel.loginWithEmail() },
+                onClick = { onAction(LoginAction.LoginWithEmail) },
                 enabled = uiState.isFormValid && !uiState.isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -213,7 +224,7 @@ fun LoginScreen(
             // Social Auth Buttons
             SocialLoginButton(
                 text = stringResource(Res.string.login_google),
-                onClick = { viewModel.loginWithSocial(LoginMethod.GOOGLE) },
+                onClick = { onAction(LoginAction.LoginWithSocial(LoginMethod.GOOGLE)) },
                 enabled = !uiState.isLoading,
                 icon = Icons.Default.Language
             )
@@ -222,7 +233,7 @@ fun LoginScreen(
 
             SocialLoginButton(
                 text = stringResource(Res.string.login_facebook),
-                onClick = { viewModel.loginWithSocial(LoginMethod.FACEBOOK) },
+                onClick = { onAction(LoginAction.LoginWithSocial(LoginMethod.FACEBOOK)) },
                 enabled = !uiState.isLoading,
                 icon = Icons.Default.Group
             )
@@ -231,7 +242,7 @@ fun LoginScreen(
 
             SocialLoginButton(
                 text = stringResource(Res.string.login_apple),
-                onClick = { viewModel.loginWithSocial(LoginMethod.APPLE) },
+                onClick = { onAction(LoginAction.LoginWithSocial(LoginMethod.APPLE)) },
                 enabled = !uiState.isLoading,
                 icon = Icons.Default.PhoneIphone
             )

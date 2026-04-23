@@ -5,7 +5,7 @@ import androidx.navigation.compose.composable
 
 fun NavGraphBuilder.scheduleGraph() {
     composable<ScheduleRoute> {
-        ScheduleScreen()
+        ScheduleRoute()
     }
 }
 

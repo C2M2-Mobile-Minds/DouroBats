@@ -6,10 +6,10 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import pt.dourobats.app.core.model.UserRole
+import pt.dourobats.app.features.login.api.UserRole
 import pt.dourobats.app.core.domain.usecase.ObserveUserProfileUseCase
 
-class HomeViewModel(
+internal class HomeViewModel(
     private val observeUserProfile: ObserveUserProfileUseCase
 ) : ViewModel() {
 

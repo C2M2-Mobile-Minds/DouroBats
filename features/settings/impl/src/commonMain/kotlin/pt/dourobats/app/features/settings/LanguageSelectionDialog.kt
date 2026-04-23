@@ -12,7 +12,7 @@ import dourobats.features.settings.generated.resources.Res
 import dourobats.features.settings.generated.resources.settings_cancel
 import dourobats.features.settings.generated.resources.settings_language_select
 import org.jetbrains.compose.resources.stringResource
-import pt.dourobats.app.core.model.Language
+import pt.dourobats.app.features.settings.api.Language
 
 @Composable
 fun LanguageSelectionDialog(

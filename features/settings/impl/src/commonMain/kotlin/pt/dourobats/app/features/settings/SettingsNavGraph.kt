@@ -5,7 +5,7 @@ import androidx.navigation.compose.composable
 
 fun NavGraphBuilder.settingsGraph() {
     composable<SettingsRoute> {
-        SettingsScreen()
+        SettingsRoute()
     }
 }
 

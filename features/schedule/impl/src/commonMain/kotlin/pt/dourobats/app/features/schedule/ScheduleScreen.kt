@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,23 +35,12 @@ import pt.dourobats.app.core.ui.model.SessionDisplayData
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 
 @Composable
-fun ScheduleScreen(
-    modifier: Modifier = Modifier,
-    viewModel: ScheduleViewModel = koinViewModel()
-) {
-    val uiState by viewModel.uiState.collectAsState()
-    val spacing = LocalSpacing.current
+fun ScheduleRoute() {
+    val viewModel: ScheduleViewModel = koinViewModel()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    val cal = rememberCalendarLocalization()
-    val today = kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault())
-
-    var currentYearMonth by remember {
-        mutableStateOf(YearMonth(uiState.selectedDate.year, uiState.selectedDate.month))
-    }
-
-    // Show snackbar for success/error messages
     LaunchedEffect(uiState.successMessage, uiState.errorMessage) {
         uiState.successMessage?.let { message ->
             scope.launch {
@@ -64,6 +54,36 @@ fun ScheduleScreen(
                 viewModel.clearMessages()
             }
         }
+    }
+
+    ScheduleScreen(
+        uiState = uiState,
+        snackBarHostState = snackBarHostState,
+        onAction = { action ->
+            when (action) {
+                is ScheduleAction.ToggleViewMode -> viewModel.toggleViewMode()
+                is ScheduleAction.SelectDate -> viewModel.selectDate(action.date)
+                is ScheduleAction.BookSession -> viewModel.bookSession(action.sessionId)
+                is ScheduleAction.CancelBooking -> viewModel.cancelBooking(action.sessionId)
+            }
+        },
+    )
+}
+
+@Composable
+internal fun ScheduleScreen(
+    uiState: ScheduleUiState,
+    snackBarHostState: SnackbarHostState,
+    onAction: (ScheduleAction) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val spacing = LocalSpacing.current
+
+    val cal = rememberCalendarLocalization()
+    val today = kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault())
+
+    var currentYearMonth by remember {
+        mutableStateOf(YearMonth(uiState.selectedDate.year, uiState.selectedDate.month))
     }
 
     Scaffold(
@@ -115,7 +135,7 @@ fun ScheduleScreen(
                 Surface(
                     color = MaterialTheme.colorScheme.primaryContainer,
                     shape = RoundedCornerShape(6.dp), // rounded-md for serious athletic tone
-                    modifier = Modifier.clickable { viewModel.toggleViewMode() }
+                    modifier = Modifier.clickable { onAction(ScheduleAction.ToggleViewMode) }
                 ) {
                     Row(
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
@@ -151,7 +171,7 @@ fun ScheduleScreen(
                             CalendarViewMode.WEEK -> WeekCalendar(
                                 selectedDate = uiState.selectedDate,
                                 today = today,
-                                onDateSelected = viewModel::selectDate,
+                                onDateSelected = { onAction(ScheduleAction.SelectDate(it)) },
                                 dayNames = cal.dayNames,
                                 sessionDates = uiState.allSessionDates,
                                 todayLabel = stringResource(Res.string.schedule_today)
@@ -164,8 +184,7 @@ fun ScheduleScreen(
                                     if (date.year != currentYearMonth.year || date.month != currentYearMonth.month) {
                                         currentYearMonth = YearMonth(date.year, date.month)
                                     }
-                                    viewModel.selectDate(date)
-                                },
+                                    onAction(ScheduleAction.SelectDate(date))                                },
                                 dayNames = cal.dayNames,
                                 sessionDates = uiState.allSessionDates,
                                 todayLabel = stringResource(Res.string.schedule_today),
@@ -198,8 +217,8 @@ fun ScheduleScreen(
                             SessionScheduleCard(
                                 sessionData = sessionData,
                                 isLoading = uiState.sessionLoadingStates[sessionData.session.id] ?: false,
-                                onBook = { viewModel.bookSession(it) },
-                                onCancel = { viewModel.cancelBooking(it) }
+                                onBook = { onAction(ScheduleAction.BookSession(it)) },
+                                onCancel = { onAction(ScheduleAction.CancelBooking(it)) }
                             )
                             Spacer(modifier = Modifier.height(spacing.small))
                         }
@@ -229,7 +248,7 @@ fun ScheduleScreen(
                         items(uiState.upcomingBookedSessions) { sessionData ->
                             UpcomingBookedCard(
                                 sessionData = sessionData,
-                                onCancel = { viewModel.cancelBooking(it) }
+                                onCancel = { onAction(ScheduleAction.CancelBooking(it)) }
                             )
                             Spacer(modifier = Modifier.height(spacing.small))
                         }

@@ -8,10 +8,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import pt.dourobats.app.core.model.Language
-import pt.dourobats.app.core.model.Theme
-import pt.dourobats.app.core.model.UserProfile
-import pt.dourobats.app.core.model.UserRole
+import pt.dourobats.app.features.settings.api.Language
+import pt.dourobats.app.features.settings.api.Theme
+import pt.dourobats.app.features.login.api.UserProfile
+import pt.dourobats.app.features.login.api.UserRole
 import pt.dourobats.app.core.domain.usecase.LogoutUseCase
 import pt.dourobats.app.core.domain.usecase.ObserveLanguageUseCase
 import pt.dourobats.app.core.domain.usecase.ObserveThemeUseCase
@@ -20,7 +20,7 @@ import pt.dourobats.app.core.domain.usecase.SetLanguageUseCase
 import pt.dourobats.app.core.domain.usecase.SetThemeUseCase
 import pt.dourobats.app.core.domain.usecase.UpdateUserProfileUseCase
 
-class SettingsViewModel(
+internal class SettingsViewModel(
     private val observeUserProfile: ObserveUserProfileUseCase,
     private val observeLanguage: ObserveLanguageUseCase,
     private val observeTheme: ObserveThemeUseCase,

@@ -26,7 +26,7 @@ import pt.dourobats.app.features.settings.SettingsUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileEditBottomSheet(
+internal fun ProfileEditBottomSheet(
     editState: ProfileEditState,
     validationErrors: SettingsUiState.ValidationErrors,
     onDisplayNameChange: (String) -> Unit,

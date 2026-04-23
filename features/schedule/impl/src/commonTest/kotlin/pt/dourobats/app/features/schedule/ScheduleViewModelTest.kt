@@ -12,9 +12,9 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
-import pt.dourobats.app.core.model.Session
-import pt.dourobats.app.core.model.SessionStatus
-import pt.dourobats.app.core.model.SkillLevel
+import pt.dourobats.app.features.schedule.api.Session
+import pt.dourobats.app.features.schedule.api.SessionStatus
+import pt.dourobats.app.features.schedule.api.SkillLevel
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -23,26 +23,31 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
+import pt.dourobats.app.features.schedule.testing.FakeGetAllSessionsUseCase
+import pt.dourobats.app.features.schedule.testing.FakeGetAvailableSessionsUseCase
+import pt.dourobats.app.features.schedule.testing.FakeGetUserBookedSessionsUseCase
+import pt.dourobats.app.features.schedule.testing.FakeBookSessionUseCase
+import pt.dourobats.app.features.schedule.testing.FakeCancelBookingUseCase
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ScheduleViewModelTest {
 
     private lateinit var viewModel: ScheduleViewModel
-    private lateinit var fakeGetAvailableSessionsUseCase: pt.dourobats.app.core.test.fakes.FakeGetAvailableSessionsUseCase
-    private lateinit var fakeGetUserBookedSessionsUseCase: pt.dourobats.app.core.test.fakes.FakeGetUserBookedSessionsUseCase
-    private lateinit var fakeGetAllSessionsUseCase: pt.dourobats.app.core.test.fakes.FakeGetAllSessionsUseCase
-    private lateinit var fakeBookSessionUseCase: pt.dourobats.app.core.test.fakes.FakeBookSessionUseCase
-    private lateinit var fakeCancelBookingUseCase: pt.dourobats.app.core.test.fakes.FakeCancelBookingUseCase
+    private lateinit var fakeGetAvailableSessionsUseCase: FakeGetAvailableSessionsUseCase
+    private lateinit var fakeGetUserBookedSessionsUseCase: FakeGetUserBookedSessionsUseCase
+    private lateinit var fakeGetAllSessionsUseCase: FakeGetAllSessionsUseCase
+    private lateinit var fakeBookSessionUseCase: FakeBookSessionUseCase
+    private lateinit var fakeCancelBookingUseCase: FakeCancelBookingUseCase
     private val testDispatcher = StandardTestDispatcher()
 
     @BeforeTest
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        fakeGetAvailableSessionsUseCase = pt.dourobats.app.core.test.fakes.FakeGetAvailableSessionsUseCase()
-        fakeGetUserBookedSessionsUseCase = pt.dourobats.app.core.test.fakes.FakeGetUserBookedSessionsUseCase()
-        fakeGetAllSessionsUseCase = pt.dourobats.app.core.test.fakes.FakeGetAllSessionsUseCase()
-        fakeBookSessionUseCase = pt.dourobats.app.core.test.fakes.FakeBookSessionUseCase()
-        fakeCancelBookingUseCase = pt.dourobats.app.core.test.fakes.FakeCancelBookingUseCase()
+        fakeGetAvailableSessionsUseCase = FakeGetAvailableSessionsUseCase()
+        fakeGetUserBookedSessionsUseCase = FakeGetUserBookedSessionsUseCase()
+        fakeGetAllSessionsUseCase = FakeGetAllSessionsUseCase()
+        fakeBookSessionUseCase = FakeBookSessionUseCase()
+        fakeCancelBookingUseCase = FakeCancelBookingUseCase()
     }
 
     private fun createViewModel() {

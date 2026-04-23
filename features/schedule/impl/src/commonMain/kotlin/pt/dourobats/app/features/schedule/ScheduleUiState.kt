@@ -7,7 +7,7 @@ import pt.dourobats.app.core.ui.model.SessionDisplayData
  * UI state for the schedule screen.
  * Immutable data class representing the current state of the screen.
  */
-data class ScheduleUiState(
+internal data class ScheduleUiState(
     val selectedDate: LocalDate,
     val viewMode: CalendarViewMode = CalendarViewMode.WEEK,
     val sessionsForSelectedDate: List<SessionDisplayData> = emptyList(),

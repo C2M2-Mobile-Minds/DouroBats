@@ -7,6 +7,8 @@ import pt.dourobats.app.core.domain.di.domainModule
 import pt.dourobats.app.features.login.LoginErrorMapper
 import pt.dourobats.app.features.login.LoginFormValidator
 import pt.dourobats.app.features.login.LoginViewModel
+import pt.dourobats.app.features.login.api.AuthRepository
+import pt.dourobats.app.features.login.data.AuthRepositoryImpl
 
 /**
  * Koin module for the login feature.
@@ -23,6 +25,7 @@ import pt.dourobats.app.features.login.LoginViewModel
 val loginModule = module {
     includes(domainModule)
 
+    single<AuthRepository> { AuthRepositoryImpl(get()) }
 
     // Utilities (presentation layer) - created fresh for each use
     factoryOf(::LoginFormValidator)

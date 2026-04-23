@@ -3,9 +3,9 @@ package pt.dourobats.app.features.schedule.data
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
-import pt.dourobats.app.core.model.Session
-import pt.dourobats.app.core.model.SessionStatus
-import pt.dourobats.app.core.model.SkillLevel
+import pt.dourobats.app.features.schedule.api.Session
+import pt.dourobats.app.features.schedule.api.SessionStatus
+import pt.dourobats.app.features.schedule.api.SkillLevel
 import pt.dourobats.app.core.ui.model.SessionDisplayData
 import kotlin.time.Duration.Companion.hours
 

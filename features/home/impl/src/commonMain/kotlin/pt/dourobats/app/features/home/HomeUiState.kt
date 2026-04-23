@@ -6,7 +6,7 @@ package pt.dourobats.app.features.home
  * @property isCommitteeUser True when the signed-in user has the COMMITTEE role,
  *   which gates visibility of the management portal section.
  */
-data class HomeUiState(
+internal data class HomeUiState(
     val isCommitteeUser: Boolean = false,
     val displayName: String = ""
 )

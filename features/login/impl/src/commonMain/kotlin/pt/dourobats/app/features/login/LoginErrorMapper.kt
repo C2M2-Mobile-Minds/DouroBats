@@ -13,7 +13,7 @@ import pt.dourobats.app.core.common.exception.ValidationException
  * Follows the principle of separation of concerns by keeping
  * error message formatting in the presentation layer.
  */
-class LoginErrorMapper {
+internal class LoginErrorMapper {
 
     /**
      * Maps a throwable to a user-friendly error message.

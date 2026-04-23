@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
-import pt.dourobats.app.core.model.Session
+import pt.dourobats.app.features.schedule.api.Session
 import pt.dourobats.app.core.domain.usecase.GetAllSessionsUseCase
 import pt.dourobats.app.core.domain.usecase.GetAvailableSessionsUseCase
 import pt.dourobats.app.core.domain.usecase.GetUserBookedSessionsUseCase
@@ -27,7 +27,7 @@ import kotlin.time.Clock
  * ViewModel for the schedule screen.
  * Manages UI state and business logic using use cases.
  */
-class ScheduleViewModel(
+internal class ScheduleViewModel(
     private val getAvailableSessionsUseCase: GetAvailableSessionsUseCase,
     private val getUserBookedSessionsUseCase: GetUserBookedSessionsUseCase,
     private val getAllSessionsUseCase: GetAllSessionsUseCase,

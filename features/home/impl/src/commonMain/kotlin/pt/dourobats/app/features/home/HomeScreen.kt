@@ -12,6 +12,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,14 +24,28 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dourobats.features.home.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import pt.dourobats.app.core.ui.components.AppHeader
 import pt.dourobats.app.core.ui.components.DetailRow
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 
 @Composable
-fun HomeScreen(
-    isCommitteeUser: Boolean = false,
-    displayName: String = "",
+fun HomeRoute(
+    modifier: Modifier = Modifier,
+) {
+    val viewModel: HomeViewModel = koinViewModel()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    HomeScreen(
+        state = uiState,
+        onAction = { },
+        modifier = modifier
+    )
+}
+
+@Composable
+internal fun HomeScreen(
+    state: HomeUiState,
+    onAction: (HomeAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val spacing = LocalSpacing.current
@@ -41,8 +57,8 @@ fun HomeScreen(
     ) {
         // Shared Header Component
         AppHeader(
-            title = if (displayName.isNotBlank()) {
-                stringResource(Res.string.home_welcome, displayName)
+            title = if (state.displayName.isNotBlank()) {
+                stringResource(Res.string.home_welcome, state.displayName)
             } else {
                 stringResource(Res.string.home_welcome_fallback)
             },
@@ -65,7 +81,7 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(spacing.large))
 
             // Management Portal Section (committee members only)
-            if (isCommitteeUser) {
+            if (state.isCommitteeUser) {
                 SectionTitle(title = stringResource(Res.string.home_management_portal))
                 ManagementPortalGrid()
 

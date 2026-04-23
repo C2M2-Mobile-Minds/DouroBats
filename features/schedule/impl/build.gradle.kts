@@ -4,12 +4,15 @@ plugins {
     id("pt.dourobats.app.compose")
 }
 
+compose.resources {
+    packageOfResClass = "dourobats.features.schedule.generated.resources"
+}
+
 kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.features.schedule.api)
             implementation(projects.core.domain)
-            implementation(projects.core.model)
             implementation(projects.core.common)
             implementation(projects.core.ui)
             implementation(libs.koin.core)
@@ -17,12 +20,13 @@ kotlin {
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.androidx.navigation.compose)
             implementation(libs.kotlinx.datetime)
+            implementation(libs.androidx.lifecycle.runtimeCompose)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.koin.test)
             implementation(libs.kotlinx.coroutines.test)
-            implementation(projects.core.test)
+            implementation(projects.features.schedule.testing)
         }
     }
 }
