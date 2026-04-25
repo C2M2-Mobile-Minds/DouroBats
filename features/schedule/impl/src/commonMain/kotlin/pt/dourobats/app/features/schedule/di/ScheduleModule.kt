@@ -10,6 +10,7 @@ import pt.dourobats.app.features.schedule.api.usecase.GetUserBookedSessionsUseCa
 import pt.dourobats.app.features.schedule.data.FakeTrainingRepository
 import pt.dourobats.app.features.schedule.repository.TrainingRepository
 import pt.dourobats.app.features.schedule.ui.ScheduleViewModel
+import pt.dourobats.app.features.schedule.ui.mapper.SessionUiMapper
 import pt.dourobats.app.features.schedule.usecase.BookSessionUseCaseImpl
 import pt.dourobats.app.features.schedule.usecase.CancelBookingUseCaseImpl
 import pt.dourobats.app.features.schedule.usecase.GetAllSessionsUseCaseImpl
@@ -18,6 +19,7 @@ import pt.dourobats.app.features.schedule.usecase.GetUserBookedSessionsUseCaseIm
 
 val scheduleModule = module {
     single<TrainingRepository> { FakeTrainingRepository() }
+    factory { SessionUiMapper(get()) }
 
     factory<BookSessionUseCase> { BookSessionUseCaseImpl(get()) }
     factory<CancelBookingUseCase> { CancelBookingUseCaseImpl(get()) }
@@ -31,7 +33,8 @@ val scheduleModule = module {
             getUserBookedSessionsUseCase = get(),
             getAllSessionsUseCase = get(),
             bookSessionUseCase = get(),
-            cancelBookingUseCase = get()
+            cancelBookingUseCase = get(),
+            mapper = get()
         )
     }
 }

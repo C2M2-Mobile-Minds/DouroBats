@@ -12,8 +12,10 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.features.schedule.api)
+            implementation(projects.features.venues.api)
             implementation(projects.core.common)
             implementation(projects.core.ui)
+            implementation(projects.core.localization)
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)

@@ -1,4 +1,4 @@
-package pt.dourobats.app.features.schedule.api.ui
+package pt.dourobats.app.features.schedule.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,31 +12,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import pt.dourobats.app.core.ui.theme.LocalSpacing
+import pt.dourobats.app.features.schedule.api.ui.SessionUiModel
 
 /**
  * Section component for displaying a list of sessions.
- *
- * Shows a title and either a list of session cards or an empty state message.
- * Used for both "Available Sessions" and "My Schedule" sections.
- *
- * @param title Section title (e.g., "Available Sessions", "My Schedule")
- * @param sessions List of sessions to display
- * @param emptyMessage Message to show when no sessions available
- * @param showDate Whether to show dates on session cards (useful for multi-date lists)
- * @param bookedBadgeText Text to display on the booked badge (default: "Booked")
- * @param sessionLoadingStates Map of session IDs to loading states
- * @param onBookSession Callback when user wants to book a session
- * @param onCancelBooking Callback when user wants to cancel a booking
- * @param bookButtonText Text for the book button
- * @param cancelButtonText Text for the cancel button
- * @param attendingText Text to show after attendee count
- * @param fullButtonText Text for disabled full button
- * @param modifier Optional modifier for the section
  */
 @Composable
-fun SessionListSection(
+internal fun SessionListSection(
     title: String,
-    sessions: List<SessionDisplayData>,
+    sessions: List<SessionUiModel>,
     emptyMessage: String,
     showDate: Boolean = false,
     bookedBadgeText: String = "Booked",
@@ -52,7 +36,6 @@ fun SessionListSection(
     val spacing = LocalSpacing.current
 
     Column(modifier = modifier.fillMaxWidth()) {
-        // Section title
         Text(
             text = title,
             style = MaterialTheme.typography.titleLarge,
@@ -62,7 +45,6 @@ fun SessionListSection(
 
         Spacer(modifier = Modifier.height(spacing.standard))
 
-        // Session list or empty state
         if (sessions.isEmpty()) {
             Text(
                 text = emptyMessage,

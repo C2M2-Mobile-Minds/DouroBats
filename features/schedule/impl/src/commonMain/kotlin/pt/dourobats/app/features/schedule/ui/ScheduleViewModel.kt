@@ -13,35 +13,36 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
-import pt.dourobats.app.features.schedule.api.model.Session
 import pt.dourobats.app.features.schedule.api.usecase.GetAllSessionsUseCase
 import pt.dourobats.app.features.schedule.api.usecase.GetAvailableSessionsUseCase
 import pt.dourobats.app.features.schedule.api.usecase.GetUserBookedSessionsUseCase
 import pt.dourobats.app.features.schedule.api.usecase.BookSessionUseCase
 import pt.dourobats.app.features.schedule.api.usecase.CancelBookingUseCase
 import pt.dourobats.app.core.common.Result
-import pt.dourobats.app.features.schedule.api.ui.SessionDisplayData
+import pt.dourobats.app.features.schedule.calendar.YearMonth
+import pt.dourobats.app.features.schedule.ui.mapper.SessionUiMapper
 import kotlin.time.Clock
 
 /**
  * ViewModel for the schedule screen.
- * Manages UI state and business logic using use cases.
  */
 internal class ScheduleViewModel(
     private val getAvailableSessionsUseCase: GetAvailableSessionsUseCase,
     private val getUserBookedSessionsUseCase: GetUserBookedSessionsUseCase,
     private val getAllSessionsUseCase: GetAllSessionsUseCase,
     private val bookSessionUseCase: BookSessionUseCase,
-    private val cancelBookingUseCase: CancelBookingUseCase
+    private val cancelBookingUseCase: CancelBookingUseCase,
+    private val mapper: SessionUiMapper
 ) : ViewModel() {
 
-    private val _selectedDate = MutableStateFlow(
-        Clock.System.todayIn(TimeZone.currentSystemDefault())
-    )
+    private val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+
+    private val _selectedDate = MutableStateFlow(today)
 
     private val _uiState = MutableStateFlow(
         ScheduleUiState(
-            selectedDate = _selectedDate.value
+            selectedDate = _selectedDate.value,
+            currentYearMonth = YearMonth(today.year, today.month)
         )
     )
     val uiState: StateFlow<ScheduleUiState> = _uiState.asStateFlow()
@@ -50,26 +51,14 @@ internal class ScheduleViewModel(
         loadSessions()
     }
 
-    /**
-     * Load sessions reactively. Available sessions are derived via flatMapLatest
-     * so they always reflect the current selectedDate without needing a manual reload.
-     */
     private fun loadSessions() {
-        val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
-
         viewModelScope.launch {
             combine(
                 _selectedDate.flatMapLatest { date -> getAvailableSessionsUseCase(date) },
                 getUserBookedSessionsUseCase(today),
                 getAllSessionsUseCase()
             ) { sessionsForDate, bookedSessions, allSessions ->
-                Triple(
-                    sessionsForDate.map { (session, isBooked) ->
-                        session.toDisplayData(isBooked)
-                    },
-                    bookedSessions.map { it.toDisplayData(true) },
-                    allSessions
-                )
+                Triple(sessionsForDate, bookedSessions, allSessions)
             }
                 .catch { error ->
                     _uiState.update {
@@ -80,33 +69,41 @@ internal class ScheduleViewModel(
                     }
                 }
                 .collect { (sessionsForDate, bookedSessions, allSessions) ->
+                    // Since mapper.map is now suspend, we map the lists in the coroutine context
+                    val mappedSessionsForDate = sessionsForDate.map { (session, isBooked) ->
+                        mapper.map(session, isBooked)
+                    }
+                    val mappedBookedSessions = bookedSessions.map { session ->
+                        mapper.map(session, true)
+                    }
+
                     _uiState.update {
                         it.copy(
-                            sessionsForSelectedDate = sessionsForDate,
-                            upcomingBookedSessions = bookedSessions,
+                            sessionsForSelectedDate = mappedSessionsForDate,
+                            upcomingBookedSessions = mappedBookedSessions,
                             isLoading = false,
                             errorMessage = null,
-                            allSessionDates = allSessions.map { s ->
-                                s.dateTime.date
-                            }.toSet()
+                            allSessionDates = allSessions.map { s -> s.dateTime.date }.toSet()
                         )
                     }
                 }
         }
     }
 
-    /**
-     * Update the selected date. The flatMapLatest in loadSessions() will
-     * automatically re-subscribe to sessions for the new date.
-     */
     fun selectDate(date: LocalDate) {
         _selectedDate.value = date
-        _uiState.update { it.copy(selectedDate = date) }
+        _uiState.update { 
+            it.copy(
+                selectedDate = date,
+                currentYearMonth = YearMonth(date.year, date.month)
+            ) 
+        }
     }
 
-    /**
-     * Toggle between week and month calendar view.
-     */
+    fun updateYearMonth(yearMonth: YearMonth) {
+        _uiState.update { it.copy(currentYearMonth = yearMonth) }
+    }
+
     fun toggleViewMode() {
         _uiState.update {
             it.copy(
@@ -119,36 +116,7 @@ internal class ScheduleViewModel(
         }
     }
 
-    /**
-     * Convert domain Session to UI SessionDisplayData.
-     * Maps sport IDs to display names and icons.
-     */
-    private fun Session.toDisplayData(isBooked: Boolean): SessionDisplayData {
-        return SessionDisplayData(
-            session = this,
-            sportName = when (sportId) {
-                "volleyball" -> "Volleyball"
-                "futsal" -> "Futsal"
-                else -> "Unknown"
-            },
-            sportIcon = when (sportId) {
-                "volleyball" -> "🏐"
-                "futsal" -> "⚽"
-                else -> "🏃"
-            },
-            venueName = venueId, // In real app, map venue ID to venue name
-            isUserBooked = isBooked
-        )
-    }
-
-    /**
-     * Books a session for the current user.
-     * Sets loading state for the specific session during the operation.
-     *
-     * @param sessionId ID of the session to book
-     */
     fun bookSession(sessionId: String) {
-        // Set loading state for this specific session
         _uiState.update {
             it.copy(
                 sessionLoadingStates = it.sessionLoadingStates + (sessionId to true),
@@ -158,10 +126,7 @@ internal class ScheduleViewModel(
         }
 
         viewModelScope.launch {
-            // Execute use case
             val result = bookSessionUseCase(sessionId)
-
-            // Handle result
             when (result) {
                 is Result.Success -> {
                     _uiState.update {
@@ -179,21 +144,12 @@ internal class ScheduleViewModel(
                         )
                     }
                 }
-                is Result.Loading -> {
-                    // Already in loading state
-                }
+                is Result.Loading -> {}
             }
         }
     }
 
-    /**
-     * Cancels a booked session for the current user.
-     * Sets loading state for the specific session during the operation.
-     *
-     * @param sessionId ID of the session to cancel
-     */
     fun cancelBooking(sessionId: String) {
-        // Set loading state for this specific session
         _uiState.update {
             it.copy(
                 sessionLoadingStates = it.sessionLoadingStates + (sessionId to true),
@@ -203,10 +159,7 @@ internal class ScheduleViewModel(
         }
 
         viewModelScope.launch {
-            // Execute use case
             val result = cancelBookingUseCase(sessionId)
-
-            // Handle result
             when (result) {
                 is Result.Success -> {
                     _uiState.update {
@@ -224,17 +177,11 @@ internal class ScheduleViewModel(
                         )
                     }
                 }
-                is Result.Loading -> {
-                    // Already in loading state
-                }
+                is Result.Loading -> {}
             }
         }
     }
 
-    /**
-     * Clears success and error messages.
-     * Called when user dismisses feedback or navigates away.
-     */
     fun clearMessages() {
         _uiState.update {
             it.copy(

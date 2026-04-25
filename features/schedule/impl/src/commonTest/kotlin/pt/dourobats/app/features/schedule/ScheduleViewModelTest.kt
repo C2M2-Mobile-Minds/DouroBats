@@ -11,12 +11,14 @@ import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 import pt.dourobats.app.core.common.Result
 import pt.dourobats.app.features.schedule.api.model.Session
 import pt.dourobats.app.features.schedule.api.model.SessionStatus
 import pt.dourobats.app.features.schedule.api.model.SkillLevel
+import pt.dourobats.app.features.schedule.calendar.YearMonth
 import pt.dourobats.app.features.schedule.testing.FakeBookSessionUseCase
 import pt.dourobats.app.features.schedule.testing.FakeCancelBookingUseCase
 import pt.dourobats.app.features.schedule.testing.FakeGetAllSessionsUseCase
@@ -24,6 +26,7 @@ import pt.dourobats.app.features.schedule.testing.FakeGetAvailableSessionsUseCas
 import pt.dourobats.app.features.schedule.testing.FakeGetUserBookedSessionsUseCase
 import pt.dourobats.app.features.schedule.ui.CalendarViewMode
 import pt.dourobats.app.features.schedule.ui.ScheduleViewModel
+import pt.dourobats.app.features.schedule.ui.mapper.SessionUiMapper
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -43,6 +46,7 @@ class ScheduleViewModelTest {
     private lateinit var fakeBookSessionUseCase: FakeBookSessionUseCase
     private lateinit var fakeCancelBookingUseCase: FakeCancelBookingUseCase
     private val testDispatcher = StandardTestDispatcher()
+    private val mapper = SessionUiMapper()
 
     @BeforeTest
     fun setup() {
@@ -70,7 +74,8 @@ class ScheduleViewModelTest {
             getUserBookedSessionsUseCase = fakeGetUserBookedSessionsUseCase.build(),
             getAllSessionsUseCase = fakeGetAllSessionsUseCase.build(),
             bookSessionUseCase = fakeBookSessionUseCase.build(),
-            cancelBookingUseCase = fakeCancelBookingUseCase.build()
+            cancelBookingUseCase = fakeCancelBookingUseCase.build(),
+            mapper = mapper
         )
     }
 
@@ -80,10 +85,13 @@ class ScheduleViewModelTest {
     }
 
     @Test
-    fun `initial state shows loading`() {
+    fun `initial state shows loading and current month`() {
         createViewModel()
         val state = viewModel.uiState.value
+        val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+        
         assertTrue(state.isLoading)
+        assertEquals(YearMonth(today.year, today.month), state.currentYearMonth)
     }
 
     @Test
@@ -103,20 +111,31 @@ class ScheduleViewModelTest {
     }
 
     @Test
-    fun `selectDate updates selected date and loads new sessions`() = runTest {
+    fun `selectDate updates selected date and year month`() = runTest {
         createViewModel()
         advanceUntilIdle()
-        val newDate = LocalDate(2026, 1, 13)
-        val session = createTestSession("2", newDate)
-        fakeGetAvailableSessionsUseCase.invoke = { _ -> flowOf(listOf(session to false)) }
-
+        val newDate = LocalDate(2026, 5, 20)
+        
         viewModel.selectDate(newDate)
         advanceUntilIdle()
 
         val state = viewModel.uiState.value
         assertEquals(newDate, state.selectedDate)
-        assertEquals(1, state.sessionsForSelectedDate.size)
-        assertEquals("2", state.sessionsForSelectedDate.first().session.id)
+        assertEquals(YearMonth(2026, Month.MAY), state.currentYearMonth)
+    }
+
+    @Test
+    fun `updateYearMonth updates current year month without changing selected date`() = runTest {
+        val initialDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
+        createViewModel()
+        advanceUntilIdle()
+        
+        val targetMonth = YearMonth(2027, Month.DECEMBER)
+        viewModel.updateYearMonth(targetMonth)
+        
+        val state = viewModel.uiState.value
+        assertEquals(targetMonth, state.currentYearMonth)
+        assertEquals(initialDate, state.selectedDate)
     }
 
     @Test

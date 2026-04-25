@@ -13,6 +13,7 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core)
             implementation(projects.core.common)
             api(projects.core.ui)
+            implementation(projects.core.localization)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

@@ -1,7 +1,8 @@
 package pt.dourobats.app.features.schedule.ui
 
 import kotlinx.datetime.LocalDate
-import pt.dourobats.app.features.schedule.api.ui.SessionDisplayData
+import pt.dourobats.app.features.schedule.api.ui.SessionUiModel
+import pt.dourobats.app.features.schedule.calendar.YearMonth
 
 /**
  * UI state for the schedule screen.
@@ -9,9 +10,10 @@ import pt.dourobats.app.features.schedule.api.ui.SessionDisplayData
  */
 internal data class ScheduleUiState(
     val selectedDate: LocalDate,
+    val currentYearMonth: YearMonth,
     val viewMode: CalendarViewMode = CalendarViewMode.WEEK,
-    val sessionsForSelectedDate: List<SessionDisplayData> = emptyList(),
-    val upcomingBookedSessions: List<SessionDisplayData> = emptyList(),
+    val sessionsForSelectedDate: List<SessionUiModel> = emptyList(),
+    val upcomingBookedSessions: List<SessionUiModel> = emptyList(),
     val isLoading: Boolean = true,
     val errorMessage: String? = null,
     val sessionLoadingStates: Map<String, Boolean> = emptyMap(),
