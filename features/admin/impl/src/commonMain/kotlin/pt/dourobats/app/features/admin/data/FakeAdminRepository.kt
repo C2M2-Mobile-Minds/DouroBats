@@ -21,7 +21,7 @@ internal class FakeAdminRepository : AdminRepository {
                 startDate = LocalDate(2026, 1, 1),
                 endDate = LocalDate(2026, 1, 31),
                 unlockedBy = "admin-1",
-                unlockedAt = kotlin.time.Clock.System.now()
+                unlockedAt = Clock.System.now()
             ),
             CalendarUnlock(
                 id = "unlock-2",
@@ -29,7 +29,7 @@ internal class FakeAdminRepository : AdminRepository {
                 startDate = LocalDate(2026, 2, 1),
                 endDate = LocalDate(2026, 2, 28),
                 unlockedBy = "admin-1",
-                unlockedAt = kotlin.time.Clock.System.now()
+                unlockedAt = Clock.System.now()
             )
         )
     )
@@ -47,7 +47,7 @@ internal class FakeAdminRepository : AdminRepository {
             startDate = startDate,
             endDate = endDate,
             unlockedBy = "current-admin",
-            unlockedAt = kotlin.time.Clock.System.now()
+            unlockedAt = Clock.System.now()
         )
         _unlocks.value = _unlocks.value + newUnlock
         return Result.Success(newUnlock)
