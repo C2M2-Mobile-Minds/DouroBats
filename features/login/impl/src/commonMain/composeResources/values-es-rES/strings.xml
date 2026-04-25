@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="login_app_name">DouroBats</string>
+    <string name="login_app_tagline">Douro Bats</string>
+
+    <!-- Email step -->
+    <string name="login_email_prompt">Introduce tu correo electrónico para recibir un código de acceso.</string>
+    <string name="login_email_label">Correo electrónico</string>
+    <string name="login_email_placeholder">tu.email@ejemplo.com</string>
+    <string name="login_send_code_button">Enviar Código</string>
+
+    <!-- Verify step -->
+    <string name="login_verify_prompt">Introduce el código de 6 dígitos enviado a</string>
+    <string name="login_verify_button">Verificar e Iniciar sesión</string>
+    <string name="login_change_email_button">Cambiar correo electrónico</string>
+
+    <!-- Language selector -->
+    <string name="login_select_language">Seleccionar idioma</string>
+</resources>

@@ -1,0 +1,17 @@
+package pt.dourobats.app.core.localization
+
+import android.os.LocaleList
+import java.util.Locale
+
+actual fun changeLanguage(language: Language) {
+    val locale = Locale.forLanguageTag(language.bcp47Tag)
+    Locale.setDefault(locale)
+    LocaleList.setDefault(LocaleList(locale))
+}
+
+actual fun getSystemLocaleLanguage(): Language {
+    val tag = Locale.getDefault().toLanguageTag()
+    return Language.fromCodeOrNull(tag)
+        ?: Language.fromCodeOrNull(Locale.getDefault().language)
+        ?: Language.ENGLISH_US
+}

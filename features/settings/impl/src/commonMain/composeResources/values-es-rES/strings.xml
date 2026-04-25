@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Settings Screen -->
+    <string name="settings_title">Ajustes</string>
+    <string name="settings_subtitle">Perfil y preferencias</string>
+
+    <!-- Section Headers -->
+    <string name="settings_section_account">Cuenta</string>
+    <string name="settings_section_preferences">Preferencias</string>
+    <string name="settings_section_actions">Acciones</string>
+
+    <!-- Account Section -->
+    <string name="settings_display_name">Nombre Visible</string>
+    <string name="settings_email">Correo Electrónico</string>
+    <string name="settings_phone">Número de Teléfono</string>
+    <string name="settings_not_set">No establecido</string>
+
+    <!-- Profile Editing -->
+    <string name="settings_edit_profile">Editar Perfil</string>
+    <string name="settings_save">Guardar</string>
+    <string name="settings_save_changes">Guardar Cambios</string>
+    <string name="settings_cancel">Cancelar</string>
+
+    <!-- Language Settings -->
+    <string name="settings_language">Idioma</string>
+    <string name="settings_language_select">Seleccionar Idioma</string>
+    <string name="settings_language_description">Cambiar idioma de la aplicación</string>
+
+    <!-- Theme Settings -->
+    <string name="settings_theme">Tema</string>
+    <string name="settings_theme_select">Seleccionar Tema</string>
+    <string name="settings_theme_light">Claro</string>
+    <string name="settings_theme_dark">Oscuro</string>
+    <string name="settings_dark_theme">Tema Oscuro</string>
+    <string name="settings_enabled">Activado</string>
+    <string name="settings_disabled">Desactivado</string>
+
+    <!-- Notifications -->
+    <string name="settings_notifications">Notificaciones</string>
+    <string name="settings_notifications_description">Gestionar preferencias de notificación</string>
+    <string name="settings_notifications_title">Notificaciones</string>
+    <string name="settings_notifications_section_sessions">Sesiones</string>
+    <string name="settings_notifications_section_club">Club</string>
+    <string name="settings_notifications_session_reminders">Recordatorios de Sesión</string>
+    <string name="settings_notifications_session_reminders_desc">Recibe avisos antes de que comiencen tus sesiones</string>
+    <string name="settings_notifications_booking_confirmed">Confirmaciones de Reserva</string>
+    <string name="settings_notifications_booking_confirmed_desc">Notificado cuando una reserva es confirmada o cancelada</string>
+    <string name="settings_notifications_new_sessions">Nuevas Sesiones Disponibles</string>
+    <string name="settings_notifications_new_sessions_desc">Sé el primero en saber cuando se publican nuevas sesiones</string>
+    <string name="settings_notifications_announcements">Anuncios del Club</string>
+    <string name="settings_notifications_announcements_desc">Noticias y actualizaciones del club</string>
+    <string name="settings_notifications_session_cancelled">Cancelaciones de Sesión</string>
+    <string name="settings_notifications_session_cancelled_desc">Alerta cuando una sesión que reservaste es cancelada</string>
+
+    <!-- Booking History -->
+    <string name="settings_booking_history">Mi Historial de Reservas</string>
+    <string name="settings_booking_attended">Asistidas</string>
+    <string name="settings_booking_canceled">Canceladas</string>
+    <string name="settings_booking_upcoming">Próximas</string>
+
+    <!-- Committee Tools -->
+    <string name="settings_committee_tools">Herramientas del Comité</string>
+    <string name="settings_committee_manage_sessions">Gestionar Sesiones</string>
+    <string name="settings_committee_manage_sessions_description">Ver y gestionar sesiones del comité</string>
+    <string name="settings_committee_view_reports">Ver Informes</string>
+    <string name="settings_committee_view_reports_description">Acceder a informes y análisis del comité</string>
+    <string name="settings_committee_settings">Configuración del Comité</string>
+    <string name="settings_committee_settings_description">Configurar preferencias del comité</string>
+
+    <!-- Actions -->
+    <string name="settings_logout">Cerrar Sesión</string>
+    <string name="settings_delete_account">Eliminar Cuenta</string>
+    <string name="settings_delete_account_confirm">¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.</string>
+    <string name="settings_delete">Eliminar</string>
+
+    <!-- Validation Errors -->
+    <string name="error_display_name_empty">El nombre visible no puede estar vacío</string>
+    <string name="error_display_name_short">Debe tener al menos 2 caracteres</string>
+    <string name="error_phone_empty">El número de teléfono no puede estar vacío</string>
+    <string name="error_phone_invalid">Formato de número de teléfono no válido</string>
+
+    <!-- Profile Header -->
+    <string name="settings_profile_picture">Foto de perfil</string>
+    <string name="settings_no_name">Sin nombre establecido</string>
+    <string name="settings_no_email">Sin correo establecido</string>
+
+    <!-- Section Headers (additional) -->
+    <string name="settings_section_profile">Perfil</string>
+    <string name="settings_section_activity">Actividad</string>
+
+    <!-- Role Labels -->
+    <string name="settings_role_athlete">Atleta</string>
+    <string name="settings_role_supporter">Seguidor</string>
+    <string name="settings_role_committee">Directiva</string>
+    <string name="settings_section_developer">Desarrollador</string>
+    <string name="settings_developer_options">Opciones de Desarrollador</string>
+    <string name="settings_developer_options_description">Simular estado de la app para pruebas</string>
+    <string name="settings_developer_role">Rol simulado</string>
+    <string name="settings_developer_role_description">Define tu rol para previsualizar la UI</string>
+
+    <!-- Activity -->
+    <string name="settings_sessions_attended">%d sesiones asistidas</string>
+
+    <!-- Profile validation errors -->
+    <string name="settings_error_display_name_blank">El nombre es obligatorio</string>
+    <string name="settings_error_display_name_too_short">El nombre debe tener al menos 2 caracteres</string>
+    <string name="settings_error_email_blank">El correo electrónico es obligatorio</string>
+    <string name="settings_error_email_invalid">Formato de correo electrónico no válido</string>
+    <string name="settings_error_phone_blank">El número de teléfono es obligatorio</string>
+    <string name="settings_error_phone_invalid">Formato de número de teléfono no válido</string>
+</resources>

@@ -7,20 +7,21 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            // Feature modules
-            implementation(projects.features.home)
-            implementation(projects.features.login)
-            implementation(projects.features.schedule)
-            implementation(projects.features.settings)
+            // Feature modules (:impl deps expose :api transitively)
+            implementation(projects.features.home.impl)
+            implementation(projects.features.login.impl)
+            implementation(projects.features.schedule.impl)
+            implementation(projects.features.settings.impl)
+            implementation(projects.features.venues.impl)
+            implementation(projects.features.admin.impl)
 
             // Core modules
-            implementation(projects.core.model)
             implementation(projects.core.common)
-            implementation(projects.core.repository)
-            implementation(projects.core.domain)
             implementation(projects.core.data)
+            implementation(projects.core.navigation)
             implementation(projects.core.network)
             implementation(projects.core.ui)
+            implementation(projects.core.localization)
 
             // Navigation
             implementation(libs.androidx.navigation.compose)
@@ -33,6 +34,7 @@ kotlin {
 
         androidMain.dependencies {
             implementation(libs.koin.android)
+            implementation(libs.androidx.core.splashscreen)
         }
     }
 }
@@ -46,4 +48,3 @@ android {
         versionName = "1.0"
     }
 }
-

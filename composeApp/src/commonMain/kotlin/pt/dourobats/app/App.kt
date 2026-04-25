@@ -1,8 +1,11 @@
 package pt.dourobats.app
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -14,123 +17,147 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import dourobats.core.ui.generated.resources.Res
 import dourobats.core.ui.generated.resources.*
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
-import pt.dourobats.app.core.model.AuthState
-import pt.dourobats.app.core.model.Language
-import pt.dourobats.app.core.model.Theme
-import pt.dourobats.app.core.repository.AuthRepository
-import pt.dourobats.app.core.repository.SettingsRepository
-import pt.dourobats.app.core.ui.localization.LocalLanguage
-import pt.dourobats.app.core.ui.localization.changeLanguage
+import org.koin.compose.koinInject
+import pt.dourobats.app.core.navigation.NavigationEvent
+import pt.dourobats.app.core.navigation.NavigationManager
+import pt.dourobats.app.features.home.HomeRoute
+import pt.dourobats.app.features.home.homeGraph
+import pt.dourobats.app.features.login.LoginRoute
+import pt.dourobats.app.features.login.loginGraph
+import pt.dourobats.app.features.login.api.model.AuthState
+import pt.dourobats.app.features.schedule.ScheduleRoute
+import pt.dourobats.app.features.schedule.scheduleGraph
+import pt.dourobats.app.features.settings.SettingsRoute
+import pt.dourobats.app.features.settings.settingsGraph
+import pt.dourobats.app.core.localization.LocalLanguage
+import pt.dourobats.app.core.localization.changeLanguage
 import pt.dourobats.app.core.ui.theme.AppTheme
-import pt.dourobats.app.features.home.HomeScreen
-import pt.dourobats.app.features.home.HomeViewModel
-import pt.dourobats.app.features.schedule.ScheduleScreen
-import pt.dourobats.app.features.settings.SettingsScreen
 
 @Composable
 @Preview
 fun App() {
-    AppContent()
-}
+    val viewModel: MainViewModel = koinViewModel()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-@Composable
-private fun AppContent() {
-    val settingsRepository: SettingsRepository = koinInject()
-    val authRepository: AuthRepository = koinInject()
-
-    // Hoisted above all conditionals — survives any auth state re-emission
-    var selectedScreen by remember { mutableStateOf(Screen.Home) }
-    var preferencesLoaded by remember { mutableStateOf(false) }
-
-    val savedLanguage by settingsRepository.languageFlow.collectAsState(initial = null)
-    val savedTheme by settingsRepository.themeFlow.collectAsState(initial = null)
-    val authState by authRepository.authStateFlow.collectAsState(initial = AuthState.Loading)
-
-    LaunchedEffect(savedLanguage, savedTheme, authState) {
-        if (savedLanguage != null && savedTheme != null && authState !is AuthState.Loading) {
-            preferencesLoaded = true
-        }
-    }
-
-    if (!preferencesLoaded) {
+    if (!uiState.isReady) {
         Box(modifier = Modifier.fillMaxSize())
         return
     }
 
-    val currentLanguage = savedLanguage ?: Language.ENGLISH_US
-    val useDarkTheme = when (savedTheme ?: Theme.LIGHT) {
-        Theme.LIGHT -> false
-        Theme.DARK -> true
-    }
+    remember(uiState.language) { changeLanguage(uiState.language) }
 
-    remember(currentLanguage) { changeLanguage(currentLanguage) }
-
-    AppTheme(darkTheme = useDarkTheme) {
-        CompositionLocalProvider(LocalLanguage provides currentLanguage) {
-            when (authState) {
-                is AuthState.Loading -> Box(modifier = Modifier.fillMaxSize())
-                is AuthState.Authenticated -> MainApp(
-                    selectedScreen = selectedScreen,
-                    onScreenSelected = { selectedScreen = it }
-                )
-                is AuthState.Unauthenticated -> LoginScreen()
-            }
+    AppTheme(darkTheme = uiState.useDarkTheme) {
+        CompositionLocalProvider(LocalLanguage provides uiState.language) {
+            DouroBatsNavigation(authState = uiState.authState)
         }
     }
 }
 
 @Composable
-private fun MainApp(
-    selectedScreen: Screen,
-    onScreenSelected: (Screen) -> Unit
-) {
+private fun DouroBatsNavigation(authState: AuthState) {
+    val navController = rememberNavController()
+    val navigationManager: NavigationManager = koinInject()
+    val startDestination = if (authState is AuthState.Authenticated) HomeRoute else LoginRoute
+
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = backStackEntry?.destination
+
+    // Auth-driven navigation (orchestration — stays in App)
+    LaunchedEffect(authState) {
+        when (authState) {
+            is AuthState.Authenticated -> {
+                if (currentDestination != null && currentDestination.hasRoute(LoginRoute::class)) {
+                    navController.navigate(HomeRoute) {
+                        popUpTo(LoginRoute) { inclusive = true }
+                    }
+                }
+            }
+            is AuthState.Unauthenticated -> {
+                if (currentDestination != null && !currentDestination.hasRoute(LoginRoute::class)) {
+                    navController.navigate(LoginRoute) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
+            }
+            is AuthState.Loading -> Unit
+        }
+    }
+
+    // Feature-driven navigation via NavigationManager
+    LaunchedEffect(Unit) {
+        navigationManager.events.collect { event ->
+            when (event) {
+                is NavigationEvent.Navigate -> navController.navigate(event.route)
+                NavigationEvent.NavigateBack -> navController.popBackStack()
+            }
+        }
+    }
+
+    val isOnAuthenticatedRoute = bottomNavItems.any {
+        currentDestination?.hasRoute(it.route::class) == true
+    }
+
     Scaffold(
         contentWindowInsets = WindowInsets(0),
         bottomBar = {
-            CustomNavigationBar(
-                selectedScreen = selectedScreen,
-                onScreenSelected = { onScreenSelected(it) }
-            )
+            if (isOnAuthenticatedRoute) {
+                AppBottomNavBar(navController = navController)
+            }
         }
     ) { paddingValues ->
-        Box(modifier = Modifier.padding(paddingValues)) {
-            when (selectedScreen) {
-                Screen.Home -> {
-                    val homeViewModel = koinViewModel<HomeViewModel>()
-                    val homeUiState by homeViewModel.uiState.collectAsState()
-                    HomeScreen(
-                        isCommitteeUser = homeUiState.isCommitteeUser,
-                        displayName = homeUiState.displayName
-                    )
-                }
-                Screen.Training -> ScheduleScreen()
-                Screen.Settings -> SettingsScreen()
-            }
+        NavHost(
+            navController = navController,
+            startDestination = startDestination,
+            modifier = Modifier.padding(paddingValues)
+        ) {
+            loginGraph()
+            homeGraph()
+            scheduleGraph()
+            settingsGraph()
         }
     }
 }
 
+private data class BottomNavItem(
+    val route: Any,
+    val titleRes: StringResource,
+    val icon: ImageVector
+)
+
+private val bottomNavItems = listOf(
+    BottomNavItem(HomeRoute, Res.string.nav_home, Icons.Default.Home),
+    BottomNavItem(ScheduleRoute, Res.string.nav_training, Icons.Default.CalendarMonth),
+    BottomNavItem(SettingsRoute, Res.string.nav_settings, Icons.Default.Settings),
+)
+
 @Composable
-private fun CustomNavigationBar(
-    selectedScreen: Screen,
-    onScreenSelected: (Screen) -> Unit
-) {
+private fun AppBottomNavBar(navController: NavController) {
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = backStackEntry?.destination
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .navigationBarsPadding() // Ensures it sits above system buttons
-            .padding(horizontal = 16.dp, vertical = 12.dp) // Adjusted vertical padding
+            .navigationBarsPadding()
+            .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
         Surface(
             modifier = Modifier
@@ -146,45 +173,61 @@ private fun CustomNavigationBar(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Screen.entries.forEach { screen ->
-                    val isSelected = selectedScreen == screen
+                bottomNavItems.forEach { item ->
+                    val isSelected = currentDestination?.hasRoute(item.route::class) == true
                     val contentColor = if (isSelected) {
                         MaterialTheme.colorScheme.primary
                     } else {
                         MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                     }
 
+                    val interactionSource = remember { MutableInteractionSource() }
+                    val isPressed by interactionSource.collectIsPressedAsState()
+                    val scale by animateFloatAsState(
+                        targetValue = if (isPressed) 0.88f else 1f,
+                        animationSpec = spring(dampingRatio = 0.6f, stiffness = 600f),
+                        label = "navItemScale"
+                    )
+
                     Column(
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxHeight()
+                            .scale(scale)
                             .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
+                                interactionSource = interactionSource,
                                 indication = null,
-                                onClick = { onScreenSelected(screen) }
+                                onClick = {
+                                    navController.navigate(item.route) {
+                                        popUpTo<HomeRoute> {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                }
                             ),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
                         Icon(
-                            imageVector = screen.icon,
-                            contentDescription = stringResource(screen.titleRes),
+                            imageVector = item.icon,
+                            contentDescription = stringResource(item.titleRes),
                             tint = contentColor,
                             modifier = Modifier.size(26.dp)
                         )
-                        
+
                         Spacer(modifier = Modifier.height(4.dp))
-                        
+
                         Text(
-                            text = stringResource(screen.titleRes),
+                            text = stringResource(item.titleRes),
                             color = contentColor,
                             fontSize = 12.sp,
                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
                         )
-                        
+
                         Spacer(modifier = Modifier.height(6.dp))
-                        
-                        // Selected indicator line
+
                         Box(
                             modifier = Modifier
                                 .width(16.dp)
@@ -197,15 +240,4 @@ private fun CustomNavigationBar(
             }
         }
     }
-}
-
-@Composable
-private fun LoginScreen() {
-    pt.dourobats.app.features.login.LoginScreen()
-}
-
-private enum class Screen(val titleRes: org.jetbrains.compose.resources.StringResource, val icon: ImageVector) {
-    Home(Res.string.nav_home, Icons.Default.Home),
-    Training(Res.string.nav_training, Icons.Default.CalendarMonth),
-    Settings(Res.string.nav_settings, Icons.Default.Settings)
 }

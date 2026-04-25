@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Training/Schedule Screen -->
+    <string name="training_title">Training Schedule</string>
+    <string name="training_coming_soon">Calendar view coming soon...</string>
+
+    <!-- Calendar - Day Names (Short) -->
+    <string name="day_monday_short">Mon</string>
+    <string name="day_tuesday_short">Tue</string>
+    <string name="day_wednesday_short">Wed</string>
+    <string name="day_thursday_short">Thu</string>
+    <string name="day_friday_short">Fri</string>
+    <string name="day_saturday_short">Sat</string>
+    <string name="day_sunday_short">Sun</string>
+
+    <!-- Calendar - View Mode -->
+    <string name="view_mode_week">Week</string>
+    <string name="view_mode_month">Month</string>
+    <string name="view_mode_switch_to_week">Switch to week view</string>
+    <string name="view_mode_switch_to_month">Switch to month view</string>
+
+    <!-- Calendar - Month Names (Full) -->
+    <string name="month_january">January</string>
+    <string name="month_february">February</string>
+    <string name="month_march">March</string>
+    <string name="month_april">April</string>
+    <string name="month_may">May</string>
+    <string name="month_june">June</string>
+    <string name="month_july">July</string>
+    <string name="month_august">August</string>
+    <string name="month_september">September</string>
+    <string name="month_october">October</string>
+    <string name="month_november">November</string>
+    <string name="month_december">December</string>
+
+    <!-- Session Lists -->
+    <string name="sessions_available_title">Available Sessions</string>
+    <string name="sessions_my_schedule_title">My Schedule</string>
+    <string name="sessions_available_empty">No sessions available on this date</string>
+    <string name="sessions_my_schedule_empty">You have no upcoming sessions booked</string>
+    <string name="session_booked_badge">Booked</string>
+    <string name="session_full_badge">Full</string>
+
+    <!-- Session Actions -->
+    <string name="session_button_book">Book Session</string>
+    <string name="session_button_cancel">Cancel Booking</string>
+    <string name="session_button_cancel_short">Cancel</string>
+    <string name="session_button_full">Full</string>
+    <string name="session_participants_label">%1$d/%2$d participants</string>
+    <string name="session_book_success">Session booked successfully</string>
+    <string name="session_cancel_success">Booking cancelled successfully</string>
+    <string name="session_book_error">Failed to book session</string>
+    <string name="session_cancel_error">Failed to cancel booking</string>
+    <string name="schedule_today">Today</string>
+</resources>
