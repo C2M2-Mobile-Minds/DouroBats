@@ -11,6 +11,8 @@ import pt.dourobats.app.features.settings.api.usecase.UpdateUserProfileUseCase
 import pt.dourobats.app.features.settings.data.SettingsRepositoryImpl
 import pt.dourobats.app.features.settings.repository.SettingsRepository
 import pt.dourobats.app.features.settings.ui.SettingsViewModel
+import pt.dourobats.app.features.settings.SettingsNavigation
+import pt.dourobats.app.features.settings.navigation.SettingsNavigationImpl
 import pt.dourobats.app.features.settings.usecase.ObserveLanguageUseCaseImpl
 import pt.dourobats.app.features.settings.usecase.ObserveThemeUseCaseImpl
 import pt.dourobats.app.features.settings.usecase.ObserveUserProfileUseCaseImpl
@@ -19,6 +21,7 @@ import pt.dourobats.app.features.settings.usecase.SetThemeUseCaseImpl
 import pt.dourobats.app.features.settings.usecase.UpdateUserProfileUseCaseImpl
 
 val settingsModule = module {
+    single<SettingsNavigation> { SettingsNavigationImpl() }
     single<SettingsRepository> { SettingsRepositoryImpl(get()) }
 
     factory<ObserveLanguageUseCase> { ObserveLanguageUseCaseImpl(get()) }

@@ -6,11 +6,13 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import pt.dourobats.app.features.home.HomeNavigation
 import pt.dourobats.app.features.login.api.model.UserRole
 import pt.dourobats.app.features.settings.api.usecase.ObserveUserProfileUseCase
 
 internal class HomeViewModel(
-    private val observeUserProfile: ObserveUserProfileUseCase
+    private val observeUserProfile: ObserveUserProfileUseCase,
+    private val navigation: HomeNavigation,
 ) : ViewModel() {
 
     val uiState: StateFlow<HomeUiState> = observeUserProfile()
@@ -25,4 +27,13 @@ internal class HomeViewModel(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = HomeUiState()
         )
+
+    fun onAction(action: HomeAction) {
+        when (action) {
+            is HomeAction.OnCreateSessionClick -> navigation.navigateToCreateSession()
+            is HomeAction.OnViewReportsClick -> navigation.navigateToViewReports()
+            is HomeAction.OnManageMembersClick -> navigation.navigateToManageMembers()
+            is HomeAction.OnNewsClick -> navigation.navigateToNewsDetail(action.newsId)
+        }
+    }
 }

@@ -1,16 +1,20 @@
 package pt.dourobats.app.features.login.ui
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.compose.viewmodel.koinViewModel
 import pt.dourobats.app.features.login.ui.LoginUiState.LoginStep
 
@@ -39,7 +43,7 @@ internal fun LoginScreen(
             color = MaterialTheme.colorScheme.primary,
         )
         Text(
-            text = "Douro Bat Polo Club",
+            text = "Douro Bats",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -48,8 +52,8 @@ internal fun LoginScreen(
 
         AnimatedContent(targetState = uiState.step) { step ->
             when (step) {
-                LoginStep.EMAIL -> EmailInputSection(uiState = uiState, onAction = onAction)
-                LoginStep.VERIFY_CODE -> CodeInputSection(uiState = uiState, onAction = onAction)
+                LoginStep.EMAIL -> EmailStep(uiState = uiState, onAction = onAction)
+                LoginStep.VERIFY_CODE -> VerifyStep(uiState = uiState, onAction = onAction)
             }
         }
 
@@ -60,79 +64,6 @@ internal fun LoginScreen(
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodySmall,
             )
-        }
-    }
-}
-
-@Composable
-private fun EmailInputSection(uiState: LoginUiState, onAction: (LoginAction) -> Unit) {
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        Text(
-            text = "Enter your email to receive a login code.",
-            style = MaterialTheme.typography.bodyLarge,
-        )
-        OutlinedTextField(
-            value = uiState.email,
-            onValueChange = { onAction(LoginAction.UpdateEmail(it)) },
-            label = { Text("Email address") },
-            isError = uiState.emailError != null,
-            supportingText = uiState.emailError?.let { { Text(it) } },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            singleLine = true,
-            modifier = Modifier.fillMaxWidth(),
-        )
-        Button(
-            onClick = { onAction(LoginAction.SubmitEmail) },
-            enabled = uiState.isEmailValid && !uiState.isLoading,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            if (uiState.isLoading) {
-                CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
-            } else {
-                Text("Send Code")
-            }
-        }
-    }
-}
-
-@Composable
-private fun CodeInputSection(uiState: LoginUiState, onAction: (LoginAction) -> Unit) {
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        Text(
-            text = "Enter the 6-digit code sent to",
-            style = MaterialTheme.typography.bodyLarge,
-        )
-        Text(
-            text = uiState.email,
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Bold,
-        )
-        OutlinedTextField(
-            value = uiState.code,
-            onValueChange = { if (it.length <= 6) onAction(LoginAction.UpdateCode(it)) },
-            label = { Text("6-digit code") },
-            isError = uiState.codeError != null,
-            supportingText = uiState.codeError?.let { { Text(it) } },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            singleLine = true,
-            modifier = Modifier.fillMaxWidth(),
-        )
-        Button(
-            onClick = { onAction(LoginAction.SubmitCode) },
-            enabled = uiState.isCodeValid && !uiState.isLoading,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            if (uiState.isLoading) {
-                CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
-            } else {
-                Text("Verify & Login")
-            }
-        }
-        TextButton(
-            onClick = { onAction(LoginAction.BackToEmail) },
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Text("Change Email")
         }
     }
 }

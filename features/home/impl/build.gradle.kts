@@ -2,6 +2,7 @@ plugins {
     id("pt.dourobats.app.android.library")
     id("pt.dourobats.app.kmp")
     id("pt.dourobats.app.compose")
+    alias(libs.plugins.kotlinSerialization)
 }
 
 compose.resources {
@@ -11,6 +12,8 @@ compose.resources {
 kotlin {
     sourceSets {
         commonMain.dependencies {
+            api(projects.features.home.api)
+            implementation(projects.core.navigation)
             implementation(projects.features.login.api)
             implementation(projects.core.common)
             implementation(projects.core.ui)

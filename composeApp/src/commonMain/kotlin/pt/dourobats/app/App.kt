@@ -35,6 +35,9 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.compose.koinInject
+import pt.dourobats.app.core.navigation.NavigationEvent
+import pt.dourobats.app.core.navigation.NavigationManager
 import pt.dourobats.app.features.home.HomeRoute
 import pt.dourobats.app.features.home.homeGraph
 import pt.dourobats.app.features.login.LoginRoute
@@ -71,11 +74,13 @@ fun App() {
 @Composable
 private fun DouroBatsNavigation(authState: AuthState) {
     val navController = rememberNavController()
+    val navigationManager: NavigationManager = koinInject()
     val startDestination = if (authState is AuthState.Authenticated) HomeRoute else LoginRoute
 
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntry?.destination
 
+    // Auth-driven navigation (orchestration — stays in App)
     LaunchedEffect(authState) {
         when (authState) {
             is AuthState.Authenticated -> {
@@ -93,6 +98,16 @@ private fun DouroBatsNavigation(authState: AuthState) {
                 }
             }
             is AuthState.Loading -> Unit
+        }
+    }
+
+    // Feature-driven navigation via NavigationManager
+    LaunchedEffect(Unit) {
+        navigationManager.events.collect { event ->
+            when (event) {
+                is NavigationEvent.Navigate -> navController.navigate(event.route)
+                NavigationEvent.NavigateBack -> navController.popBackStack()
+            }
         }
     }
 

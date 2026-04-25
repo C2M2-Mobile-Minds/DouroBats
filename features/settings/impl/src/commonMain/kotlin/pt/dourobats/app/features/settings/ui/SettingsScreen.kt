@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -18,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import dourobats.features.settings.generated.resources.Res
 import dourobats.features.settings.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
@@ -29,6 +27,7 @@ import pt.dourobats.app.core.localization.Language
 import pt.dourobats.app.core.ui.components.layout.AppHeader
 import pt.dourobats.app.core.ui.components.layout.SectionHeader
 import pt.dourobats.app.features.settings.components.SettingsRowItem
+import pt.dourobats.app.features.settings.ui.components.ProfileCard
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 import pt.dourobats.app.core.common.isDebug
 import pt.dourobats.app.features.settings.components.DeveloperOptionsBottomSheet
@@ -258,64 +257,6 @@ internal fun SettingsScreen(
             },
             onDismiss = { showDeveloperSheet = false }
         )
-    }
-}
-
-@Composable
-private fun ProfileCard(
-    name: String,
-    email: String,
-    role: String,
-    onEditClick: () -> Unit
-) {
-    val spacing = LocalSpacing.current
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(6.dp), // rounded-md for serious athletic tone
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest), // Component layer - "Active Card"
-        elevation = CardDefaults.cardElevation(defaultElevation = spacing.cardElevation)
-    ) {
-        Column(modifier = Modifier.padding(spacing.standard)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                // Avatar placeholder
-                Box(
-                    modifier = Modifier.size(80.dp).background(MaterialTheme.colorScheme.surfaceVariant, CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(Icons.Default.Person, null, modifier = Modifier.size(40.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
-                Spacer(modifier = Modifier.width(spacing.standard))
-                Column {
-                    Text(text = name, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-                    Text(text = email, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Surface(
-                        color = MaterialTheme.colorScheme.primaryContainer,
-                        shape = RoundedCornerShape(6.dp) // rounded-md consistency
-                    ) {
-                        Text(
-                            text = role,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-            }
-            
-            Spacer(modifier = Modifier.height(spacing.large))
-            
-            OutlinedButton(
-                onClick = onEditClick,
-                modifier = Modifier.fillMaxWidth().height(48.dp),
-                shape = RoundedCornerShape(6.dp) // rounded-md for serious athletic tone
-            ) {
-                Icon(Icons.Default.Edit, null, modifier = Modifier.size(18.dp))
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(stringResource(Res.string.settings_edit_profile))
-            }
-        }
     }
 }
 

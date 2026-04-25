@@ -3,6 +3,7 @@ package pt.dourobats.app.di
 import org.koin.core.context.startKoin
 import org.koin.dsl.KoinAppDeclaration
 import pt.dourobats.app.core.data.di.dataModule
+import pt.dourobats.app.core.navigation.di.navigationModule
 import pt.dourobats.app.core.network.di.networkModule
 import pt.dourobats.app.features.admin.di.adminModule
 import pt.dourobats.app.features.home.di.homeModule
@@ -16,6 +17,7 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) {
         appDeclaration()
         modules(
             appModule,
+            navigationModule,
             networkModule,
             dataModule,
             loginModule,

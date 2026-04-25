@@ -6,9 +6,6 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.features.login.api)
-            implementation(projects.features.schedule.api)
-            implementation(projects.features.settings.api)
             implementation(projects.core.common)
             implementation(projects.core.network)
             implementation(libs.kotlinx.coroutines.core)

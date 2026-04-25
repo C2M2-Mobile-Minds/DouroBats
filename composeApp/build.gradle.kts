@@ -8,7 +8,6 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             // Feature modules (:impl deps expose :api transitively)
-            implementation(projects.features.home.api)
             implementation(projects.features.home.impl)
             implementation(projects.features.login.impl)
             implementation(projects.features.schedule.impl)
@@ -19,6 +18,7 @@ kotlin {
             // Core modules
             implementation(projects.core.common)
             implementation(projects.core.data)
+            implementation(projects.core.navigation)
             implementation(projects.core.network)
             implementation(projects.core.ui)
             implementation(projects.core.localization)

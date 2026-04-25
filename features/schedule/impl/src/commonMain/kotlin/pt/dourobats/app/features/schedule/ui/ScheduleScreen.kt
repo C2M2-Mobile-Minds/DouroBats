@@ -1,11 +1,9 @@
 package pt.dourobats.app.features.schedule.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -29,6 +27,7 @@ import pt.dourobats.app.features.schedule.calendar.rememberCalendarLocalization
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 import pt.dourobats.app.features.schedule.ui.components.SessionCard
 import pt.dourobats.app.features.schedule.ui.components.UpcomingBookedCard
+import pt.dourobats.app.features.schedule.ui.components.ViewModeToggle
 
 @Composable
 fun ScheduleRoute() {
@@ -123,32 +122,10 @@ internal fun ScheduleScreen(
                     .padding(horizontal = spacing.standard, vertical = spacing.small),
                 horizontalArrangement = Arrangement.End
             ) {
-                Surface(
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                    shape = RoundedCornerShape(6.dp),
-                    modifier = Modifier.clickable { onAction(ScheduleAction.ToggleViewMode) }
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = if (uiState.viewMode == CalendarViewMode.WEEK) Icons.Default.CalendarMonth else Icons.Default.ViewWeek,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = if (uiState.viewMode == CalendarViewMode.WEEK)
-                                stringResource(Res.string.view_mode_month)
-                            else
-                                stringResource(Res.string.view_mode_week),
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            style = MaterialTheme.typography.labelMedium
-                        )
-                    }
-                }
+                ViewModeToggle(
+                    viewMode = uiState.viewMode,
+                    onToggle = { onAction(ScheduleAction.ToggleViewMode) }
+                )
             }
 
             if (uiState.isLoading) {
