@@ -13,6 +13,8 @@ kotlin {
             implementation(projects.features.login.impl)
             implementation(projects.features.schedule.impl)
             implementation(projects.features.settings.impl)
+            implementation(projects.features.venues.impl)
+            implementation(projects.features.admin.impl)
 
             // Core modules
             implementation(projects.core.common)
@@ -46,4 +48,3 @@ android {
         versionName = "1.0"
     }
 }
-
