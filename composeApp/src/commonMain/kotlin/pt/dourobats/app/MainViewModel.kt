@@ -24,7 +24,7 @@ internal class MainViewModel(
         MainUiState(authState = authState, language = language, theme = theme)
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
+        started = SharingStarted.Eagerly,
         initialValue = MainUiState(),
     )
 }
