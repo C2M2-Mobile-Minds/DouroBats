@@ -11,6 +11,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import okio.FileSystem
 import pt.dourobats.app.core.localization.Language
+import pt.dourobats.app.core.localization.getSystemLocaleLanguage
 import pt.dourobats.app.features.settings.api.model.Theme
 import pt.dourobats.app.features.login.api.model.UserProfile
 import kotlin.random.Random
@@ -63,7 +64,7 @@ class SettingsRepositoryImplTest {
         val language = repository.languageFlow.first()
 
         // Assert
-        assertEquals(Language.getSystemDefault(), language)
+        assertEquals(getSystemLocaleLanguage(), language)
         collectorJob.cancel()
     }
 

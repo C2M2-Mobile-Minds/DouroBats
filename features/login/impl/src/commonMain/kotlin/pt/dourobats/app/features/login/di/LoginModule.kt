@@ -37,6 +37,8 @@ val loginModule = module {
             verifyLoginCode = get(),
             validator = get(),
             errorMapper = get(),
+            observeLanguage = get(),
+            setLanguageUseCase = get(),
         )
     }
 }

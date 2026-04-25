@@ -15,6 +15,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dourobats.features.login.generated.resources.Res
+import dourobats.features.login.generated.resources.login_app_name
+import dourobats.features.login.generated.resources.login_app_tagline
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.dourobats.app.features.login.ui.LoginUiState.LoginStep
 
@@ -36,14 +40,21 @@ internal fun LoginScreen(
             .padding(24.dp),
         verticalArrangement = Arrangement.Center,
     ) {
+        LanguageSelectorRow(
+            currentLanguage = uiState.currentLanguage,
+            onLanguageSelected = { onAction(LoginAction.SelectLanguage(it)) },
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
         Text(
-            text = "DouroBats",
+            text = stringResource(Res.string.login_app_name),
             style = MaterialTheme.typography.displaySmall,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
         )
         Text(
-            text = "Douro Bats",
+            text = stringResource(Res.string.login_app_tagline),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

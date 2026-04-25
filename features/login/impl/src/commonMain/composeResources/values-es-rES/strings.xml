@@ -1,30 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Login Screen -->
+    <!-- App identity -->
     <string name="login_app_name">DouroBats</string>
-    <string name="login_welcome">¡Bienvenido de nuevo!</string>
+    <string name="login_app_tagline">Douro Bats</string>
 
-    <!-- Form Fields -->
+    <!-- Email step -->
+    <string name="login_email_prompt">Introduce tu correo electrónico para recibir un código de acceso.</string>
     <string name="login_email_label">Correo electrónico</string>
-    <string name="login_email_placeholder">usuario@dourobats.com</string>
-    <string name="login_password_label">Contraseña</string>
-    <string name="login_password_placeholder">••••••••</string>
-    <string name="login_password_show">Mostrar contraseña</string>
-    <string name="login_password_hide">Ocultar contraseña</string>
+    <string name="login_email_placeholder">tu.email@ejemplo.com</string>
+    <string name="login_send_code_button">Enviar Código</string>
 
-    <!-- Buttons -->
-    <string name="login_button">Iniciar sesión</string>
-    <string name="login_divider">O</string>
-    <string name="login_forgot_password">¿Olvidaste tu contraseña?</string>
-    <string name="login_no_account">¿No tienes cuenta?</string>
-    <string name="login_sign_up">Regístrate</string>
+    <!-- Verify step -->
+    <string name="login_verify_prompt">Introduce el código de 6 dígitos enviado a</string>
+    <string name="login_verify_button">Verificar e Iniciar sesión</string>
+    <string name="login_change_email_button">Cambiar correo electrónico</string>
 
-    <!-- Social Login -->
-    <string name="login_google">Continuar con Google</string>
-    <string name="login_facebook">Continuar con Facebook</string>
-    <string name="login_apple">Continuar con Apple</string>
-
-    <!-- Development -->
-    <string name="login_test_credentials_title">Credenciales de Prueba</string>
-    <string name="login_test_credentials_text">Correo: usuario@dourobats.com\nContraseña: 123456</string>
+    <!-- Language selector -->
+    <string name="login_select_language">Seleccionar idioma</string>
 </resources>

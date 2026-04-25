@@ -1,5 +1,7 @@
 package pt.dourobats.app.features.login.ui
 
+import pt.dourobats.app.core.localization.Language
+
 internal data class LoginUiState(
     val email: String = "",
     val code: String = "",
@@ -8,6 +10,7 @@ internal data class LoginUiState(
     val errorMessage: String? = null,
     val emailError: String? = null,
     val codeError: String? = null,
+    val currentLanguage: Language = Language.ENGLISH_US,
 ) {
     enum class LoginStep { EMAIL, VERIFY_CODE }
 

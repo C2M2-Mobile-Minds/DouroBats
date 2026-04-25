@@ -1,6 +1,6 @@
 package pt.dourobats.app.core.localization
 
-import platform.Foundation.NSLocale
+import platform.Foundation.NSBundle
 import platform.Foundation.NSUserDefaults
 
 actual fun changeLanguage(language: Language) {
@@ -12,7 +12,7 @@ actual fun changeLanguage(language: Language) {
 }
 
 actual fun getSystemLocaleLanguage(): Language {
-    val tag = NSLocale.preferredLanguages.firstOrNull() as? String ?: "en"
+    val tag = (NSBundle.mainBundle.preferredLocalizations.firstOrNull() as? String) ?: "en"
     return Language.fromCodeOrNull(tag)
         ?: Language.fromCodeOrNull(tag.substringBefore("-"))
         ?: Language.ENGLISH_US

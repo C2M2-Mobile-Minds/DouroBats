@@ -11,6 +11,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import pt.dourobats.app.features.login.api.model.UserProfile
 import pt.dourobats.app.features.login.api.model.UserRole
+import pt.dourobats.app.features.home.HomeNavigation
 import pt.dourobats.app.features.home.ui.HomeViewModel
 import pt.dourobats.app.features.settings.testing.FakeObserveUserProfileUseCase
 import kotlin.test.AfterTest
@@ -28,12 +29,19 @@ class HomeViewModelTest {
 
     private val profileFlow = MutableStateFlow(UserProfile.empty())
 
+    private val noOpNavigation = object : HomeNavigation {
+        override fun navigateToCreateSession() = Unit
+        override fun navigateToViewReports() = Unit
+        override fun navigateToManageMembers() = Unit
+        override fun navigateToNewsDetail(newsId: String) = Unit
+    }
+
     @BeforeTest
     fun setup() {
         Dispatchers.setMain(testDispatcher)
         profileFlow.value = UserProfile.empty()
         observeUserProfile = FakeObserveUserProfileUseCase().apply { invoke = { profileFlow } }
-        viewModel = HomeViewModel(observeUserProfile.build())
+        viewModel = HomeViewModel(observeUserProfile.build(), noOpNavigation)
     }
 
     @AfterTest

@@ -13,12 +13,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import dourobats.features.login.generated.resources.Res
+import dourobats.features.login.generated.resources.login_change_email_button
+import dourobats.features.login.generated.resources.login_verify_button
+import dourobats.features.login.generated.resources.login_verify_prompt
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun VerifyStep(uiState: LoginUiState, onAction: (LoginAction) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Text(
-            text = "Enter the 6-digit code sent to",
+            text = stringResource(Res.string.login_verify_prompt),
             style = MaterialTheme.typography.bodyLarge,
         )
         Text(
@@ -39,14 +44,14 @@ internal fun VerifyStep(uiState: LoginUiState, onAction: (LoginAction) -> Unit) 
             if (uiState.isLoading) {
                 CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
             } else {
-                Text("Verify & Login")
+                Text(stringResource(Res.string.login_verify_button))
             }
         }
         TextButton(
             onClick = { onAction(LoginAction.BackToEmail) },
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text("Change Email")
+            Text(stringResource(Res.string.login_change_email_button))
         }
     }
 }

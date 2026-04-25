@@ -15,6 +15,8 @@ import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 import pt.dourobats.app.core.common.Result
+import pt.dourobats.app.features.venues.api.model.Venue
+import pt.dourobats.app.features.venues.api.usecase.GetVenueByIdUseCase
 import pt.dourobats.app.features.schedule.api.model.Session
 import pt.dourobats.app.features.schedule.api.model.SessionStatus
 import pt.dourobats.app.features.schedule.api.model.SkillLevel
@@ -46,7 +48,10 @@ class ScheduleViewModelTest {
     private lateinit var fakeBookSessionUseCase: FakeBookSessionUseCase
     private lateinit var fakeCancelBookingUseCase: FakeCancelBookingUseCase
     private val testDispatcher = StandardTestDispatcher()
-    private val mapper = SessionUiMapper()
+    private val fakeGetVenueById = object : GetVenueByIdUseCase {
+        override suspend fun invoke(id: String) = Result.Success(Venue(id = id, name = id, address = "", capacity = 0, sportIds = emptyList()))
+    }
+    private val mapper = SessionUiMapper(fakeGetVenueById)
 
     @BeforeTest
     fun setup() {

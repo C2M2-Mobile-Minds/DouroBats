@@ -7,7 +7,9 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.flow.MutableStateFlow
 import pt.dourobats.app.core.common.Result
+import pt.dourobats.app.core.localization.Language
 import pt.dourobats.app.features.login.api.exception.AuthException
 import pt.dourobats.app.features.login.testing.FakeRequestLoginCodeUseCase
 import pt.dourobats.app.features.login.testing.FakeVerifyLoginCodeUseCase
@@ -16,6 +18,8 @@ import pt.dourobats.app.features.login.ui.LoginErrorMapper
 import pt.dourobats.app.features.login.ui.LoginFormValidator
 import pt.dourobats.app.features.login.ui.LoginUiState.LoginStep
 import pt.dourobats.app.features.login.ui.LoginViewModel
+import pt.dourobats.app.features.settings.api.usecase.ObserveLanguageUseCase
+import pt.dourobats.app.features.settings.api.usecase.SetLanguageUseCase
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -32,6 +36,13 @@ class LoginViewModelTest {
     private lateinit var fakeVerifyLoginCode: FakeVerifyLoginCodeUseCase
     private val testDispatcher = StandardTestDispatcher()
 
+    private val noOpObserveLanguage = object : ObserveLanguageUseCase {
+        override fun invoke() = MutableStateFlow(Language.ENGLISH_US)
+    }
+    private val noOpSetLanguage = object : SetLanguageUseCase {
+        override suspend fun invoke(language: Language) = Unit
+    }
+
     @BeforeTest
     fun setup() {
         Dispatchers.setMain(testDispatcher)
@@ -46,6 +57,8 @@ class LoginViewModelTest {
             verifyLoginCode = fakeVerifyLoginCode.build(),
             validator = LoginFormValidator(),
             errorMapper = LoginErrorMapper(),
+            observeLanguage = noOpObserveLanguage,
+            setLanguageUseCase = noOpSetLanguage,
         )
     }
 
@@ -92,6 +105,8 @@ class LoginViewModelTest {
             verifyLoginCode = fakeVerifyLoginCode.build(),
             validator = LoginFormValidator(),
             errorMapper = LoginErrorMapper(),
+            observeLanguage = noOpObserveLanguage,
+            setLanguageUseCase = noOpSetLanguage,
         )
         viewModel.onAction(LoginAction.UpdateEmail("test@example.com"))
         viewModel.onAction(LoginAction.SubmitEmail)
@@ -121,6 +136,8 @@ class LoginViewModelTest {
             verifyLoginCode = fakeVerifyLoginCode.build(),
             validator = LoginFormValidator(),
             errorMapper = LoginErrorMapper(),
+            observeLanguage = noOpObserveLanguage,
+            setLanguageUseCase = noOpSetLanguage,
         )
         viewModel.onAction(LoginAction.UpdateEmail("test@example.com"))
         viewModel.onAction(LoginAction.SubmitEmail)
@@ -167,6 +184,8 @@ class LoginViewModelTest {
             verifyLoginCode = fakeVerifyLoginCode.build(),
             validator = LoginFormValidator(),
             errorMapper = LoginErrorMapper(),
+            observeLanguage = noOpObserveLanguage,
+            setLanguageUseCase = noOpSetLanguage,
         )
         viewModel.onAction(LoginAction.UpdateCode("123456"))
         viewModel.onAction(LoginAction.SubmitCode)
@@ -184,6 +203,8 @@ class LoginViewModelTest {
             verifyLoginCode = fakeVerifyLoginCode.build(),
             validator = LoginFormValidator(),
             errorMapper = LoginErrorMapper(),
+            observeLanguage = noOpObserveLanguage,
+            setLanguageUseCase = noOpSetLanguage,
         )
         viewModel.onAction(LoginAction.UpdateCode("000000"))
         viewModel.onAction(LoginAction.SubmitCode)

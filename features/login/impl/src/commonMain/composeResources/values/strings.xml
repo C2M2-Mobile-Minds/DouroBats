@@ -1,30 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Login Screen -->
+    <!-- App identity -->
     <string name="login_app_name">DouroBats</string>
-    <string name="login_welcome">Welcome back!</string>
+    <string name="login_app_tagline">Douro Bats</string>
 
-    <!-- Form Fields -->
+    <!-- Email step -->
+    <string name="login_email_prompt">Enter your email to receive a login code.</string>
     <string name="login_email_label">Email</string>
     <string name="login_email_placeholder">your.email@example.com</string>
-    <string name="login_password_label">Password</string>
-    <string name="login_password_placeholder">••••••••</string>
-    <string name="login_password_show">Show password</string>
-    <string name="login_password_hide">Hide password</string>
+    <string name="login_send_code_button">Send Code</string>
 
-    <!-- Buttons -->
-    <string name="login_button">Log In</string>
-    <string name="login_divider">Or continue with</string>
-    <string name="login_forgot_password">Forgot password?</string>
-    <string name="login_no_account">Don’t have an account?</string>
-    <string name="login_sign_up">Sign up</string>
+    <!-- Verify step -->
+    <string name="login_verify_prompt">Enter the 6-digit code sent to</string>
+    <string name="login_verify_button">Verify &amp; Login</string>
+    <string name="login_change_email_button">Change Email</string>
 
-    <!-- Social Login -->
-    <string name="login_google">Google</string>
-    <string name="login_facebook">Facebook</string>
-    <string name="login_apple">Apple</string>
-
-    <!-- Development -->
-    <string name="login_test_credentials_title">Test Credentials</string>
-    <string name="login_test_credentials_text">Email: user@dourobats.com\nPassword: 123456</string>
+    <!-- Language selector -->
+    <string name="login_select_language">Select Language</string>
 </resources>

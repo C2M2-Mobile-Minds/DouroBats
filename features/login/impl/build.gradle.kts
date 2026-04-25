@@ -15,6 +15,8 @@ kotlin {
             implementation(projects.core.data)
             implementation(projects.core.common)
             implementation(projects.core.ui)
+            implementation(projects.core.localization)
+            implementation(projects.features.settings.api)
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
