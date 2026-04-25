@@ -1,18 +1,12 @@
 package pt.dourobats.app.features.settings.testing
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import pt.dourobats.app.features.login.api.model.UserProfile
 import pt.dourobats.app.features.settings.api.usecase.ObserveUserProfileUseCase
 
-fun fakeObserveUserProfileUseCase(builder: FakeObserveUserProfileUseCase.() -> Unit = {}): ObserveUserProfileUseCase =
-    FakeObserveUserProfileUseCase().apply(builder).build()
+class FakeObserveUserProfileUseCase : ObserveUserProfileUseCase {
+    var result: Flow<UserProfile> = MutableStateFlow(UserProfile.empty())
 
-class FakeObserveUserProfileUseCase {
-    var invoke: () -> Flow<UserProfile> = { throw NotImplementedError() }
-
-    fun build(): ObserveUserProfileUseCase =
-        object : ObserveUserProfileUseCase {
-            override fun invoke(): Flow<UserProfile> =
-                this@FakeObserveUserProfileUseCase.invoke()
-        }
+    override fun invoke(): Flow<UserProfile> = result
 }

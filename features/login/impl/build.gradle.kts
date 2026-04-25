@@ -28,7 +28,9 @@ kotlin {
             implementation(libs.kotlin.test)
             implementation(libs.koin.test)
             implementation(libs.kotlinx.coroutines.test)
+            implementation(projects.core.testing)
             implementation(projects.features.login.testing)
+            implementation(projects.features.settings.testing)
         }
         val androidMain by getting {
             dependencies {

@@ -27,6 +27,7 @@ include(":composeApp")
 
 // Core modules
 include(":core:common")
+include(":core:testing")
 include(":core:data")
 include(":core:navigation")
 include(":core:network")

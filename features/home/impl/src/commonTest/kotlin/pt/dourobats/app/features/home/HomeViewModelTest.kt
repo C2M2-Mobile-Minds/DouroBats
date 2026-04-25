@@ -40,8 +40,8 @@ class HomeViewModelTest {
     fun setup() {
         Dispatchers.setMain(testDispatcher)
         profileFlow.value = UserProfile.empty()
-        observeUserProfile = FakeObserveUserProfileUseCase().apply { invoke = { profileFlow } }
-        viewModel = HomeViewModel(observeUserProfile.build(), noOpNavigation)
+        observeUserProfile = FakeObserveUserProfileUseCase().apply { result = profileFlow }
+        viewModel = HomeViewModel(observeUserProfile, noOpNavigation)
     }
 
     @AfterTest

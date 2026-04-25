@@ -7,9 +7,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import kotlinx.coroutines.flow.MutableStateFlow
 import pt.dourobats.app.core.common.Result
-import pt.dourobats.app.core.localization.Language
 import pt.dourobats.app.features.login.api.exception.AuthException
 import pt.dourobats.app.features.login.testing.FakeRequestLoginCodeUseCase
 import pt.dourobats.app.features.login.testing.FakeVerifyLoginCodeUseCase
@@ -18,8 +16,8 @@ import pt.dourobats.app.features.login.ui.LoginErrorMapper
 import pt.dourobats.app.features.login.ui.LoginFormValidator
 import pt.dourobats.app.features.login.ui.LoginUiState.LoginStep
 import pt.dourobats.app.features.login.ui.LoginViewModel
-import pt.dourobats.app.features.settings.api.usecase.ObserveLanguageUseCase
-import pt.dourobats.app.features.settings.api.usecase.SetLanguageUseCase
+import pt.dourobats.app.features.settings.testing.FakeObserveLanguageUseCase
+import pt.dourobats.app.features.settings.testing.FakeSetLanguageUseCase
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -34,31 +32,22 @@ class LoginViewModelTest {
     private lateinit var viewModel: LoginViewModel
     private lateinit var fakeRequestLoginCode: FakeRequestLoginCodeUseCase
     private lateinit var fakeVerifyLoginCode: FakeVerifyLoginCodeUseCase
+    private val fakeObserveLanguage = FakeObserveLanguageUseCase()
+    private val fakeSetLanguage = FakeSetLanguageUseCase()
     private val testDispatcher = StandardTestDispatcher()
-
-    private val noOpObserveLanguage = object : ObserveLanguageUseCase {
-        override fun invoke() = MutableStateFlow(Language.ENGLISH_US)
-    }
-    private val noOpSetLanguage = object : SetLanguageUseCase {
-        override suspend fun invoke(language: Language) = Unit
-    }
 
     @BeforeTest
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        fakeRequestLoginCode = FakeRequestLoginCodeUseCase().apply {
-            invoke = { _ -> Result.Success(Unit) }
-        }
-        fakeVerifyLoginCode = FakeVerifyLoginCodeUseCase().apply {
-            invoke = { _, _ -> Result.Success(Unit) }
-        }
+        fakeRequestLoginCode = FakeRequestLoginCodeUseCase()
+        fakeVerifyLoginCode = FakeVerifyLoginCodeUseCase()
         viewModel = LoginViewModel(
-            requestLoginCode = fakeRequestLoginCode.build(),
-            verifyLoginCode = fakeVerifyLoginCode.build(),
+            requestLoginCode = fakeRequestLoginCode,
+            verifyLoginCode = fakeVerifyLoginCode,
             validator = LoginFormValidator(),
             errorMapper = LoginErrorMapper(),
-            observeLanguage = noOpObserveLanguage,
-            setLanguageUseCase = noOpSetLanguage,
+            observeLanguage = fakeObserveLanguage,
+            setLanguageUseCase = fakeSetLanguage,
         )
     }
 
@@ -97,16 +86,14 @@ class LoginViewModelTest {
 
     @Test
     fun `UpdateEmail clears general error message`() = runTest(testDispatcher) {
-        fakeRequestLoginCode = FakeRequestLoginCodeUseCase().apply {
-            invoke = { _ -> Result.Error(AuthException.Unknown()) }
-        }
+        fakeRequestLoginCode.result = Result.Error(AuthException.Unknown())
         viewModel = LoginViewModel(
-            requestLoginCode = fakeRequestLoginCode.build(),
-            verifyLoginCode = fakeVerifyLoginCode.build(),
+            requestLoginCode = fakeRequestLoginCode,
+            verifyLoginCode = fakeVerifyLoginCode,
             validator = LoginFormValidator(),
             errorMapper = LoginErrorMapper(),
-            observeLanguage = noOpObserveLanguage,
-            setLanguageUseCase = noOpSetLanguage,
+            observeLanguage = fakeObserveLanguage,
+            setLanguageUseCase = fakeSetLanguage,
         )
         viewModel.onAction(LoginAction.UpdateEmail("test@example.com"))
         viewModel.onAction(LoginAction.SubmitEmail)
@@ -128,16 +115,14 @@ class LoginViewModelTest {
 
     @Test
     fun `SubmitEmail shows error on failure`() = runTest(testDispatcher) {
-        fakeRequestLoginCode = FakeRequestLoginCodeUseCase().apply {
-            invoke = { _ -> Result.Error(AuthException.Unknown()) }
-        }
+        fakeRequestLoginCode.result = Result.Error(AuthException.Unknown())
         viewModel = LoginViewModel(
-            requestLoginCode = fakeRequestLoginCode.build(),
-            verifyLoginCode = fakeVerifyLoginCode.build(),
+            requestLoginCode = fakeRequestLoginCode,
+            verifyLoginCode = fakeVerifyLoginCode,
             validator = LoginFormValidator(),
             errorMapper = LoginErrorMapper(),
-            observeLanguage = noOpObserveLanguage,
-            setLanguageUseCase = noOpSetLanguage,
+            observeLanguage = fakeObserveLanguage,
+            setLanguageUseCase = fakeSetLanguage,
         )
         viewModel.onAction(LoginAction.UpdateEmail("test@example.com"))
         viewModel.onAction(LoginAction.SubmitEmail)
@@ -175,36 +160,22 @@ class LoginViewModelTest {
 
     @Test
     fun `SubmitCode calls verifyLoginCode`() = runTest(testDispatcher) {
-        var capturedCode: String? = null
-        fakeVerifyLoginCode = FakeVerifyLoginCodeUseCase().apply {
-            invoke = { _, code -> capturedCode = code; Result.Success(Unit) }
-        }
-        viewModel = LoginViewModel(
-            requestLoginCode = fakeRequestLoginCode.build(),
-            verifyLoginCode = fakeVerifyLoginCode.build(),
-            validator = LoginFormValidator(),
-            errorMapper = LoginErrorMapper(),
-            observeLanguage = noOpObserveLanguage,
-            setLanguageUseCase = noOpSetLanguage,
-        )
         viewModel.onAction(LoginAction.UpdateCode("123456"))
         viewModel.onAction(LoginAction.SubmitCode)
         advanceUntilIdle()
-        assertEquals("123456", capturedCode)
+        assertEquals("123456", fakeVerifyLoginCode.lastCode)
     }
 
     @Test
     fun `SubmitCode shows error on wrong code`() = runTest(testDispatcher) {
-        fakeVerifyLoginCode = FakeVerifyLoginCodeUseCase().apply {
-            invoke = { _, _ -> Result.Error(AuthException.InvalidCredentials()) }
-        }
+        fakeVerifyLoginCode.result = Result.Error(AuthException.InvalidCredentials())
         viewModel = LoginViewModel(
-            requestLoginCode = fakeRequestLoginCode.build(),
-            verifyLoginCode = fakeVerifyLoginCode.build(),
+            requestLoginCode = fakeRequestLoginCode,
+            verifyLoginCode = fakeVerifyLoginCode,
             validator = LoginFormValidator(),
             errorMapper = LoginErrorMapper(),
-            observeLanguage = noOpObserveLanguage,
-            setLanguageUseCase = noOpSetLanguage,
+            observeLanguage = fakeObserveLanguage,
+            setLanguageUseCase = fakeSetLanguage,
         )
         viewModel.onAction(LoginAction.UpdateCode("000000"))
         viewModel.onAction(LoginAction.SubmitCode)

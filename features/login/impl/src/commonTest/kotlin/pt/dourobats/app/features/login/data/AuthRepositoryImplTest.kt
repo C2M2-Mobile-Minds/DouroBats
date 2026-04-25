@@ -11,6 +11,7 @@ import kotlinx.coroutines.test.runTest
 import okio.FileSystem
 import okio.Path.Companion.toPath
 import pt.dourobats.app.core.common.Result
+import pt.dourobats.app.core.testing.logging.FakeLogger
 import pt.dourobats.app.features.login.api.exception.AuthException
 import pt.dourobats.app.features.login.api.model.AuthState
 import kotlin.test.AfterTest
@@ -28,6 +29,8 @@ class AuthRepositoryImplTest {
     private lateinit var repository: AuthRepositoryImpl
     private lateinit var testFile: okio.Path
 
+    private val noOpLogger = FakeLogger()
+
     @BeforeTest
     fun setup() {
         val tempDir = FileSystem.SYSTEM_TEMPORARY_DIRECTORY
@@ -39,7 +42,7 @@ class AuthRepositoryImplTest {
             scope = kotlinx.coroutines.CoroutineScope(testDispatcher + kotlinx.coroutines.SupervisorJob()),
             produceFile = { testFile }
         )
-        repository = AuthRepositoryImpl(dataStore)
+        repository = AuthRepositoryImpl(dataStore = dataStore, logger = noOpLogger)
     }
 
     @AfterTest

@@ -14,9 +14,7 @@ import kotlinx.datetime.LocalTime
 import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
-import pt.dourobats.app.core.common.Result
-import pt.dourobats.app.features.venues.api.model.Venue
-import pt.dourobats.app.features.venues.api.usecase.GetVenueByIdUseCase
+import pt.dourobats.app.core.testing.logging.FakeLogger
 import pt.dourobats.app.features.schedule.api.model.Session
 import pt.dourobats.app.features.schedule.api.model.SessionStatus
 import pt.dourobats.app.features.schedule.api.model.SkillLevel
@@ -29,6 +27,7 @@ import pt.dourobats.app.features.schedule.testing.FakeGetUserBookedSessionsUseCa
 import pt.dourobats.app.features.schedule.ui.CalendarViewMode
 import pt.dourobats.app.features.schedule.ui.ScheduleViewModel
 import pt.dourobats.app.features.schedule.ui.mapper.SessionUiMapper
+import pt.dourobats.app.features.venues.testing.FakeGetVenueByIdUseCase
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -42,44 +41,28 @@ import kotlin.time.Duration.Companion.hours
 class ScheduleViewModelTest {
 
     private lateinit var viewModel: ScheduleViewModel
-    private lateinit var fakeGetAvailableSessionsUseCase: FakeGetAvailableSessionsUseCase
-    private lateinit var fakeGetUserBookedSessionsUseCase: FakeGetUserBookedSessionsUseCase
-    private lateinit var fakeGetAllSessionsUseCase: FakeGetAllSessionsUseCase
-    private lateinit var fakeBookSessionUseCase: FakeBookSessionUseCase
-    private lateinit var fakeCancelBookingUseCase: FakeCancelBookingUseCase
+    private val fakeGetAvailableSessionsUseCase = FakeGetAvailableSessionsUseCase()
+    private val fakeGetUserBookedSessionsUseCase = FakeGetUserBookedSessionsUseCase()
+    private val fakeGetAllSessionsUseCase = FakeGetAllSessionsUseCase()
+    private val fakeBookSessionUseCase = FakeBookSessionUseCase()
+    private val fakeCancelBookingUseCase = FakeCancelBookingUseCase()
+    private val fakeGetVenueById = FakeGetVenueByIdUseCase()
+    private val fakeLogger = FakeLogger()
     private val testDispatcher = StandardTestDispatcher()
-    private val fakeGetVenueById = object : GetVenueByIdUseCase {
-        override suspend fun invoke(id: String) = Result.Success(Venue(id = id, name = id, address = "", capacity = 0, sportIds = emptyList()))
-    }
-    private val mapper = SessionUiMapper(fakeGetVenueById)
+    private val mapper = SessionUiMapper(fakeGetVenueById, fakeLogger)
 
     @BeforeTest
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        fakeGetAvailableSessionsUseCase = FakeGetAvailableSessionsUseCase().apply {
-            invoke = { _ -> flowOf(emptyList()) }
-        }
-        fakeGetUserBookedSessionsUseCase = FakeGetUserBookedSessionsUseCase().apply {
-            invoke = { _ -> flowOf(emptyList()) }
-        }
-        fakeGetAllSessionsUseCase = FakeGetAllSessionsUseCase().apply {
-            invoke = { flowOf(emptyList()) }
-        }
-        fakeBookSessionUseCase = FakeBookSessionUseCase().apply {
-            invoke = { _ -> Result.Success(Unit) }
-        }
-        fakeCancelBookingUseCase = FakeCancelBookingUseCase().apply {
-            invoke = { _ -> Result.Success(Unit) }
-        }
     }
 
     private fun createViewModel() {
         viewModel = ScheduleViewModel(
-            getAvailableSessionsUseCase = fakeGetAvailableSessionsUseCase.build(),
-            getUserBookedSessionsUseCase = fakeGetUserBookedSessionsUseCase.build(),
-            getAllSessionsUseCase = fakeGetAllSessionsUseCase.build(),
-            bookSessionUseCase = fakeBookSessionUseCase.build(),
-            cancelBookingUseCase = fakeCancelBookingUseCase.build(),
+            getAvailableSessionsUseCase = fakeGetAvailableSessionsUseCase,
+            getUserBookedSessionsUseCase = fakeGetUserBookedSessionsUseCase,
+            getAllSessionsUseCase = fakeGetAllSessionsUseCase,
+            bookSessionUseCase = fakeBookSessionUseCase,
+            cancelBookingUseCase = fakeCancelBookingUseCase,
             mapper = mapper
         )
     }
@@ -103,8 +86,7 @@ class ScheduleViewModelTest {
     fun `loads sessions successfully`() = runTest {
         val date = LocalDate(2026, 1, 12)
         val session = createTestSession("1", date)
-        fakeGetAvailableSessionsUseCase.invoke = { _ -> flowOf(listOf(session to false)) }
-        fakeGetUserBookedSessionsUseCase.invoke = { _ -> flowOf(emptyList()) }
+        fakeGetAvailableSessionsUseCase.result = flowOf(listOf(session to false))
 
         createViewModel()
         advanceUntilIdle()
@@ -162,8 +144,7 @@ class ScheduleViewModelTest {
     fun `loads user booked sessions`() = runTest {
         val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
         val bookedSession = createTestSession("3", today)
-        fakeGetAvailableSessionsUseCase.invoke = { _ -> flowOf(emptyList()) }
-        fakeGetUserBookedSessionsUseCase.invoke = { _ -> flowOf(listOf(bookedSession)) }
+        fakeGetUserBookedSessionsUseCase.result = flowOf(listOf(bookedSession))
 
         createViewModel()
         advanceUntilIdle()

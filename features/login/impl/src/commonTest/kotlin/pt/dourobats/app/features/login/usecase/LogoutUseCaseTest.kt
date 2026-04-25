@@ -33,9 +33,10 @@ class LogoutUseCaseTest {
 
         override suspend fun verifyLoginCode(email: String, code: String): Result<Unit> = Result.Success(Unit)
 
-        override suspend fun logout() {
+        override suspend fun logout(): Result<Unit> {
             logoutCalled = true
-            if (shouldThrow) throw RuntimeException("Logout failed")
+            return if (shouldThrow) Result.Error(pt.dourobats.app.features.login.api.exception.AuthException.Unknown("Logout failed"))
+            else Result.Success(Unit)
         }
 
         override suspend fun isAuthenticated(): Boolean = false

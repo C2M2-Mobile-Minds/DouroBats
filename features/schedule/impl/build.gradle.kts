@@ -27,7 +27,9 @@ kotlin {
             implementation(libs.kotlin.test)
             implementation(libs.koin.test)
             implementation(libs.kotlinx.coroutines.test)
+            implementation(projects.core.testing)
             implementation(projects.features.schedule.testing)
+            implementation(projects.features.venues.testing)
         }
     }
 }

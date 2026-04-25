@@ -39,55 +39,34 @@ class SettingsViewModelTest {
     private lateinit var logoutUseCase: FakeLogoutUseCase
     private lateinit var viewModel: SettingsViewModel
 
-    // Shared flows for observe fakes
     private val profileFlow = MutableStateFlow(UserProfile.empty())
     private val languageFlow = MutableStateFlow(Language.ENGLISH_US)
     private val themeFlow = MutableStateFlow(Theme.LIGHT)
-
-    // Captured state for action fakes
-    private var lastSetLanguage: Language? = null
-    private var setLanguageCount = 0
-    private var lastSetTheme: Theme? = null
-    private var setThemeCount = 0
-    private var lastUpdateProfile: UserProfile? = null
-    private var updateProfileCount = 0
-    private var logoutInvoked = false
 
     @BeforeTest
     fun setup() {
         Dispatchers.setMain(testDispatcher)
 
-        // Reset flows and captured state
         profileFlow.value = UserProfile.empty()
         languageFlow.value = Language.ENGLISH_US
         themeFlow.value = Theme.LIGHT
-        lastSetLanguage = null; setLanguageCount = 0
-        lastSetTheme = null; setThemeCount = 0
-        lastUpdateProfile = null; updateProfileCount = 0
-        logoutInvoked = false
 
-        observeUserProfile = FakeObserveUserProfileUseCase().apply { invoke = { profileFlow } }
-        observeLanguage = FakeObserveLanguageUseCase().apply { invoke = { languageFlow } }
-        observeTheme = FakeObserveThemeUseCase().apply { invoke = { themeFlow } }
-        setLanguage = FakeSetLanguageUseCase().apply {
-            invoke = { lang -> lastSetLanguage = lang; setLanguageCount++ }
-        }
-        setTheme = FakeSetThemeUseCase().apply {
-            invoke = { t -> lastSetTheme = t; setThemeCount++ }
-        }
-        updateUserProfile = FakeUpdateUserProfileUseCase().apply {
-            invoke = { p -> lastUpdateProfile = p; updateProfileCount++ }
-        }
-        logoutUseCase = FakeLogoutUseCase().apply { invoke = { logoutInvoked = true } }
+        observeUserProfile = FakeObserveUserProfileUseCase().apply { result = profileFlow }
+        observeLanguage = FakeObserveLanguageUseCase().apply { result = languageFlow }
+        observeTheme = FakeObserveThemeUseCase().apply { result = themeFlow }
+        setLanguage = FakeSetLanguageUseCase()
+        setTheme = FakeSetThemeUseCase()
+        updateUserProfile = FakeUpdateUserProfileUseCase()
+        logoutUseCase = FakeLogoutUseCase()
 
         viewModel = SettingsViewModel(
-            observeUserProfile = observeUserProfile.build(),
-            observeLanguage = observeLanguage.build(),
-            observeTheme = observeTheme.build(),
-            setLanguageUseCase = setLanguage.build(),
-            setThemeUseCase = setTheme.build(),
-            updateUserProfileUseCase = updateUserProfile.build(),
-            logoutUseCase = logoutUseCase.build()
+            observeUserProfile = observeUserProfile,
+            observeLanguage = observeLanguage,
+            observeTheme = observeTheme,
+            setLanguageUseCase = setLanguage,
+            setThemeUseCase = setTheme,
+            updateUserProfileUseCase = updateUserProfile,
+            logoutUseCase = logoutUseCase
         )
     }
 
@@ -108,8 +87,8 @@ class SettingsViewModelTest {
         viewModel.setLanguage(Language.PORTUGUESE_BR)
         advanceUntilIdle()
 
-        assertEquals(Language.PORTUGUESE_BR, lastSetLanguage)
-        assertEquals(1, setLanguageCount)
+        assertEquals(Language.PORTUGUESE_BR, setLanguage.lastLanguage)
+        assertEquals(1, setLanguage.invocationCount)
     }
 
     @Test
@@ -130,7 +109,7 @@ class SettingsViewModelTest {
             advanceUntilIdle()
         }
 
-        assertEquals(Language.entries.size, setLanguageCount)
+        assertEquals(Language.entries.size, setLanguage.invocationCount)
     }
 
     @Test
@@ -138,8 +117,8 @@ class SettingsViewModelTest {
         viewModel.setTheme(Theme.DARK)
         advanceUntilIdle()
 
-        assertEquals(Theme.DARK, lastSetTheme)
-        assertEquals(1, setThemeCount)
+        assertEquals(Theme.DARK, setTheme.lastTheme)
+        assertEquals(1, setTheme.invocationCount)
     }
 
     @Test
@@ -180,10 +159,10 @@ class SettingsViewModelTest {
         viewModel.saveProfile()
         advanceUntilIdle()
 
-        assertEquals("João Silva", lastUpdateProfile?.displayName)
-        assertEquals("joao@example.com", lastUpdateProfile?.email)
-        assertEquals("+351912345678", lastUpdateProfile?.phoneNumber)
-        assertEquals(1, updateProfileCount)
+        assertEquals("João Silva", updateUserProfile.lastProfile?.displayName)
+        assertEquals("joao@example.com", updateUserProfile.lastProfile?.email)
+        assertEquals("+351912345678", updateUserProfile.lastProfile?.phoneNumber)
+        assertEquals(1, updateUserProfile.invocationCount)
         collectorJob.cancel()
     }
 
@@ -200,7 +179,7 @@ class SettingsViewModelTest {
         viewModel.saveProfile()
         advanceUntilIdle()
 
-        assertEquals(0, updateProfileCount)
+        assertEquals(0, updateUserProfile.invocationCount)
         collectorJob.cancel()
     }
 
@@ -219,8 +198,8 @@ class SettingsViewModelTest {
         viewModel.saveProfile()
         advanceUntilIdle()
 
-        assertEquals("Ana", lastUpdateProfile?.displayName)
-        assertEquals("ana@example.com", lastUpdateProfile?.email)
+        assertEquals("Ana", updateUserProfile.lastProfile?.displayName)
+        assertEquals("ana@example.com", updateUserProfile.lastProfile?.email)
         collectorJob.cancel()
     }
 
@@ -254,6 +233,6 @@ class SettingsViewModelTest {
         viewModel.logout()
         advanceUntilIdle()
 
-        assertTrue(logoutInvoked)
+        assertTrue(logoutUseCase.invocationCount > 0)
     }
 }
