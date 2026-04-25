@@ -13,5 +13,6 @@ data class SessionUiModel(
     val venueName: String,
     val isUserBooked: Boolean,
     val formattedTimeRange: String,
+    val formattedStartTime: String,
     val formattedShortDate: String
 )

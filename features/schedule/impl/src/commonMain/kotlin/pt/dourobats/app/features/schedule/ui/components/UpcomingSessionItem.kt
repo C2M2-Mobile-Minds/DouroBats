@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 
 @Composable
-fun UpcomingSessionItem(
+internal fun UpcomingSessionItem(
     sport: String,
     location: String,
     time: String,

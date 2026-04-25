@@ -52,7 +52,7 @@ internal fun UpcomingBookedCard(
                     color = MaterialTheme.colorScheme.onSecondaryContainer
                 )
                 Text(
-                    text = "${sessionData.formattedShortDate} • ${sessionData.formattedTimeRange.split(" - ")[0]} • ${sessionData.venueName}",
+                    text = "${sessionData.formattedShortDate} • ${sessionData.formattedStartTime} • ${sessionData.venueName}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f)
                 )
