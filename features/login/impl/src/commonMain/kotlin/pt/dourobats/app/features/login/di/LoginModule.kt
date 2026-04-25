@@ -20,7 +20,7 @@ import pt.dourobats.app.features.login.usecase.RequestLoginCodeUseCaseImpl
 import pt.dourobats.app.features.login.usecase.VerifyLoginCodeUseCaseImpl
 
 val loginModule = module {
-    single<AuthRepository> { AuthRepositoryImpl(get()) }
+    single<AuthRepository> { AuthRepositoryImpl(dataStore = get(), logger = get()) }
 
     factory<RequestLoginCodeUseCase> { RequestLoginCodeUseCaseImpl(get()) }
     factory<VerifyLoginCodeUseCase> { VerifyLoginCodeUseCaseImpl(get()) }

@@ -9,12 +9,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import pt.dourobats.app.core.common.Result
+import pt.dourobats.app.core.common.logging.Logger
 import pt.dourobats.app.features.login.api.exception.AuthException
 import pt.dourobats.app.features.login.api.model.AuthState
 import pt.dourobats.app.features.login.repository.AuthRepository
 
 internal class AuthRepositoryImpl(
-    private val dataStore: DataStore<Preferences>
+    private val dataStore: DataStore<Preferences>,
+    private val logger: Logger,
 ) : AuthRepository {
 
     private val isAuthenticatedKey = booleanPreferencesKey("is_authenticated")
@@ -22,6 +24,10 @@ internal class AuthRepositoryImpl(
     private val userEmailKey = stringPreferencesKey("user_email")
 
     private val MOCK_USER_ID = "mock_user_001"
+
+    companion object {
+        private const val TAG = "AuthRepository"
+    }
 
     override val authStateFlow: Flow<AuthState> = dataStore.data
         .map { preferences ->
@@ -61,15 +67,17 @@ internal class AuthRepositoryImpl(
         }
     }
 
-    override suspend fun logout() {
-        try {
+    override suspend fun logout(): Result<Unit> {
+        return try {
             dataStore.edit { preferences ->
                 preferences.remove(isAuthenticatedKey)
                 preferences.remove(userIdKey)
                 preferences.remove(userEmailKey)
             }
+            Result.Success(Unit)
         } catch (e: Exception) {
-            println("Error during logout: ${e.message}")
+            logger.e("Error during logout", throwable = e, tag = TAG)
+            Result.Error(AuthException.Unknown(e.message ?: "Logout failed"))
         }
     }
 
