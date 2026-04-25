@@ -17,9 +17,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import dourobats.features.schedule.generated.resources.Res
 import dourobats.features.schedule.generated.resources.view_mode_month
+import dourobats.features.schedule.generated.resources.view_mode_switch_to_month
+import dourobats.features.schedule.generated.resources.view_mode_switch_to_week
 import dourobats.features.schedule.generated.resources.view_mode_week
 import org.jetbrains.compose.resources.stringResource
 import pt.dourobats.app.features.schedule.ui.CalendarViewMode
@@ -30,10 +36,19 @@ internal fun ViewModeToggle(
     onToggle: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val toggleLabel = stringResource(
+        if (viewMode == CalendarViewMode.WEEK) Res.string.view_mode_switch_to_month
+        else Res.string.view_mode_switch_to_week
+    )
     Surface(
         color = MaterialTheme.colorScheme.primaryContainer,
         shape = RoundedCornerShape(6.dp),
-        modifier = modifier.clickable(onClick = onToggle)
+        modifier = modifier
+            .clickable(onClick = onToggle)
+            .semantics {
+                contentDescription = toggleLabel
+                role = Role.Button
+            }
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),

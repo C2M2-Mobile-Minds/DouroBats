@@ -16,7 +16,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import pt.dourobats.app.core.localization.Language
@@ -49,8 +52,12 @@ internal fun LanguageSelectorRow(
                         else MaterialTheme.colorScheme.outlineVariant,
                         shape = CircleShape,
                     )
-                    .clickable { onLanguageSelected(language) }
-                    .semantics { contentDescription = language.displayName },
+                    .clickable(role = Role.Tab) { onLanguageSelected(language) }
+                    .semantics {
+                        contentDescription = language.displayName
+                        selected = isSelected
+                        role = Role.Tab
+                    },
                 contentAlignment = Alignment.Center,
             ) {
                 Text(

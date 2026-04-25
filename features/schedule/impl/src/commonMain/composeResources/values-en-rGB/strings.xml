@@ -16,6 +16,8 @@
     <!-- Calendar - View Mode -->
     <string name="view_mode_week">Week</string>
     <string name="view_mode_month">Month</string>
+    <string name="view_mode_switch_to_week">Switch to week view</string>
+    <string name="view_mode_switch_to_month">Switch to month view</string>
 
     <!-- Calendar - Month Names (Full) -->
     <string name="month_january">January</string>
