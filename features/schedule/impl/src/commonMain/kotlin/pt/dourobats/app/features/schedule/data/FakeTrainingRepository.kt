@@ -1,5 +1,6 @@
 package pt.dourobats.app.features.schedule.data
 
+import kotlin.time.Clock
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
@@ -7,7 +8,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.todayIn
+import kotlinx.datetime.toLocalDateTime
 import pt.dourobats.app.core.common.Result
 import pt.dourobats.app.core.common.exception.NetworkException
 import pt.dourobats.app.features.schedule.api.model.Session
@@ -87,7 +88,7 @@ internal class FakeTrainingRepository : TrainingRepository {
      * In real implementation, this data would come from API.
      */
     private fun generateMockSessions(): List<Session> {
-        val baseDate = kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault()) // Today
+        val baseDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
 
         return listOf(
             // Today's sessions

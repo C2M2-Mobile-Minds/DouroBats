@@ -1,10 +1,10 @@
 package pt.dourobats.app.features.admin.data
 
+import kotlin.time.Clock
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import pt.dourobats.app.core.common.Result
 import pt.dourobats.app.features.admin.api.model.CalendarUnlock
@@ -49,7 +49,7 @@ internal class FakeAdminRepository : AdminRepository {
             unlockedBy = "current-admin",
             unlockedAt = Clock.System.now()
         )
-        _unlocks.value = _unlocks.value + newUnlock
+        _unlocks.value += newUnlock
         return Result.Success(newUnlock)
     }
 
