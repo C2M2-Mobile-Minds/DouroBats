@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,7 +26,7 @@ import pt.dourobats.app.features.schedule.utils.minusDays
 import pt.dourobats.app.features.schedule.utils.plusDays
 
 @Composable
-fun WeekCalendar(
+internal fun WeekCalendar(
     selectedDate: LocalDate,
     today: LocalDate,
     onDateSelected: (LocalDate) -> Unit,
@@ -104,15 +105,11 @@ private fun DateItem(
             isSelected = isSelected,
             isToday = isToday,
             hasSession = hasSession,
-            fontWeight = fontWeight,
-            textColor = textColor,
             backgroundColor = backgroundColor,
-            cellHeight = 58.dp,
-            dayNumberStyle = MaterialTheme.typography.titleMedium,
-            dotSize = 5.dp,
-            dotBottomPadding = 6.dp,
+            textColor = textColor,
             todayLabel = todayLabel,
-            onClick = onDateClick
+            onClick = onDateClick,
+            modifier = Modifier.size(width = 44.dp, height = 58.dp),
         )
     }
 }

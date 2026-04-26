@@ -6,6 +6,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import pt.dourobats.app.core.ui.theme.AppTheme
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 
 /**
@@ -20,9 +24,20 @@ fun SectionTitle(
     val spacing = LocalSpacing.current
     Text(
         text = title,
-        style = MaterialTheme.typography.titleLarge,
-        fontWeight = FontWeight.Bold,
+        style = MaterialTheme.typography.titleLarge.copy(letterSpacing = (-0.5).sp),
+        fontWeight = FontWeight.ExtraBold,
         color = MaterialTheme.colorScheme.onBackground,
         modifier = modifier.padding(bottom = spacing.small),
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SectionTitlePreview() {
+    AppTheme {
+        SectionTitle(
+            title = "This Week",
+            modifier = Modifier.padding(16.dp),
+        )
+    }
 }

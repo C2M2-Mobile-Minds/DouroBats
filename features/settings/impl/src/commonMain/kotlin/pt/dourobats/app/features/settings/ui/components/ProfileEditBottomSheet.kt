@@ -1,6 +1,5 @@
-package pt.dourobats.app.features.settings.components
+package pt.dourobats.app.features.settings.ui.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -8,15 +7,14 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import dourobats.features.settings.generated.resources.Res
 import dourobats.features.settings.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
+import pt.dourobats.app.core.ui.components.inputs.DouroTextField
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 import pt.dourobats.app.features.settings.ui.DisplayNameError
 import pt.dourobats.app.features.settings.ui.EmailError
@@ -43,14 +41,15 @@ internal fun ProfileEditBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         modifier = modifier,
-        containerColor = MaterialTheme.colorScheme.surface,
+        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
         dragHandle = { BottomSheetDefaults.DragHandle(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)) }
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .navigationBarsPadding()
                 .padding(horizontal = spacing.standard)
-                .padding(bottom = spacing.huge)
+                .padding(bottom = spacing.standard)
                 .verticalScroll(rememberScrollState())
         ) {
             Text(
@@ -64,13 +63,12 @@ internal fun ProfileEditBottomSheet(
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)),
-                border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
+                elevation = CardDefaults.cardElevation(defaultElevation = spacing.cardElevation),
             ) {
                 Column(modifier = Modifier.padding(spacing.standard)) {
-                    // Display Name
-                    ProfileInputField(
+                    DouroTextField(
                         value = editState.displayName,
                         onValueChange = onDisplayNameChange,
                         label = stringResource(Res.string.settings_display_name),
@@ -84,8 +82,7 @@ internal fun ProfileEditBottomSheet(
 
                     Spacer(modifier = Modifier.height(spacing.standard))
 
-                    // Email
-                    ProfileInputField(
+                    DouroTextField(
                         value = editState.email,
                         onValueChange = onEmailChange,
                         label = stringResource(Res.string.settings_email),
@@ -100,8 +97,7 @@ internal fun ProfileEditBottomSheet(
 
                     Spacer(modifier = Modifier.height(spacing.standard))
 
-                    // Phone
-                    ProfileInputField(
+                    DouroTextField(
                         value = editState.phoneNumber,
                         onValueChange = onPhoneNumberChange,
                         label = stringResource(Res.string.settings_phone),
@@ -124,7 +120,7 @@ internal fun ProfileEditBottomSheet(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(6.dp),
             ) {
                 Text(
                     text = stringResource(Res.string.settings_save_changes),
@@ -136,47 +132,3 @@ internal fun ProfileEditBottomSheet(
     }
 }
 
-@Composable
-private fun ProfileInputField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    label: String,
-    error: String? = null,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
-) {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-        TextField(
-            value = value,
-            onValueChange = onValueChange,
-            modifier = Modifier.fillMaxWidth(),
-            isError = error != null,
-            keyboardOptions = keyboardOptions,
-            singleLine = true,
-            shape = RoundedCornerShape(12.dp),
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = MaterialTheme.colorScheme.surface,
-                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                disabledContainerColor = MaterialTheme.colorScheme.surface,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent,
-                errorIndicatorColor = Color.Transparent
-            )
-        )
-        if (error != null) {
-            Text(
-                text = error,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.padding(top = 4.dp, start = 4.dp)
-            )
-        }
-    }
-}

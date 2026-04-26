@@ -68,12 +68,17 @@ internal class LoginViewModel(
 
     private fun verifyOtpCode() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-            val result = verifyLoginCode(_uiState.value.email, _uiState.value.code)
-            if (result is Result.Error) {
-                _uiState.update {
-                    it.copy(isLoading = false, errorMessage = errorMapper.mapToUserMessage(result.exception))
+            _uiState.update { it.copy(isLoading = true, errorMessage = null, codeError = null) }
+            when (val result = verifyLoginCode(_uiState.value.email, _uiState.value.code)) {
+                is Result.Success -> _uiState.update { it.copy(isLoading = false) }
+                is Result.Error -> _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        codeError = errorMapper.mapToUserMessage(result.exception),
+                        errorMessage = null,
+                    )
                 }
+                is Result.Loading -> Unit
             }
         }
     }

@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import pt.dourobats.app.core.common.isDebug
 import pt.dourobats.app.core.localization.Language
 import pt.dourobats.app.features.settings.api.model.Theme
 import pt.dourobats.app.features.login.api.model.UserProfile
@@ -37,6 +38,9 @@ internal class SettingsViewModel(
     // Validation errors state
     private val _validationErrors = MutableStateFlow(SettingsUiState.ValidationErrors())
 
+    // One-shot flag that fires after a successful profile save
+    private val _profileSaved = MutableStateFlow(false)
+
     // Share each upstream flow once to avoid duplicate DataStore subscriptions
     private val profileState: StateFlow<UserProfile?> = observeUserProfile()
         .stateIn(
@@ -64,14 +68,17 @@ internal class SettingsViewModel(
         profileState,
         currentLanguage,
         themeState,
-        _validationErrors
-    ) { profile, language, theme, validationErrors ->
+        _validationErrors,
+        _profileSaved,
+    ) { profile, language, theme, validationErrors, profileSaved ->
         SettingsUiState(
             userProfile = profile,
             currentLanguage = language,
             currentTheme = theme,
             isLoading = false,
-            validationErrors = validationErrors
+            validationErrors = validationErrors,
+            showDeveloperOptions = isDebug,
+            profileSaved = profileSaved,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -134,8 +141,13 @@ internal class SettingsViewModel(
             )
             updateUserProfileUseCase(updatedProfile)
             _validationErrors.value = SettingsUiState.ValidationErrors()
+            _profileSaved.value = true
             onSuccess()
         }
+    }
+
+    fun consumeProfileSaved() {
+        _profileSaved.value = false
     }
 
     fun cancelEdit() {

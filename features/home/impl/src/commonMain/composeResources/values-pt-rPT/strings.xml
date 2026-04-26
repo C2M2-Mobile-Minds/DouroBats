@@ -25,4 +25,27 @@
 
     <!-- News Actions -->
     <string name="home_read_more">Ler Mais</string>
+
+    <!-- Home placeholder data (mock — will be replaced by real data) -->
+    <string name="home_sport_swimming">Natação</string>
+    <string name="home_sport_volleyball">Voleibol</string>
+    <string name="home_sport_basketball">Basquetebol</string>
+    <string name="home_venue_indoor_pool">Piscina Interior</string>
+    <string name="home_venue_secondary_hall">Pavilhão Secundário</string>
+    <string name="home_venue_main_hall">Pavilhão Principal</string>
+    <string name="home_announcement_hall_title">Novo Pavilhão Desportivo Aberto</string>
+    <string name="home_announcement_hall_desc">O novo pavilhão desportivo está agora disponível para reservas!</string>
+    <string name="home_announcement_hall_date">25 de fevereiro de 2026</string>
+    <string name="home_announcement_tournament_title">Torneio de Futebol</string>
+    <string name="home_announcement_tournament_desc">Inscrições abertas para o torneio de futebol de verão.</string>
+    <string name="home_announcement_tournament_date">24 de fevereiro de 2026</string>
+    <string name="home_next_session_sport">Basquetebol</string>
+    <string name="home_next_session_coach">Treinador Pedro</string>
+    <string name="home_next_session_date">Sexta-feira, 27 de fevereiro</string>
+    <string name="home_next_session_location">Pavilhão Principal • 10:00 - 11:30</string>
+    <string name="home_stats_this_season">Esta Época</string>
+    <string name="home_stat_sessions_label">Treinos</string>
+    <string name="home_stat_sessions_value">12</string>
+    <string name="home_stat_ranking_label">Ranking</string>
+    <string name="home_stat_ranking_value">Top 5</string>
 </resources>

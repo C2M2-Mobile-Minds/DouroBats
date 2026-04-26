@@ -1,4 +1,4 @@
-package pt.dourobats.app.features.settings.components
+package pt.dourobats.app.features.settings.ui.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -13,12 +13,14 @@ import androidx.compose.ui.unit.dp
 import dourobats.features.settings.generated.resources.Res
 import dourobats.features.settings.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import pt.dourobats.app.features.login.api.model.UserRole
+import pt.dourobats.app.core.ui.theme.AppTheme
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DeveloperOptionsBottomSheet(
+internal fun DeveloperOptionsBottomSheet(
     currentRole: UserRole,
     onRoleSelected: (UserRole) -> Unit,
     onDismiss: () -> Unit,
@@ -32,29 +34,35 @@ fun DeveloperOptionsBottomSheet(
         sheetState = sheetState,
         modifier = modifier,
         containerColor = MaterialTheme.colorScheme.surface,
-        dragHandle = { BottomSheetDefaults.DragHandle(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)) }
+        tonalElevation = 0.dp,
+        dragHandle = {
+            BottomSheetDefaults.DragHandle(
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+            )
+        },
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .navigationBarsPadding()
                 .padding(horizontal = spacing.standard)
-                .padding(bottom = spacing.huge)
+                .padding(bottom = spacing.standard)
                 .verticalScroll(rememberScrollState())
         ) {
             Text(
                 text = stringResource(Res.string.settings_developer_options),
                 style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(vertical = spacing.standard)
+                fontWeight = FontWeight.Black,
+                modifier = Modifier.padding(bottom = spacing.standard)
             )
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(20.dp),
+                shape = RoundedCornerShape(12.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
                 ),
-                elevation = CardDefaults.cardElevation(0.dp)
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             ) {
                 RoleDropdownRow(
                     currentRole = currentRole,
@@ -133,5 +141,17 @@ private fun RoleDropdownRow(
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun DeveloperOptionsBottomSheetPreview() {
+    AppTheme {
+        DeveloperOptionsBottomSheet(
+            currentRole = UserRole.ATHLETE,
+            onRoleSelected = {},
+            onDismiss = {},
+        )
     }
 }

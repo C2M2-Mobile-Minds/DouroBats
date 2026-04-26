@@ -1,5 +1,7 @@
 package pt.dourobats.app.core.ui.components.feedback
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -10,22 +12,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import pt.dourobats.app.core.ui.theme.AppTheme
+import pt.dourobats.app.core.ui.theme.proIndigo
+import pt.dourobats.app.core.ui.theme.proIndigoContainer
 
 /**
  * Kinetic Precision Status Chip
  *
  * Following the design system's chip guidelines:
- * - Attendance: Use secondary_container (#75ff68) for "Attending"
+ * - Attendance: Use secondaryContainer (Mint #DCFCE7) / onSecondaryContainer (Forest #166534)
  * - Skill Level: Use tonal scale (Beginner=Primary, Intermediate=Secondary, Elite=Tertiary)
  * - Rounded corners: rounded-md (6dp) to avoid "full" rounding for serious athletic tone
  *
  * Usage:
  * ```kotlin
- * // Attendance chip
+ * // Attendance chip — Mint bg, Forest text
  * StatusBadge(
  *     text = "Attending",
- *     color = MaterialTheme.colorScheme.secondaryContainer,
- *     textColor = MaterialTheme.colorScheme.onSecondaryContainer
+ *     chipType = ChipType.POSITIVE
  * )
  *
  * // Skill level chip
@@ -50,13 +55,13 @@ fun StatusBadge(
     modifier: Modifier = Modifier
 ) {
     val (bgColor, fgColor) = when (chipType) {
-        ChipType.POSITIVE -> MaterialTheme.colorScheme.secondaryContainer to MaterialTheme.colorScheme.onSecondaryContainer
-        ChipType.TIER_LOW -> MaterialTheme.colorScheme.primaryContainer to MaterialTheme.colorScheme.onPrimaryContainer
-        ChipType.TIER_MID -> MaterialTheme.colorScheme.secondaryContainer to MaterialTheme.colorScheme.onSecondaryContainer
+        ChipType.POSITIVE  -> MaterialTheme.colorScheme.secondaryContainer to MaterialTheme.colorScheme.onSecondaryContainer
+        ChipType.TIER_LOW  -> MaterialTheme.colorScheme.primaryContainer to MaterialTheme.colorScheme.onPrimaryContainer
+        ChipType.TIER_MID  -> MaterialTheme.colorScheme.secondaryContainer to MaterialTheme.colorScheme.onSecondaryContainer
         ChipType.TIER_HIGH -> MaterialTheme.colorScheme.tertiaryContainer to MaterialTheme.colorScheme.onTertiaryContainer
-        ChipType.NEGATIVE -> MaterialTheme.colorScheme.errorContainer to MaterialTheme.colorScheme.onErrorContainer
-        ChipType.PROMINENT -> MaterialTheme.colorScheme.tertiaryContainer to MaterialTheme.colorScheme.onTertiaryContainer
-        null -> (color ?: MaterialTheme.colorScheme.surfaceVariant) to (textColor ?: MaterialTheme.colorScheme.onSurfaceVariant)
+        ChipType.NEGATIVE  -> MaterialTheme.colorScheme.errorContainer to MaterialTheme.colorScheme.onErrorContainer
+        ChipType.PROMINENT -> proIndigoContainer to proIndigo
+        null               -> (color ?: MaterialTheme.colorScheme.surfaceVariant) to (textColor ?: MaterialTheme.colorScheme.onSurfaceVariant)
     }
 
     Surface(
@@ -68,8 +73,8 @@ fun StatusBadge(
             text = text,
             color = fgColor,
             style = MaterialTheme.typography.labelSmall,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+            fontWeight = FontWeight.ExtraBold,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
         )
     }
 }
@@ -91,4 +96,22 @@ enum class ChipType {
     TIER_HIGH,
     NEGATIVE,
     PROMINENT
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun StatusBadgeAllVariantsPreview() {
+    AppTheme {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            StatusBadge(text = "Attending", chipType = ChipType.POSITIVE)
+            StatusBadge(text = "Beginner", chipType = ChipType.TIER_LOW)
+            StatusBadge(text = "Intermediate", chipType = ChipType.TIER_MID)
+            StatusBadge(text = "Elite", chipType = ChipType.TIER_HIGH)
+            StatusBadge(text = "3 spots left", chipType = ChipType.NEGATIVE)
+            StatusBadge(text = "New", chipType = ChipType.PROMINENT)
+        }
+    }
 }

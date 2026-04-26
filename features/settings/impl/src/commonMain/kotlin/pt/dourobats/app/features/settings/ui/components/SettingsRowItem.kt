@@ -1,4 +1,4 @@
-package pt.dourobats.app.features.settings.components
+package pt.dourobats.app.features.settings.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -39,7 +39,7 @@ import pt.dourobats.app.core.ui.theme.LocalSpacing
  * @param iconSize Size of the icon inside the container (default 24 dp).
  */
 @Composable
-fun SettingsRowItem(
+internal fun SettingsRowItem(
     icon: ImageVector,
     iconContainerColor: Color,
     iconTint: Color,

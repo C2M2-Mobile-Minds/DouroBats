@@ -22,7 +22,9 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import pt.dourobats.app.core.localization.Language
+import pt.dourobats.app.core.ui.theme.AppTheme
 
 @Composable
 internal fun LanguageSelectorRow(
@@ -78,3 +80,14 @@ private val Language.flagEmoji: String
         Language.PORTUGUESE_BR -> "🇧🇷"
         Language.SPANISH -> "🇪🇸"
     }
+
+@Preview(showBackground = true)
+@Composable
+private fun LanguageSelectorRowPreview() {
+    AppTheme {
+        LanguageSelectorRow(
+            currentLanguage = Language.PORTUGUESE_PT,
+            onLanguageSelected = {},
+        )
+    }
+}

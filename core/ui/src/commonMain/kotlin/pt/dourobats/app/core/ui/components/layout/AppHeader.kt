@@ -12,6 +12,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -21,78 +22,103 @@ import pt.dourobats.app.core.ui.theme.AppTheme
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 
 /**
- * Universal header component with brand gradient background.
+ * Universal Kinetic Precision header with diagonal athletic gradient.
  *
- * Used across different features to maintain visual consistency.
+ * ## Design Decisions
+ * - **Diagonal linearGradient** (top-left → bottom-right): Creates kinetic energy vs. the
+ *   "muddy" vertical fade that mixes primary and secondary mid-screen.
+ * - **24dp bottom corners** (down from 32dp): More editorial, less "mobile-2018."
+ * - **Surface shadowElevation = 0dp**: Gradient shape provides visual depth. Zero shadow means
+ *   hero cards (elevation = 8dp) always render above the header without z-order fighting.
+ *   Content column painted after AppHeader → naturally draws on top (Compose draw order).
+ * - **spacing.screenHorizontal**: Title aligns exactly with list content below.
+ * - **spacing.extraLarge bottom padding**: Reserves overlap space for the first card.
+ * - **Explicit font families**: title → Lexend (actionable), subtitle → Manrope (narrative).
  *
- * @param title The main title text
- * @param modifier Optional modifier
- * @param subtitle Optional subtitle text
- * @param trailing Optional composable to display at the end of the title row
- * @param content Optional custom content to display below the title section
+ * @param title The main title text — rendered in Lexend Bold.
+ * @param modifier Optional modifier.
+ * @param subtitle Optional subtitle — rendered in Manrope at 70% white.
+ * @param leading Optional composable at the start of the title row (e.g., back button).
+ * @param trailing Optional composable at the end of the title row (e.g., action chips).
+ * @param content Optional custom content below the title row (e.g., month picker).
  */
 @Composable
 fun AppHeader(
     title: String,
     modifier: Modifier = Modifier,
     subtitle: String? = null,
+    leading: @Composable (RowScope.() -> Unit)? = null,
     trailing: @Composable (RowScope.() -> Unit)? = null,
-    content: @Composable (ColumnScope.() -> Unit)? = null
+    content: @Composable (ColumnScope.() -> Unit)? = null,
 ) {
     val spacing = LocalSpacing.current
 
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.secondary
-                    )
-                ),
-                shape = RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp)
-            )
-            .windowInsetsPadding(WindowInsets.statusBars)
-            .padding(spacing.medium)
-            .padding(bottom = spacing.small),
-        contentAlignment = Alignment.BottomStart
+    val athleticGradient = Brush.linearGradient(
+        colors = listOf(
+            MaterialTheme.colorScheme.primary,                      // Midnight Pitch
+            MaterialTheme.colorScheme.primary.copy(alpha = 0.90f),
+            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.80f), // Light Blue — stays in Power Blue family
+        ),
+        start = Offset(0f, 0f),
+        end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY),
+    )
+
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        color = Color.Transparent, // Let the Column's gradient show through
+        shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp),
+        shadowElevation = 0.dp,
     ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(athleticGradient)
+                .windowInsetsPadding(WindowInsets.statusBars)
+                .padding(horizontal = spacing.screenHorizontal)
+                .padding(top = spacing.medium, bottom = spacing.extraLarge),
+        ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    fontWeight = FontWeight.Bold
-                )
+                if (leading != null) {
+                    Row { leading() }
+                }
+
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = Color.White,
+                        fontWeight = FontWeight.Black, // Editorial weight — magazine-cover boldness
+                        fontFamily = MaterialTheme.typography.headlineMedium.fontFamily,
+                    )
+
+                    if (subtitle != null) {
+                        Text(
+                            text = subtitle,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = Color.White.copy(alpha = 0.70f),
+                            fontFamily = MaterialTheme.typography.bodyLarge.fontFamily, // Manrope
+                        )
+                    }
+                }
 
                 if (trailing != null) {
-                    trailing()
+                    Row { trailing() }
                 }
             }
 
-            if (subtitle != null) {
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
-                )
-            }
-
             if (content != null) {
-                Spacer(modifier = Modifier.height(spacing.medium))
+                Spacer(modifier = Modifier.height(spacing.standard))
                 content()
             }
         }
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun AppHeaderHomePreview() {
     AppTheme {
@@ -103,7 +129,7 @@ private fun AppHeaderHomePreview() {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun AppHeaderSchedulePreview() {
     AppTheme {
@@ -158,3 +184,4 @@ private fun AppHeaderSchedulePreview() {
         )
     }
 }
+

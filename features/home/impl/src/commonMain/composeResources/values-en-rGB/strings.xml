@@ -25,4 +25,27 @@
 
     <!-- News Actions -->
     <string name="home_read_more">Read More</string>
+
+    <!-- Home placeholder data (mock — will be replaced by real data) -->
+    <string name="home_sport_swimming">Swimming</string>
+    <string name="home_sport_volleyball">Volleyball</string>
+    <string name="home_sport_basketball">Basketball</string>
+    <string name="home_venue_indoor_pool">Indoor Pool</string>
+    <string name="home_venue_secondary_hall">Secondary Hall</string>
+    <string name="home_venue_main_hall">Main Hall</string>
+    <string name="home_announcement_hall_title">New Sports Hall Opened</string>
+    <string name="home_announcement_hall_desc">The new sports hall is now available for bookings!</string>
+    <string name="home_announcement_hall_date">25 February 2026</string>
+    <string name="home_announcement_tournament_title">Football Tournament</string>
+    <string name="home_announcement_tournament_desc">Registration open for the summer football tournament.</string>
+    <string name="home_announcement_tournament_date">24 February 2026</string>
+    <string name="home_next_session_sport">Basketball</string>
+    <string name="home_next_session_coach">Coach Pedro</string>
+    <string name="home_next_session_date">Friday, 27 February</string>
+    <string name="home_next_session_location">Main Hall • 10:00 - 11:30</string>
+    <string name="home_stats_this_season">This Season</string>
+    <string name="home_stat_sessions_label">Sessions</string>
+    <string name="home_stat_sessions_value">12</string>
+    <string name="home_stat_ranking_label">Ranking</string>
+    <string name="home_stat_ranking_value">Top 5</string>
 </resources>

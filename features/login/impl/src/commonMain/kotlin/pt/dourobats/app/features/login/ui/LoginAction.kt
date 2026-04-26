@@ -2,7 +2,7 @@ package pt.dourobats.app.features.login.ui
 
 import pt.dourobats.app.core.localization.Language
 
-sealed interface LoginAction {
+internal sealed interface LoginAction {
     data class UpdateEmail(val email: String) : LoginAction
     data class UpdateCode(val code: String) : LoginAction
     data class SelectLanguage(val language: Language) : LoginAction

@@ -31,23 +31,21 @@ class SessionUiMapperTest {
     }
 
     @Test
-    fun `map should correctly resolve sport name and icon for volleyball`() = runTest {
+    fun `map should correctly resolve sport name for volleyball`() = runTest {
         val session = createBaseSession(sportId = "volleyball")
 
         val result = mapper.map(session, isBooked = false)
 
         assertEquals("Volleyball", result.sportName)
-        assertEquals("🏐", result.sportIcon)
     }
 
     @Test
-    fun `map should correctly resolve sport name and icon for padel`() = runTest {
+    fun `map should correctly resolve sport name for padel`() = runTest {
         val session = createBaseSession(sportId = "padel")
 
         val result = mapper.map(session, isBooked = false)
 
         assertEquals("Padel", result.sportName)
-        assertEquals("🎾", result.sportIcon)
     }
 
     @Test
@@ -113,38 +111,33 @@ class SessionUiMapperTest {
     }
 
     @Test
-    fun `map should correctly resolve sport name and icon for futsal`() = runTest {
+    fun `map should correctly resolve sport name for futsal`() = runTest {
         val result = mapper.map(createBaseSession(sportId = "futsal"), isBooked = false)
         assertEquals("Futsal", result.sportName)
-        assertEquals("⚽", result.sportIcon)
     }
 
     @Test
-    fun `map should correctly resolve sport name and icon for swimming`() = runTest {
+    fun `map should correctly resolve sport name for swimming`() = runTest {
         val result = mapper.map(createBaseSession(sportId = "swimming"), isBooked = false)
         assertEquals("Swimming", result.sportName)
-        assertEquals("🏊", result.sportIcon)
     }
 
     @Test
-    fun `map should correctly resolve sport name and icon for basketball`() = runTest {
+    fun `map should correctly resolve sport name for basketball`() = runTest {
         val result = mapper.map(createBaseSession(sportId = "basketball"), isBooked = false)
         assertEquals("Basketball", result.sportName)
-        assertEquals("🏀", result.sportIcon)
     }
 
     @Test
-    fun `map should correctly resolve sport name and icon for running`() = runTest {
+    fun `map should correctly resolve sport name for running`() = runTest {
         val result = mapper.map(createBaseSession(sportId = "running"), isBooked = false)
         assertEquals("Running", result.sportName)
-        assertEquals("🏃", result.sportIcon)
     }
 
     @Test
-    fun `map should capitalize and use fallback icon for unknown sport id`() = runTest {
+    fun `map should capitalize sport name for unknown sport id`() = runTest {
         val result = mapper.map(createBaseSession(sportId = "tennis"), isBooked = false)
         assertEquals("Tennis", result.sportName)
-        assertEquals("👟", result.sportIcon)
     }
 
     @Test

@@ -170,9 +170,9 @@ val athleticSpring = CubicBezierEasing(0.34f, 1.56f, 0.64f, 1f)
  * This modifier applies the appropriate surface container color based on the layer.
  *
  * Surface Hierarchy:
- * 1. Base Layer: surface (#f8f9fa) – The stadium floor
- * 2. Section Layer: surface-container-low (#f3f4f5) – Defines large functional areas
- * 3. Component Layer: surface-container-lowest (#ffffff) – The "Active Card"
+ * 1. Base Layer: surface (#ffffff) – Pure White card faces
+ * 2. Section Layer: surface-container-low (#f1f5f9) – Cool Slate canvas (screen bg)
+ * 3. Component Layer: surface-container-lowest (#ffffff) – Cards pop above the canvas
  *
  * Usage:
  * ```kotlin

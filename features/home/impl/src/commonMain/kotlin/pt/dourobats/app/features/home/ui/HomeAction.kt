@@ -1,6 +1,6 @@
 package pt.dourobats.app.features.home.ui
 
-sealed interface HomeAction {
+internal sealed interface HomeAction {
     data object OnCreateSessionClick : HomeAction
     data object OnViewReportsClick : HomeAction
     data object OnManageMembersClick : HomeAction
