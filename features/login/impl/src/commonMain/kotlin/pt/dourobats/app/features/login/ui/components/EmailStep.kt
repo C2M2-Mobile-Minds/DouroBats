@@ -51,6 +51,13 @@ internal fun EmailStep(uiState: LoginUiState, onAction: (LoginAction) -> Unit) {
             supportingText = uiState.emailError?.let {
                 { Text(it, color = MaterialTheme.colorScheme.error) }
             },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Done,
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = { onAction(LoginAction.SubmitEmail) },
+            ),
             modifier = Modifier.fillMaxWidth(),
         )
 

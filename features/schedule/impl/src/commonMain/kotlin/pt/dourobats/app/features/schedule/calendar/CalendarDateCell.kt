@@ -52,7 +52,7 @@ internal fun CalendarDateCell(
 ) {
     Surface(
         onClick = { onClick(date) },
-        modifier = modifier.size(width = 44.dp, height = 54.dp),
+        modifier = Modifier.size(width = 44.dp, height = 54.dp).then(modifier),
         shape = RoundedCornerShape(6.dp),
         color = backgroundColor,
         tonalElevation = if (isToday && !isSelected) 2.dp else 0.dp,
