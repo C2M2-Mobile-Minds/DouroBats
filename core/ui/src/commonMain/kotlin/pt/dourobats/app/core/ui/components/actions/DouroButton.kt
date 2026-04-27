@@ -1,6 +1,7 @@
 package pt.dourobats.app.core.ui.components.actions
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -122,7 +123,7 @@ fun DouroOutlinedButton(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun DouroButtonPreview() {
     AppTheme {
@@ -130,7 +131,7 @@ private fun DouroButtonPreview() {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun DouroButtonLoadingPreview() {
     AppTheme {
@@ -138,7 +139,7 @@ private fun DouroButtonLoadingPreview() {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun DouroOutlinedButtonPreview() {
     AppTheme {
@@ -147,21 +148,10 @@ private fun DouroOutlinedButtonPreview() {
 }
 
 /**
- * Kinetic Precision Destructive Button
- *
- * Full-width ghost button for irreversible actions (Logout, Delete Account, Cancel Membership).
- * The error color signals danger without being aggressive — faint tint bg + 1dp border.
- *
- * Design decisions:
- * - **1dp border @ 30% opacity**: Integrated, not alarming — "Are you sure?" not "WARNING!"
- * - **error.copy(alpha=0.05f) container**: Barely-there tint reinforces destructive context
- * - **56dp height**: Slightly taller than standard actions — more deliberate tap required
- * - **6dp corners**: Consistent with the rest of the design system
- *
- * @param text Button label.
- * @param onClick Called when the button is tapped.
- * @param modifier Optional modifier.
- * @param icon Optional leading icon.
+ * Kinetic Precision Destructive Button (Updated)
+ * * Redesigned to be "Integrated" rather than "Alarming".
+ * Uses a thick 2dp ghost border to match the DouroOutlinedButton
+ * but with a desaturated profile to signal a secondary/exit action.
  */
 @Composable
 fun DouroDestructiveButton(
@@ -170,32 +160,42 @@ fun DouroDestructiveButton(
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
 ) {
-    OutlinedButton(
+    Button(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp),
-        shape = MaterialTheme.shapes.small, // 6dp — rounded-md
-        colors = ButtonDefaults.outlinedButtonColors(
-            containerColor = MaterialTheme.colorScheme.error.copy(alpha = 0.05f),
-            contentColor = MaterialTheme.colorScheme.error,
+        shape = MaterialTheme.shapes.small,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.errorContainer,
+            contentColor = MaterialTheme.colorScheme.onErrorContainer,
         ),
-        border = BorderStroke(
-            width = 1.dp,
-            color = MaterialTheme.colorScheme.error.copy(alpha = 0.3f),
-        ),
+        elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp),
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
             icon?.let {
-                Icon(it, contentDescription = null, modifier = Modifier.size(20.dp))
+                Icon(
+                    imageVector = it,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                    tint = MaterialTheme.colorScheme.onErrorContainer,
+                )
                 Spacer(modifier = Modifier.width(12.dp))
             }
-            Text(text = text, fontWeight = FontWeight.Bold)
+            Text(
+                text = text.uppercase(),
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Black,
+                letterSpacing = 1.sp
+            )
         }
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun DouroDestructiveButtonPreview() {
     AppTheme {
@@ -248,7 +248,7 @@ fun DouroLoginButton(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun DouroLoginButtonPreview() {
     AppTheme {
@@ -256,7 +256,7 @@ private fun DouroLoginButtonPreview() {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun DouroLoginButtonDisabledPreview() {
     AppTheme {
@@ -294,7 +294,7 @@ fun DouroProButton(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun DouroProButtonPreview() {
     AppTheme {

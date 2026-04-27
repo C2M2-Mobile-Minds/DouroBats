@@ -20,7 +20,6 @@ internal data class SettingsUiState(
     val isLoading: Boolean = true,
     val validationErrors: ValidationErrors = ValidationErrors(),
     val showDeveloperOptions: Boolean = false,
-    val profileSaved: Boolean = false,
 ) {
     /**
      * Whether we have loaded all required data from DataStore.
