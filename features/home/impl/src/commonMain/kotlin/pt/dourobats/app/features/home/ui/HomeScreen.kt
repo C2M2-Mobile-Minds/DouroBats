@@ -8,17 +8,23 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.automirrored.filled.DirectionsRun
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.zIndex
 import androidx.compose.ui.unit.dp
 import dourobats.features.home.generated.resources.*
@@ -29,6 +35,7 @@ import pt.dourobats.app.core.ui.theme.AppTheme
 import pt.dourobats.app.core.ui.components.layout.AppHeader
 import pt.dourobats.app.core.ui.components.layout.SectionTitle
 import pt.dourobats.app.core.ui.theme.LocalSpacing
+import pt.dourobats.app.core.ui.theme.proIndigo
 import pt.dourobats.app.features.home.ui.components.AnnouncementItem
 import pt.dourobats.app.features.home.ui.components.LatestNewsSection
 import pt.dourobats.app.features.home.ui.components.NextSessionCard
@@ -36,19 +43,36 @@ import pt.dourobats.app.features.home.ui.components.StatCard
 import pt.dourobats.app.features.home.ui.components.UpcomingSessionItem
 
 @Composable
-internal fun HomeRoute() {
+internal fun HomeRoute(savedStateHandle: SavedStateHandle? = null) {
     val viewModel: HomeViewModel = koinViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    HomeScreen(state = uiState, onAction = viewModel::onAction)
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(savedStateHandle) {
+        val sessionName = savedStateHandle?.get<String>("session_created_name")
+        if (!sessionName.isNullOrBlank()) {
+            savedStateHandle.remove<String>("session_created_name")
+            snackbarHostState.showSnackbar(
+                message = sessionName,
+                actionLabel = "VIEW",
+                duration = SnackbarDuration.Long,
+            )
+        }
+    }
+
+    HomeScreen(state = uiState, onAction = viewModel::onAction, snackbarHostState = snackbarHostState)
 }
 
 @Composable
 internal fun HomeScreen(
     state: HomeUiState,
     onAction: (HomeAction) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     val spacing = LocalSpacing.current
+    val scrollState = rememberScrollState()
+    val fabExpanded by remember { derivedStateOf { scrollState.value < 50 } }
 
     Box(
         modifier = modifier
@@ -63,7 +87,6 @@ internal fun HomeScreen(
                     stringResource(Res.string.home_welcome_fallback)
                 },
                 subtitle = stringResource(Res.string.home_subtitle),
-                // Content column comes AFTER in code — natural draw order puts it on top.
             )
 
             Column(
@@ -71,12 +94,10 @@ internal fun HomeScreen(
                     .fillMaxWidth()
                     .weight(1f)
                     .zIndex(1f)
-                    .verticalScroll(rememberScrollState()) // scroll inside the shifted viewport
+                    .verticalScroll(scrollState)
                     .padding(horizontal = spacing.standard)
             ) {
-                // Small top breathing room between header text and the floating hero card
                 Spacer(modifier = Modifier.height(spacing.medium))
-                // NextSessionCard floats directly into the header — no spacer/section title needed
                 NextSessionCard()
 
                 Spacer(modifier = Modifier.height(spacing.large))
@@ -150,23 +171,78 @@ internal fun HomeScreen(
             }
         }
 
-        // Committee-only FAB: instant access to "Create Session" — most common admin task
         AnimatedVisibility(
             visible = state.isCommitteeUser,
             enter = scaleIn() + fadeIn(),
             exit = scaleOut() + fadeOut(),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(spacing.standard)
-                .navigationBarsPadding(),
+                .padding(spacing.standard),
         ) {
-            FloatingActionButton(
-                onClick = { onAction(HomeAction.OnCreateSessionClick) },
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary,
-                shape = CircleShape,
-            ) {
-                Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.home_portal_new_session))
+            ExtendedFloatingActionButton(
+                onClick = { onAction(HomeAction.OnManageFabClick) },
+                containerColor = proIndigo,
+                contentColor = Color.White,
+                expanded = fabExpanded,
+                elevation = FloatingActionButtonDefaults.elevation(
+                    defaultElevation = 6.dp,
+                    pressedElevation = 12.dp,
+                ),
+                shape = RoundedCornerShape(16.dp),
+                icon = { Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.home_fab_manage)) },
+                text = {
+                    Text(
+                        text = stringResource(Res.string.home_fab_manage),
+                        fontWeight = FontWeight.Bold,
+                    )
+                },
+            )
+        }
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = spacing.standard),
+        ) { data ->
+            BrandedSnackbar(data)
+        }
+    }
+}
+
+@Composable
+private fun BrandedSnackbar(snackbarData: SnackbarData) {
+    Card(
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF001E40)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Icon(
+                imageVector = Icons.Default.CheckCircle,
+                contentDescription = null,
+                tint = proIndigo,
+                modifier = Modifier.size(20.dp),
+            )
+            Text(
+                text = snackbarData.visuals.message,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.White,
+                modifier = Modifier.weight(1f),
+            )
+            snackbarData.visuals.actionLabel?.let { label ->
+                TextButton(onClick = { snackbarData.performAction() }) {
+                    Text(
+                        text = label,
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = proIndigo,
+                    )
+                }
             }
         }
     }

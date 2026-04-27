@@ -33,7 +33,7 @@ internal fun ManagementPortalGrid(onAction: (HomeAction) -> Unit) {
                 icon = Icons.Default.Add,
                 containerColor = tonalContainer,
                 iconColor = tonalIcon,
-                onClick = { onAction(HomeAction.OnCreateSessionClick) },
+                onClick = { onAction(HomeAction.OnManageFabClick) },
                 modifier = Modifier.weight(1f)
             )
             PortalItem(

@@ -9,7 +9,7 @@ import pt.dourobats.app.features.home.ui.HomeRoute as HomeRouteComposable
 internal class HomeGraph : FeatureGraph {
     override fun register(builder: NavGraphBuilder, navController: NavHostController) {
         builder.composable<HomeRoute> {
-            HomeRouteComposable()
+            HomeRouteComposable(savedStateHandle = it.savedStateHandle)
         }
     }
 }

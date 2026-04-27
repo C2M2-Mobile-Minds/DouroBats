@@ -30,7 +30,7 @@ class HomeViewModelTest {
     private val profileFlow = MutableStateFlow(UserProfile.empty())
 
     private val noOpNavigation = object : HomeNavigation {
-        override fun navigateToCreateSession() = Unit
+        override fun navigateToManagementHub() = Unit
         override fun navigateToViewReports() = Unit
         override fun navigateToManageMembers() = Unit
         override fun navigateToNewsDetail(newsId: String) = Unit

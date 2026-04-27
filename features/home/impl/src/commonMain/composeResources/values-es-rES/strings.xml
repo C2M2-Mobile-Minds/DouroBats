@@ -48,4 +48,7 @@
     <string name="home_stat_sessions_value">12</string>
     <string name="home_stat_ranking_label">Ranking</string>
     <string name="home_stat_ranking_value">Top 5</string>
+
+    <!-- Management Hub (FAB Bottom Sheet) -->
+    <string name="home_fab_manage">Gestionar</string>
 </resources>

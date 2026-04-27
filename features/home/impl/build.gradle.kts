@@ -18,6 +18,7 @@ kotlin {
             implementation(projects.core.common)
             implementation(projects.core.ui)
             implementation(projects.features.settings.api)
+            implementation(projects.features.management.api)
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)

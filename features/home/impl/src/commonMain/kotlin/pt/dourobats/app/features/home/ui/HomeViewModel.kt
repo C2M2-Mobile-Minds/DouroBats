@@ -30,7 +30,7 @@ internal class HomeViewModel(
 
     fun onAction(action: HomeAction) {
         when (action) {
-            is HomeAction.OnCreateSessionClick -> navigation.navigateToCreateSession()
+            is HomeAction.OnManageFabClick -> navigation.navigateToManagementHub()
             is HomeAction.OnViewReportsClick -> navigation.navigateToViewReports()
             is HomeAction.OnManageMembersClick -> navigation.navigateToManageMembers()
             is HomeAction.OnNewsClick -> navigation.navigateToNewsDetail(action.newsId)
