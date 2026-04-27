@@ -36,7 +36,6 @@ internal class SessionUiMapper(
         return SessionUiModel(
             session = session,
             sportName = resolveSportName(session.sportId),
-            sportIcon = resolveSportIcon(session.sportId),
             venueName = venueName,
             isUserBooked = isBooked,
             formattedTimeRange = formatTimeRange(session.dateTime, session.duration.inWholeMinutes.toInt()),
@@ -53,16 +52,6 @@ internal class SessionUiMapper(
         "padel"      -> "Padel"
         "running"    -> "Running"
         else         -> sportId.replaceFirstChar { it.uppercaseChar() }
-    }
-
-    private fun resolveSportIcon(sportId: String): String = when (sportId) {
-        "volleyball" -> "🏐"
-        "futsal"     -> "⚽"
-        "swimming"   -> "🏊"
-        "basketball" -> "🏀"
-        "padel"      -> "🎾"
-        "running"    -> "🏃"
-        else         -> "👟"
     }
 
     private fun formatTimeRange(start: LocalDateTime, durationMin: Int): String {

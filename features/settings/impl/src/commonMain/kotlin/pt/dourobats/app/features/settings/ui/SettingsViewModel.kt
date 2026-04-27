@@ -2,12 +2,15 @@ package pt.dourobats.app.features.settings.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import pt.dourobats.app.core.common.isDebug
 import pt.dourobats.app.core.localization.Language
 import pt.dourobats.app.features.settings.api.model.Theme
 import pt.dourobats.app.features.login.api.model.UserProfile
@@ -19,6 +22,10 @@ import pt.dourobats.app.features.settings.api.usecase.ObserveUserProfileUseCase
 import pt.dourobats.app.features.settings.api.usecase.SetLanguageUseCase
 import pt.dourobats.app.features.settings.api.usecase.SetThemeUseCase
 import pt.dourobats.app.features.settings.api.usecase.UpdateUserProfileUseCase
+
+internal sealed interface SettingsEvent {
+    data object ProfileSaved : SettingsEvent
+}
 
 internal class SettingsViewModel(
     private val observeUserProfile: ObserveUserProfileUseCase,
@@ -36,6 +43,9 @@ internal class SettingsViewModel(
 
     // Validation errors state
     private val _validationErrors = MutableStateFlow(SettingsUiState.ValidationErrors())
+
+    private val _events = Channel<SettingsEvent>(Channel.BUFFERED)
+    val events = _events.receiveAsFlow()
 
     // Share each upstream flow once to avoid duplicate DataStore subscriptions
     private val profileState: StateFlow<UserProfile?> = observeUserProfile()
@@ -59,19 +69,19 @@ internal class SettingsViewModel(
             initialValue = Theme.LIGHT
         )
 
-    // Combine shared flows into a single UI state
     val uiState: StateFlow<SettingsUiState> = combine(
         profileState,
         currentLanguage,
         themeState,
-        _validationErrors
+        _validationErrors,
     ) { profile, language, theme, validationErrors ->
         SettingsUiState(
             userProfile = profile,
             currentLanguage = language,
             currentTheme = theme,
             isLoading = false,
-            validationErrors = validationErrors
+            validationErrors = validationErrors,
+            showDeveloperOptions = isDebug,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -134,6 +144,7 @@ internal class SettingsViewModel(
             )
             updateUserProfileUseCase(updatedProfile)
             _validationErrors.value = SettingsUiState.ValidationErrors()
+            _events.send(SettingsEvent.ProfileSaved)
             onSuccess()
         }
     }

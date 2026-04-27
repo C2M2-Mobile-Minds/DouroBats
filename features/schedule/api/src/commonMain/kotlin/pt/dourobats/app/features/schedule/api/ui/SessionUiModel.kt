@@ -9,7 +9,6 @@ import pt.dourobats.app.features.schedule.api.model.Session
 data class SessionUiModel(
     val session: Session,
     val sportName: String,
-    val sportIcon: String,
     val venueName: String,
     val isUserBooked: Boolean,
     val formattedTimeRange: String,

@@ -1,7 +1,10 @@
 package pt.dourobats.app.features.settings.di
 
 import org.koin.core.module.dsl.viewModel
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
+import pt.dourobats.app.core.navigation.FeatureGraph
+import pt.dourobats.app.features.settings.SettingsGraph
 import pt.dourobats.app.features.settings.api.usecase.ObserveLanguageUseCase
 import pt.dourobats.app.features.settings.api.usecase.ObserveThemeUseCase
 import pt.dourobats.app.features.settings.api.usecase.ObserveUserProfileUseCase
@@ -21,6 +24,7 @@ import pt.dourobats.app.features.settings.usecase.SetThemeUseCaseImpl
 import pt.dourobats.app.features.settings.usecase.UpdateUserProfileUseCaseImpl
 
 val settingsModule = module {
+    single<FeatureGraph>(named("settings")) { SettingsGraph() }
     single<SettingsNavigation> { SettingsNavigationImpl() }
     single<SettingsRepository> { SettingsRepositoryImpl(get()) }
 

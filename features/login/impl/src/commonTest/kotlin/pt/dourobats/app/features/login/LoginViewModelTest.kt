@@ -180,7 +180,7 @@ class LoginViewModelTest {
         viewModel.onAction(LoginAction.UpdateCode("000000"))
         viewModel.onAction(LoginAction.SubmitCode)
         advanceUntilIdle()
-        assertTrue(viewModel.uiState.value.errorMessage != null)
+        assertTrue(viewModel.uiState.value.codeError != null)
         assertFalse(viewModel.uiState.value.isLoading)
     }
 

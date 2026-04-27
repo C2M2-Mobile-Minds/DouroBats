@@ -1,51 +1,107 @@
 package pt.dourobats.app.features.settings.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.material.icons.filled.AdminPanelSettings
+import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dourobats.features.settings.generated.resources.Res
-import dourobats.features.settings.generated.resources.*
+import dourobats.features.settings.generated.resources.settings_booking_history
+import dourobats.features.settings.generated.resources.settings_committee_manage_sessions
+import dourobats.features.settings.generated.resources.settings_committee_manage_sessions_description
+import dourobats.features.settings.generated.resources.settings_committee_settings
+import dourobats.features.settings.generated.resources.settings_committee_settings_description
+import dourobats.features.settings.generated.resources.settings_committee_tools
+import dourobats.features.settings.generated.resources.settings_committee_view_reports
+import dourobats.features.settings.generated.resources.settings_committee_view_reports_description
+import dourobats.features.settings.generated.resources.settings_dark_theme
+import dourobats.features.settings.generated.resources.settings_developer_options
+import dourobats.features.settings.generated.resources.settings_developer_options_description
+import dourobats.features.settings.generated.resources.settings_disabled
+import dourobats.features.settings.generated.resources.settings_enabled
+import dourobats.features.settings.generated.resources.settings_language
+import dourobats.features.settings.generated.resources.settings_logout
+import dourobats.features.settings.generated.resources.settings_notifications
+import dourobats.features.settings.generated.resources.settings_notifications_description
+import dourobats.features.settings.generated.resources.settings_role_athlete
+import dourobats.features.settings.generated.resources.settings_role_committee
+import dourobats.features.settings.generated.resources.settings_role_supporter
+import dourobats.features.settings.generated.resources.settings_section_activity
+import dourobats.features.settings.generated.resources.settings_section_developer
+import dourobats.features.settings.generated.resources.settings_section_preferences
+import dourobats.features.settings.generated.resources.settings_sessions_attended
+import dourobats.features.settings.generated.resources.settings_title
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import pt.dourobats.app.features.settings.api.model.Theme
-import pt.dourobats.app.features.login.api.model.UserRole
-import pt.dourobats.app.core.localization.Language
+import pt.dourobats.app.core.ui.components.actions.DouroDestructiveButton
 import pt.dourobats.app.core.ui.components.layout.AppHeader
 import pt.dourobats.app.core.ui.components.layout.SectionHeader
-import pt.dourobats.app.features.settings.components.SettingsRowItem
-import pt.dourobats.app.features.settings.ui.components.ProfileCard
 import pt.dourobats.app.core.ui.theme.LocalSpacing
-import pt.dourobats.app.core.common.isDebug
-import pt.dourobats.app.features.settings.components.DeveloperOptionsBottomSheet
-import pt.dourobats.app.features.settings.components.LanguageBottomSheet
-import pt.dourobats.app.features.settings.components.NotificationsBottomSheet
-import pt.dourobats.app.features.settings.components.ProfileEditBottomSheet
+import pt.dourobats.app.features.login.api.model.UserRole
+import pt.dourobats.app.features.settings.api.model.Theme
+import pt.dourobats.app.features.settings.ui.components.DeveloperOptionsBottomSheet
+import pt.dourobats.app.features.settings.ui.components.LanguageBottomSheet
+import pt.dourobats.app.features.settings.ui.components.ProfileCard
+import pt.dourobats.app.features.settings.ui.components.ProfileEditBottomSheet
+import pt.dourobats.app.features.settings.ui.components.SettingsRowItem
 
 @Composable
-fun SettingsRoute(
+internal fun SettingsRoute(
+    onNavigateToNotifications: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel: SettingsViewModel = koinViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val editState by viewModel.editState.collectAsStateWithLifecycle()
+    var showEditDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is SettingsEvent.ProfileSaved -> showEditDialog = false
+            }
+        }
+    }
 
     SettingsScreen(
         uiState = uiState,
         editState = editState,
+        showEditDialog = showEditDialog,
+        onShowEditDialog = { showEditDialog = true },
+        onHideEditDialog = { showEditDialog = false },
         onAction = { action ->
             when (action) {
                 is SettingsAction.SetLanguage -> viewModel.setLanguage(action.language)
@@ -59,6 +115,7 @@ fun SettingsRoute(
                 is SettingsAction.Logout -> viewModel.logout()
             }
         },
+        onNavigateToNotifications = onNavigateToNotifications,
         modifier = modifier,
     )
 }
@@ -67,13 +124,15 @@ fun SettingsRoute(
 internal fun SettingsScreen(
     uiState: SettingsUiState,
     editState: ProfileEditState,
+    showEditDialog: Boolean,
+    onShowEditDialog: () -> Unit,
+    onHideEditDialog: () -> Unit,
     onAction: (SettingsAction) -> Unit,
+    onNavigateToNotifications: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val spacing = LocalSpacing.current
     var showLanguageSheet by remember { mutableStateOf(false) }
-    var showEditDialog by remember { mutableStateOf(false) }
-    var showNotificationsSheet by remember { mutableStateOf(false) }
     var showDeveloperSheet by remember { mutableStateOf(false) }
 
     if (!uiState.isDataLoaded) {
@@ -88,29 +147,40 @@ internal fun SettingsScreen(
     val currentTheme = uiState.currentTheme!!
     val currentRole = userProfile.roles.firstOrNull() ?: UserRole.ATHLETE
 
+    val roleLabel = when (currentRole) {
+        UserRole.ATHLETE -> stringResource(Res.string.settings_role_athlete)
+        UserRole.SUPPORTER -> stringResource(Res.string.settings_role_supporter)
+        UserRole.COMMITTEE -> stringResource(Res.string.settings_role_committee)
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surfaceContainerLow) // Section layer for base background
+            .background(MaterialTheme.colorScheme.background)
     ) {
-        AppHeader(title = stringResource(Res.string.settings_title))
+        // Content column comes AFTER AppHeader in code — Compose paints later siblings on top.
+        // AppHeader shadowElevation = 0 ensures no elevation z-fighting. Hero cards use 8dp.
+        AppHeader(
+            title = stringResource(Res.string.settings_title),
+        )
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .verticalScroll(rememberScrollState())
+                .zIndex(1f)
+                .verticalScroll(rememberScrollState()) // scroll inside the shifted viewport
                 .padding(horizontal = spacing.screenHorizontal)
         ) {
-            Spacer(modifier = Modifier.height(spacing.large))
-
-            // Profile Section
-            SectionHeader(title = stringResource(Res.string.settings_section_profile))
+            // Small top breathing room between header text and the floating hero card
+            Spacer(modifier = Modifier.height(spacing.medium))
+            // Profile Card — floats visually over the header's bottom edge (no SectionHeader needed)
             ProfileCard(
                 name = userProfile.displayName,
                 email = userProfile.email,
-                role = stringResource(Res.string.settings_role_athlete), // TODO: Get from profile
-                onEditClick = { showEditDialog = true }
+                role = roleLabel,
+                isCommittee = currentRole == UserRole.COMMITTEE,
+                onEditClick = { onShowEditDialog() }
             )
 
             Spacer(modifier = Modifier.height(spacing.large))
@@ -134,6 +204,47 @@ internal fun SettingsScreen(
             }
 
             Spacer(modifier = Modifier.height(spacing.large))
+
+            // Committee Management Hub — only visible to committee members
+            if (currentRole == UserRole.COMMITTEE) {
+                SectionHeader(title = stringResource(Res.string.settings_committee_tools))
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(6.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
+                    elevation = CardDefaults.cardElevation(defaultElevation = spacing.cardElevation)
+                ) {
+                    Column {
+                        SettingsRowItem(
+                            icon = Icons.Default.AdminPanelSettings,
+                            iconContainerColor = MaterialTheme.colorScheme.primary,
+                            iconTint = MaterialTheme.colorScheme.onPrimary,
+                            title = stringResource(Res.string.settings_committee_manage_sessions),
+                            subtitle = stringResource(Res.string.settings_committee_manage_sessions_description),
+                            onClick = { /* TODO: Navigate to admin management */ }
+                        )
+                        Spacer(modifier = Modifier.height(spacing.small))
+                        SettingsRowItem(
+                            icon = Icons.Default.BarChart,
+                            iconContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                            iconTint = MaterialTheme.colorScheme.primary,
+                            title = stringResource(Res.string.settings_committee_view_reports),
+                            subtitle = stringResource(Res.string.settings_committee_view_reports_description),
+                            onClick = { /* TODO */ }
+                        )
+                        Spacer(modifier = Modifier.height(spacing.small))
+                        SettingsRowItem(
+                            icon = Icons.Default.Settings,
+                            iconContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                            iconTint = MaterialTheme.colorScheme.primary,
+                            title = stringResource(Res.string.settings_committee_settings),
+                            subtitle = stringResource(Res.string.settings_committee_settings_description),
+                            onClick = { /* TODO */ }
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(spacing.large))
+            }
 
             // Preferences Section
             SectionHeader(title = stringResource(Res.string.settings_section_preferences))
@@ -173,7 +284,7 @@ internal fun SettingsScreen(
                         iconTint = MaterialTheme.colorScheme.secondary,
                         title = stringResource(Res.string.settings_notifications),
                         subtitle = stringResource(Res.string.settings_notifications_description),
-                        onClick = { showNotificationsSheet = true }
+                        onClick = { onNavigateToNotifications() }
                     )
                 }
             }
@@ -181,7 +292,7 @@ internal fun SettingsScreen(
             Spacer(modifier = Modifier.height(spacing.large))
 
             // Developer Options Section — debug builds only
-            if (isDebug) {
+            if (uiState.showDeveloperOptions) {
                 SectionHeader(title = stringResource(Res.string.settings_section_developer))
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -203,21 +314,11 @@ internal fun SettingsScreen(
             Spacer(modifier = Modifier.height(spacing.extraLarge))
 
             // Logout Button
-            OutlinedButton(
+            DouroDestructiveButton(
+                text = stringResource(Res.string.settings_logout),
                 onClick = { onAction(SettingsAction.Logout) },
-                modifier = Modifier.fillMaxWidth().height(56.dp),
-                shape = RoundedCornerShape(6.dp), // rounded-md for serious athletic tone
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error),
-                border = androidx.compose.foundation.BorderStroke(2.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.2f)) // Ghost border style
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.AutoMirrored.Filled.Logout, null, modifier = Modifier.size(20.dp))
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text(stringResource(Res.string.settings_logout), fontWeight = FontWeight.Bold)
-                }
-            }
-
-            Spacer(modifier = Modifier.height(spacing.huge))
+                icon = Icons.AutoMirrored.Filled.Logout,
+            )
         }
     }
 
@@ -238,13 +339,7 @@ internal fun SettingsScreen(
             onEmailChange = { onAction(SettingsAction.UpdateEmail(it)) },
             onPhoneNumberChange = { onAction(SettingsAction.UpdatePhoneNumber(it)) },
             onSave = { onAction(SettingsAction.SaveProfile) },
-            onDismiss = { onAction(SettingsAction.CancelEdit); showEditDialog = false }
-        )
-    }
-
-    if (showNotificationsSheet) {
-        NotificationsBottomSheet(
-            onDismiss = { showNotificationsSheet = false }
+            onDismiss = { onAction(SettingsAction.CancelEdit); onHideEditDialog() }
         )
     }
 
@@ -259,5 +354,3 @@ internal fun SettingsScreen(
         )
     }
 }
-
-// SettingsItemCard and SettingsRowItem removed — replaced by shared components from core/ui

@@ -7,6 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import pt.dourobats.app.core.ui.theme.AppTheme
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 
 /**
@@ -16,14 +19,26 @@ import pt.dourobats.app.core.ui.theme.LocalSpacing
 @Composable
 fun SectionHeader(
     title: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showTopSpacing: Boolean = true,
 ) {
     val spacing = LocalSpacing.current
     Text(
-        text = title,
-        style = MaterialTheme.typography.labelLarge,
-        fontWeight = FontWeight.Bold,
+        text = title.uppercase(),
+        style = MaterialTheme.typography.labelLarge.copy(letterSpacing = 1.2.sp),
+        fontWeight = FontWeight.ExtraBold,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = modifier.padding(bottom = spacing.small, start = 4.dp)
+        modifier = modifier.padding(top = if (showTopSpacing) spacing.large else 0.dp, bottom = spacing.small, start = 4.dp)
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SectionHeaderPreview() {
+    AppTheme {
+        SectionHeader(
+            title = "Upcoming Sessions",
+            modifier = Modifier.padding(16.dp),
+        )
+    }
 }

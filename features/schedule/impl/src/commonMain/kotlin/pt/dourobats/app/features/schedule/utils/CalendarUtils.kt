@@ -12,7 +12,7 @@ import kotlinx.datetime.plus
 /**
  * Calendar utility functions for date calculations.
  */
-object CalendarUtils {
+internal object CalendarUtils {
 
     /**
      * Gets the start date of the week containing the given date.
@@ -99,7 +99,7 @@ object CalendarUtils {
 /**
  * Default English short day names.
  */
-fun defaultDayNames(): Map<DayOfWeek, String> = mapOf(
+internal fun defaultDayNames(): Map<DayOfWeek, String> = mapOf(
     DayOfWeek.MONDAY to "Mon",
     DayOfWeek.TUESDAY to "Tue",
     DayOfWeek.WEDNESDAY to "Wed",
@@ -112,7 +112,7 @@ fun defaultDayNames(): Map<DayOfWeek, String> = mapOf(
 /**
  * Default English month names.
  */
-fun defaultMonthNames(): Map<Month, String> = mapOf(
+internal fun defaultMonthNames(): Map<Month, String> = mapOf(
     Month.JANUARY to "January",
     Month.FEBRUARY to "February",
     Month.MARCH to "March",
@@ -130,13 +130,13 @@ fun defaultMonthNames(): Map<Month, String> = mapOf(
 /**
  * Helper to subtract days from LocalDate.
  */
-fun LocalDate.minusDays(days: Int): LocalDate {
+internal fun LocalDate.minusDays(days: Int): LocalDate {
     return LocalDate.fromEpochDays(this.toEpochDays() - days)
 }
 
 /**
  * Helper to add days to LocalDate.
  */
-fun LocalDate.plusDays(days: Int): LocalDate {
+internal fun LocalDate.plusDays(days: Int): LocalDate {
     return LocalDate.fromEpochDays(this.toEpochDays() + days)
 }

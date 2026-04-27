@@ -14,6 +14,7 @@ kotlin {
             implementation(projects.features.settings.impl)
             implementation(projects.features.venues.impl)
             implementation(projects.features.admin.impl)
+            implementation(projects.features.management.impl)
 
             // Core modules
             implementation(projects.core.common)

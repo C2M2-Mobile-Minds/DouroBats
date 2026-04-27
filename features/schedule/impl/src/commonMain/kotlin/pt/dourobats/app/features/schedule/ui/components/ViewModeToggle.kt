@@ -17,11 +17,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import dourobats.features.schedule.generated.resources.Res
 import dourobats.features.schedule.generated.resources.view_mode_month
 import dourobats.features.schedule.generated.resources.view_mode_switch_to_month
@@ -36,38 +39,42 @@ internal fun ViewModeToggle(
     onToggle: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val isWeek = viewMode == CalendarViewMode.WEEK
     val toggleLabel = stringResource(
-        if (viewMode == CalendarViewMode.WEEK) Res.string.view_mode_switch_to_month
+        if (isWeek) Res.string.view_mode_switch_to_month
         else Res.string.view_mode_switch_to_week
     )
     Surface(
         color = MaterialTheme.colorScheme.primaryContainer,
         shape = RoundedCornerShape(6.dp),
         modifier = modifier
-            .clickable(onClick = onToggle)
             .semantics {
                 contentDescription = toggleLabel
                 role = Role.Button
             }
+            .clip(RoundedCornerShape(6.dp))
+            .clickable(onClick = onToggle)
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                imageVector = if (viewMode == CalendarViewMode.WEEK) Icons.Default.CalendarMonth else Icons.Default.ViewWeek,
+                imageVector = if (isWeek) Icons.Default.CalendarMonth else Icons.Default.ViewWeek,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                modifier = Modifier.size(16.dp)
+                modifier = Modifier.size(18.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = if (viewMode == CalendarViewMode.WEEK)
-                    stringResource(Res.string.view_mode_month)
+                text = if (isWeek)
+                    stringResource(Res.string.view_mode_month).uppercase()
                 else
-                    stringResource(Res.string.view_mode_week),
+                    stringResource(Res.string.view_mode_week).uppercase(),
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
-                style = MaterialTheme.typography.labelMedium
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.ExtraBold,
+                letterSpacing = 0.5.sp,
             )
         }
     }

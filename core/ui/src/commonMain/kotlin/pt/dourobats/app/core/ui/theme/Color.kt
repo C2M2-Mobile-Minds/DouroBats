@@ -13,8 +13,8 @@ val primaryContainerLight = Color(0xFFD4E3FF)
 val onPrimaryContainerLight = Color(0xFF001C39)
 val secondaryLight = Color(0xFF006E0A)
 val onSecondaryLight = Color(0xFFFFFFFF)
-val secondaryContainerLight = Color(0xFF75FF68)
-val onSecondaryContainerLight = Color(0xFF002201)
+val secondaryContainerLight = Color(0xFFDCFCE7)     // Mint — tonal success, not neon
+val onSecondaryContainerLight = Color(0xFF166534)   // Forest Green — premium badge text
 val tertiaryLight = Color(0xFFFF7022)
 val onTertiaryLight = Color(0xFFFFFFFF)
 val tertiaryContainerLight = Color(0xFFFFDBCF)
@@ -23,22 +23,22 @@ val errorLight = Color(0xFFBA1A1A)
 val onErrorLight = Color(0xFFFFFFFF)
 val errorContainerLight = Color(0xFFFFDAD6)
 val onErrorContainerLight = Color(0xFF93000A)
-val backgroundLight = Color(0xFFF8F9FA)
+val backgroundLight = Color(0xFFF1F5F9)  // Cool Slate — canvas foundation
 val onBackgroundLight = Color(0xFF191C1D)
-val surfaceLight = Color(0xFFF8F9FA)
+val surfaceLight = Color(0xFFFFFFFF)     // Pure White — cards pop off the canvas
 val onSurfaceLight = Color(0xFF191C1D)
 val surfaceVariantLight = Color(0xFFDFE2EB)
 val onSurfaceVariantLight = Color(0xFF43474E)
 val outlineLight = Color(0xFF73777F)
-val outlineVariantLight = Color(0xFFC3C6CF)
+val outlineVariantLight = Color(0xFFE2E8F0)  // Slate-200 — subtle borders, not heavy lines
 val scrimLight = Color(0xFF000000)
 val inverseSurfaceLight = Color(0xFF2E3132)
 val inverseOnSurfaceLight = Color(0xFFF0F1F2)
 val inversePrimaryLight = Color(0xFFA6C8FF)
 val surfaceDimLight = Color(0xFFD8DADB)
-val surfaceBrightLight = Color(0xFFF8F9FA)
+val surfaceBrightLight = Color(0xFFFFFFFF)
 val surfaceContainerLowestLight = Color(0xFFFFFFFF)
-val surfaceContainerLowLight = Color(0xFFF3F4F5)
+val surfaceContainerLowLight = Color(0xFFF1F5F9)   // Cool Slate — screen canvas, cards "pop" above this
 val surfaceContainerLight = Color(0xFFECEEEF)
 val surfaceContainerHighLight = Color(0xFFE6E8E9)
 val surfaceContainerHighestLight = Color(0xFFE1E2E4)
@@ -134,7 +134,7 @@ val errorDark = Color(0xFFFFB4AB)
 val onErrorDark = Color(0xFF690005)
 val errorContainerDark = Color(0xFF93000A)
 val onErrorContainerDark = Color(0xFFFFDAD6)
-val backgroundDark = Color(0xFF111315)
+val backgroundDark = Color(0xFF0C0E10)
 val onBackgroundDark = Color(0xFFE1E2E4)
 val surfaceDark = Color(0xFF111315)
 val onSurfaceDark = Color(0xFFE1E2E4)
@@ -148,7 +148,7 @@ val inverseOnSurfaceDark = Color(0xFF2E3132)
 val inversePrimaryDark = Color(0xFF001E40)
 val surfaceDimDark = Color(0xFF111315)
 val surfaceBrightDark = Color(0xFF37393B)
-val surfaceContainerLowestDark = Color(0xFF0C0E10)
+val surfaceContainerLowestDark = Color(0xFF111315)
 val surfaceContainerLowDark = Color(0xFF191C1D)
 val surfaceContainerDark = Color(0xFF1D2021)
 val surfaceContainerHighDark = Color(0xFF282A2C)
@@ -230,10 +230,19 @@ val surfaceContainerHighestDarkHighContrast = Color(0xFF323537)
 
 // Semantic Color Tokens for Status & Interaction
 // Using Pitch Green for positive states (attendance/available)
-val attendingColor = Color(0xFF75FF68) // secondary_container_light
+val attendingColor = Color(0xFFDCFCE7)    // Tonal Mint — was neon #75FF68
 val skillBeginnerTint = Color(0xFFD4E3FF) // primary_fixed_dim equivalent
-val skillIntermediateTint = Color(0xFF75FF68) // secondary_fixed_dim equivalent
-val skillEliteTint = Color(0xFFFFDBCF) // tertiary_fixed_dim equivalent
+val skillIntermediateTint = Color(0xFFDCFCE7)
+val skillEliteTint = Color(0xFFFFDBCF)    // tertiary_fixed_dim equivalent
+
+// Kinetic Precision: Status Tokens
+// "Reservado" badge — low-chroma Apple-Health style, not Bootstrap green
+val mintBackground = Color(0xFFDCFCE7)    // Badge container
+val forestGreen = Color(0xFF166534)       // Badge text — high contrast on mintBackground
+
+// Committee / Pro Mode — Indigo tint signals "admin zone" without breaking the blue palette
+val proIndigo = Color(0xFF6366F1)
+val proIndigoContainer = Color(0xFFEEF2FF)
 
 // Glassmorphism & Ambient Tinting
 // Use these for overlays and floating components

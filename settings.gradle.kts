@@ -36,6 +36,8 @@ include(":core:localization")
 // Feature modules
 include(":features:home:api")
 include(":features:home:impl")
+include(":features:management:api")
+include(":features:management:impl")
 include(":features:login:api")
 include(":features:login:impl")
 include(":features:login:testing")

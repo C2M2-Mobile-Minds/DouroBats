@@ -18,7 +18,8 @@ internal data class SettingsUiState(
     val currentLanguage: Language? = null,
     val currentTheme: Theme? = null,
     val isLoading: Boolean = true,
-    val validationErrors: ValidationErrors = ValidationErrors()
+    val validationErrors: ValidationErrors = ValidationErrors(),
+    val showDeveloperOptions: Boolean = false,
 ) {
     /**
      * Whether we have loaded all required data from DataStore.

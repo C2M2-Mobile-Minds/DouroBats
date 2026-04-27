@@ -3,17 +3,25 @@ package pt.dourobats.app.core.ui.components.feedback
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import pt.dourobats.app.core.ui.theme.AppTheme
 import pt.dourobats.app.core.ui.theme.athleticSpring
 
 /**
@@ -44,7 +52,7 @@ import pt.dourobats.app.core.ui.theme.athleticSpring
 fun PulseIndicator(
     modifier: Modifier = Modifier,
     dotColor: Color = MaterialTheme.colorScheme.secondary,
-    pulseColor: Color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.3f),
+    pulseColor: Color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.4f),
     dotSize: Dp = 8.dp,
     pulseDuration: Int = 1500
 ) {
@@ -65,14 +73,15 @@ fun PulseIndicator(
         label = "pulseScale"
     )
 
-    // Opacity animation: 0.3 -> 0.0
+    // Opacity animation: 0.5 -> 0.0, synced to athleticSpring so fade is physically
+    // attached to the expanding ring — no easing disconnect when scale overshoots.
     val pulseAlpha by infiniteTransition.animateFloat(
-        initialValue = 0.3f,
+        initialValue = 0.5f,
         targetValue = 0f,
         animationSpec = infiniteRepeatable(
             animation = tween(
                 durationMillis = pulseDuration,
-                easing = LinearEasing
+                easing = athleticSpring
             ),
             repeatMode = RepeatMode.Restart
         ),
@@ -80,18 +89,19 @@ fun PulseIndicator(
     )
 
     Box(
-        modifier = modifier.size(dotSize * 3), // Ensure space for pulse to expand
+        modifier = modifier.size(dotSize * 3f), // 3x avoids oversized hit-box in tight rows
         contentAlignment = Alignment.Center
     ) {
         // Pulse ring (animated scale-out effect)
         Box(
             modifier = Modifier
                 .size(dotSize)
-                .scale(pulseScale)
-                .background(
-                    color = pulseColor.copy(alpha = pulseAlpha),
-                    shape = CircleShape
-                )
+                .graphicsLayer {
+                    scaleX = pulseScale
+                    scaleY = pulseScale
+                    alpha = pulseAlpha
+                }
+                .background(color = pulseColor, shape = CircleShape)
         )
 
         // Central dot (static)
@@ -132,4 +142,42 @@ fun CompactPulseIndicator(
         dotSize = 6.dp,
         pulseDuration = 1200
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PulseIndicatorPreview() {
+    AppTheme {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            PulseIndicator()
+            Spacer(Modifier.width(8.dp))
+            Text(
+                text = "Live session",
+                style = MaterialTheme.typography.labelMedium,
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun CompactPulseIndicatorPreview() {
+    AppTheme {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            CompactPulseIndicator()
+            Spacer(Modifier.width(4.dp))
+            Text(
+                text = "LIVE",
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.secondary,
+            )
+        }
+    }
 }

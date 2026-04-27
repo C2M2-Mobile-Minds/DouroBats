@@ -285,6 +285,7 @@ fun AppTheme(
           MaterialTheme(
             colorScheme = colorScheme,
             typography = appTypography(),
+            shapes = AppShapes,
             content = content
           )
       }

@@ -1,10 +1,16 @@
 package pt.dourobats.app.core.ui.components.primitives
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -13,7 +19,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import pt.dourobats.app.core.ui.theme.AppTheme
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 
 /**
@@ -48,7 +58,7 @@ fun IconLabelRow(
             modifier = Modifier.size(16.dp),
             tint = iconTint
         )
-        Spacer(modifier = Modifier.width(spacing.small))
+        Spacer(modifier = Modifier.width(spacing.extraSmall)) // 4dp bonds icon visually to label
         content()
     }
 }
@@ -68,6 +78,7 @@ fun IconLabelRow(
     modifier: Modifier = Modifier,
     color: Color? = null,
     contentDescription: String? = null,
+    maxLines: Int = 1,
 ) {
     val resolvedColor = color ?: MaterialTheme.colorScheme.onSurfaceVariant
     IconLabelRow(
@@ -79,7 +90,25 @@ fun IconLabelRow(
         Text(
             text = text,
             style = MaterialTheme.typography.bodySmall,
-            color = resolvedColor
+            color = resolvedColor,
+            fontWeight = FontWeight.Medium,
+            maxLines = maxLines,
+            overflow = TextOverflow.Ellipsis,
         )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun IconLabelRowPreview() {
+    AppTheme {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            IconLabelRow(icon = Icons.Default.Schedule, text = "18:00 – 19:30")
+            IconLabelRow(icon = Icons.Default.LocationOn, text = "Pavilhão Municipal")
+            IconLabelRow(icon = Icons.Default.Person, text = "Athletes only")
+        }
     }
 }

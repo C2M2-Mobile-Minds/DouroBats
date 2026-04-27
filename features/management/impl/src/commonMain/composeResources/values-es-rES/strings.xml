@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Management Hub -->
+    <string name="management_hub_title">Gestión del Club</string>
+    <string name="management_hub_create_session">Crear Nueva Sesión</string>
+    <string name="management_hub_create_session_desc">Programar un entrenamiento o evento</string>
+    <string name="management_hub_post_announcement">Publicar Anuncio</string>
+    <string name="management_hub_post_announcement_desc">Enviar mensaje a todos los miembros</string>
+    <!-- Create Session Screen -->
+    <string name="management_create_session_title">Nueva Sesión</string>
+    <string name="management_create_session_save">GUARDAR</string>
+    <string name="management_create_session_section_details">Detalles Esenciales</string>
+    <string name="management_create_session_section_schedule">Horario</string>
+    <string name="management_create_session_type_label">Tipo de Sesión</string>
+    <string name="management_create_session_type_category">Categoría de Sesión</string>
+    <string name="management_create_session_type_practice">Entrenamiento</string>
+    <string name="management_create_session_type_match">Partido</string>
+    <string name="management_create_session_type_event">Evento</string>
+    <string name="management_create_session_type_meeting">Reunión</string>
+    <string name="management_create_session_type_tournament">Torneo</string>
+    <string name="management_create_session_type_social">Social</string>
+    <string name="management_create_session_name_label">Nombre de la Sesión</string>
+    <string name="management_create_session_location_label">Ubicación</string>
+    <string name="management_create_session_max_athletes_label">Máx. Atletas</string>
+    <string name="management_create_session_date_label">Fecha</string>
+    <string name="management_create_session_time_label">Hora</string>
+    <string name="management_create_session_date_placeholder">Elegir fecha</string>
+    <string name="management_create_session_time_placeholder">Elegir hora</string>
+    <!-- Create Session — Venue & Validation -->
+    <string name="management_create_session_venue_label">Ubicación</string>
+    <string name="management_create_session_venue_placeholder">Seleccionar lugar</string>
+    <string name="management_create_session_venue_required">Por favor seleccione un lugar</string>
+    <string name="management_create_session_venue_empty">Sin lugares disponibles</string>
+    <string name="management_create_session_name_required">El nombre de la sesión es obligatorio</string>
+    <string name="management_create_session_date_required">Por favor seleccione una fecha</string>
+    <string name="management_create_session_time_required">Por favor seleccione una hora</string>
+    <string name="management_create_session_success">Sesión creada correctamente</string>
+    <string name="management_create_session_view">VER</string>
+    <string name="management_create_session_max_athletes_optional">Máx. Atletas (Opcional)</string>
+    <!-- Create Session — Level, Coach, Duration -->
+    <string name="management_create_session_level_section">Nivel Objetivo</string>
+    <string name="management_create_session_level_beginner">Principiante</string>
+    <string name="management_create_session_level_intermediate">Intermedio</string>
+    <string name="management_create_session_level_advanced">Avanzado</string>
+    <string name="management_create_session_level_all">Todos los Niveles</string>
+    <string name="management_create_session_level_required">Por favor seleccione un nivel</string>
+    <string name="management_create_session_coach_label">Entrenador</string>
+    <string name="management_create_session_duration_section">Duración</string>
+    <string name="management_create_session_duration_required">Por favor seleccione una duración</string>
+    <!-- Create Session — Templates -->
+    <string name="management_create_session_templates_section">Inicio Rápido</string>
+    <string name="management_create_session_save_as_template">Guardar como Plantilla</string>
+    <string name="management_create_session_save_as_template_desc">Reutilice esta configuración en sesiones futuras</string>
+    <string name="management_create_session_template_name_label">Nombre de Plantilla (ej: Lunes Avanzado)</string>
+    <string name="management_create_session_template_name_required">El nombre de la plantilla es obligatorio</string>
+    <!-- Create Session — Observations -->
+    <string name="management_create_session_obs_section">Observaciones</string>
+    <string name="management_create_session_obs_label">Obs. (Opcional)</string>
+    <string name="management_create_session_obs_placeholder">ej: Traer equipación, llevar camiseta azul…</string>
+</resources>

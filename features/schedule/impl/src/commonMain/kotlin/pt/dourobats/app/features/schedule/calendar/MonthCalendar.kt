@@ -24,7 +24,7 @@ import pt.dourobats.app.features.schedule.utils.plusDays
 /**
  * Year/Month data class for calendar navigation.
  */
-data class YearMonth(val year: Int, val month: Month) {
+internal data class YearMonth(val year: Int, val month: Month) {
     fun minusMonths(months: Int): YearMonth {
         var newYear = year
         var newMonth = month.ordinal - months
@@ -55,7 +55,7 @@ data class YearMonth(val year: Int, val month: Month) {
  * Optimized to match the provided design reference.
  */
 @Composable
-fun MonthCalendar(
+internal fun MonthCalendar(
     yearMonth: YearMonth,
     selectedDate: LocalDate,
     today: LocalDate,
@@ -202,15 +202,11 @@ private fun MonthDateItem(
             isSelected = isSelected,
             isToday = isToday,
             hasSession = isCurrentMonth && hasSession,
-            fontWeight = fontWeight,
-            textColor = textColor,
             backgroundColor = backgroundColor,
-            cellHeight = 50.dp,
-            dayNumberStyle = MaterialTheme.typography.bodyMedium,
-            dotSize = 4.dp,
-            dotBottomPadding = 4.dp,
+            textColor = textColor,
             todayLabel = todayLabel,
-            onClick = onDateClick
+            onClick = onDateClick,
+            modifier = Modifier.size(width = 44.dp, height = 50.dp),
         )
     }
 }

@@ -1,9 +1,20 @@
 package pt.dourobats.app.features.schedule.ui
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -13,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import dourobats.features.schedule.generated.resources.*
 import dourobats.features.schedule.generated.resources.Res
 import kotlinx.coroutines.launch
@@ -26,11 +38,11 @@ import pt.dourobats.app.features.schedule.calendar.YearMonth
 import pt.dourobats.app.features.schedule.calendar.rememberCalendarLocalization
 import pt.dourobats.app.core.ui.theme.LocalSpacing
 import pt.dourobats.app.features.schedule.ui.components.SessionCard
-import pt.dourobats.app.features.schedule.ui.components.UpcomingBookedCard
+import pt.dourobats.app.features.schedule.ui.components.SessionCardShimmer
 import pt.dourobats.app.features.schedule.ui.components.ViewModeToggle
 
 @Composable
-fun ScheduleRoute() {
+internal fun ScheduleRoute() {
     val viewModel: ScheduleViewModel = koinViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarHostState = remember { SnackbarHostState() }
@@ -75,19 +87,40 @@ internal fun ScheduleScreen(
     modifier: Modifier = Modifier,
 ) {
     val spacing = LocalSpacing.current
-
     val cal = rememberCalendarLocalization()
     val today = kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault())
+    val dateStr = remember(uiState.selectedDate, cal) {
+        "${uiState.selectedDate.day} ${cal.monthNames[uiState.selectedDate.month]?.uppercase()}"
+    }
+    val dayOfWeekStr = remember(uiState.selectedDate, cal) {
+        cal.dayNames[uiState.selectedDate.dayOfWeek]?.uppercase() ?: ""
+    }
 
     Scaffold(
         modifier = modifier,
         contentWindowInsets = WindowInsets(0),
-        snackbarHost = { SnackbarHost(snackBarHostState) }
+        snackbarHost = { SnackbarHost(snackBarHostState) },
+        floatingActionButton = {
+            AnimatedVisibility(
+                visible = uiState.selectedDate != today,
+                enter = scaleIn() + fadeIn(),
+                exit = scaleOut() + fadeOut(),
+            ) {
+                SmallFloatingActionButton(
+                    onClick = { onAction(ScheduleAction.SelectDate(today)) },
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    shape = CircleShape,
+                ) {
+                    Icon(Icons.Default.Today, contentDescription = "Back to today")
+                }
+            }
+        },
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                .background(MaterialTheme.colorScheme.background)
         ) {
             AppHeader(
                 title = stringResource(Res.string.training_title),
@@ -129,45 +162,93 @@ internal fun ScheduleScreen(
             }
 
             if (uiState.isLoading) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(
+                        horizontal = spacing.screenHorizontal,
+                        vertical = spacing.standard,
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(spacing.small),
+                ) {
+                    items(5) { SessionCardShimmer() }
                 }
             } else {
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
+                ) {
                     item {
-                        when (uiState.viewMode) {
-                            CalendarViewMode.WEEK -> WeekCalendar(
-                                selectedDate = uiState.selectedDate,
-                                today = today,
-                                onDateSelected = { onAction(ScheduleAction.SelectDate(it)) },
-                                dayNames = cal.dayNames,
-                                sessionDates = uiState.allSessionDates,
-                                todayLabel = stringResource(Res.string.schedule_today)
-                            )
-                            CalendarViewMode.MONTH -> MonthCalendar(
-                                yearMonth = uiState.currentYearMonth,
-                                selectedDate = uiState.selectedDate,
-                                today = today,
-                                onDateSelected = { date ->
-                                    onAction(ScheduleAction.SelectDate(date))
-                                },
-                                dayNames = cal.dayNames,
-                                sessionDates = uiState.allSessionDates,
-                                todayLabel = stringResource(Res.string.schedule_today),
-                                modifier = Modifier.fillMaxWidth()
-                            )
+                        AnimatedContent(
+                            targetState = uiState.viewMode,
+                            transitionSpec = {
+                                (fadeIn(tween(300)) + expandVertically(animationSpec = tween(300)))
+                                    .togetherWith(fadeOut(tween(250)) + shrinkVertically(animationSpec = tween(250)))
+                            },
+                        ) { mode ->
+                            when (mode) {
+                                CalendarViewMode.WEEK -> WeekCalendar(
+                                    selectedDate = uiState.selectedDate,
+                                    today = today,
+                                    onDateSelected = { onAction(ScheduleAction.SelectDate(it)) },
+                                    dayNames = cal.dayNames,
+                                    sessionDates = uiState.allSessionDates,
+                                    todayLabel = stringResource(Res.string.schedule_today)
+                                )
+                                CalendarViewMode.MONTH -> MonthCalendar(
+                                    yearMonth = uiState.currentYearMonth,
+                                    selectedDate = uiState.selectedDate,
+                                    today = today,
+                                    onDateSelected = { onAction(ScheduleAction.SelectDate(it)) },
+                                    dayNames = cal.dayNames,
+                                    sessionDates = uiState.allSessionDates,
+                                    todayLabel = stringResource(Res.string.schedule_today),
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
                         }
                     }
 
-                    item {
-                        val dateStr = "${uiState.selectedDate.day} ${cal.monthNames[uiState.selectedDate.month]?.uppercase()}"
-                        Text(
-                            text = dateStr,
-                            style = MaterialTheme.typography.labelLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(horizontal = spacing.screenHorizontal, vertical = spacing.standard)
-                        )
+                    stickyHeader {
+                        Surface(
+                            color = MaterialTheme.colorScheme.background,
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Column {
+                                Row(
+                                    modifier = Modifier.padding(
+                                        horizontal = spacing.screenHorizontal,
+                                        vertical = spacing.standard,
+                                    ),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(width = 4.dp, height = 16.dp)
+                                            .background(
+                                                MaterialTheme.colorScheme.primary,
+                                                CircleShape,
+                                            )
+                                    )
+                                    Spacer(modifier = Modifier.width(spacing.small))
+                                    Text(
+                                        text = dayOfWeekStr,
+                                        style = MaterialTheme.typography.labelLarge,
+                                        fontWeight = FontWeight.Black,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        letterSpacing = 1.sp,
+                                    )
+                                    Spacer(modifier = Modifier.width(spacing.small))
+                                    Text(
+                                        text = dateStr,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                }
+                                HorizontalDivider(
+                                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                                )
+                            }
+                        }
                     }
 
                     if (uiState.sessionsForSelectedDate.isEmpty()) {
@@ -182,14 +263,11 @@ internal fun ScheduleScreen(
                         items(uiState.sessionsForSelectedDate) { sessionData ->
                             SessionCard(
                                 sessionData = sessionData,
+                                isCompact = false,
                                 isLoading = uiState.sessionLoadingStates[sessionData.session.id] ?: false,
-                                onBookSession = { onAction(ScheduleAction.BookSession(it)) },
-                                onCancelBooking = { onAction(ScheduleAction.CancelBooking(it)) },
-                                bookButtonText = stringResource(Res.string.session_button_book),
-                                cancelButtonText = stringResource(Res.string.session_button_cancel),
-                                fullButtonText = stringResource(Res.string.session_button_full),
-                                bookedBadgeText = stringResource(Res.string.session_booked_badge),
-                                attendingText = "" // Using stringResource in IconLabelRow inside SessionCard instead
+                                onBook = { onAction(ScheduleAction.BookSession(it)) },
+                                onCancel = { onAction(ScheduleAction.CancelBooking(it)) },
+                                modifier = Modifier.padding(horizontal = spacing.screenHorizontal),
                             )
                             Spacer(modifier = Modifier.height(spacing.small))
                         }
@@ -217,16 +295,19 @@ internal fun ScheduleScreen(
                         }
                     } else {
                         items(uiState.upcomingBookedSessions) { sessionData ->
-                            UpcomingBookedCard(
+                            SessionCard(
                                 sessionData = sessionData,
+                                isCompact = true,
+                                isLoading = uiState.sessionLoadingStates[sessionData.session.id] ?: false,
+                                onBook = {},
                                 onCancel = { onAction(ScheduleAction.CancelBooking(it)) },
-                                cancelShortText = stringResource(Res.string.session_button_cancel_short)
+                                modifier = Modifier.padding(horizontal = spacing.screenHorizontal),
                             )
                             Spacer(modifier = Modifier.height(spacing.small))
                         }
                     }
 
-                    item { Spacer(modifier = Modifier.height(spacing.huge)) }
+                    item { Spacer(modifier = Modifier.height(spacing.large)) }
                 }
             }
         }
