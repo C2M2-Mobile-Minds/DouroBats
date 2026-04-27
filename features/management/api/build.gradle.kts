@@ -2,19 +2,18 @@ plugins {
     id("pt.dourobats.app.android.library")
     id("pt.dourobats.app.kmp")
     id("pt.dourobats.app.compose")
+    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.core.common)
-            implementation(libs.koin.core)
-            implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.androidx.navigation.compose)
+            implementation(libs.kotlinx.serialization.json)
         }
     }
 }
 
 android {
-    namespace = "pt.dourobats.app.core.navigation"
+    namespace = "pt.dourobats.app.features.management.api"
 }

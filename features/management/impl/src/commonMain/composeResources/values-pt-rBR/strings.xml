@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Management Hub -->
+    <string name="management_hub_title">Gestão do Clube</string>
+    <string name="management_hub_create_session">Criar Nova Sessão</string>
+    <string name="management_hub_create_session_desc">Agendar um treino ou evento</string>
+    <string name="management_hub_post_announcement">Publicar Aviso</string>
+    <string name="management_hub_post_announcement_desc">Enviar mensagem para todos os membros</string>
+    <string name="management_hub_checkin">Registrar Presença</string>
+    <string name="management_hub_checkin_desc">Ler QR codes para controle de presenças</string>
+    <!-- Create Session Screen -->
+    <string name="management_create_session_title">Nova Sessão</string>
+    <string name="management_create_session_save">SALVAR</string>
+    <string name="management_create_session_section_details">Detalhes Essenciais</string>
+    <string name="management_create_session_section_schedule">Horário</string>
+    <string name="management_create_session_type_label">Tipo de Sessão</string>
+    <string name="management_create_session_type_category">Categoria de Sessão</string>
+    <string name="management_create_session_type_practice">Treino</string>
+    <string name="management_create_session_type_match">Jogo</string>
+    <string name="management_create_session_type_event">Evento</string>
+    <string name="management_create_session_type_meeting">Reunião</string>
+    <string name="management_create_session_type_tournament">Torneio</string>
+    <string name="management_create_session_type_social">Social</string>
+    <string name="management_create_session_type_tryout">Seleção</string>
+    <string name="management_create_session_name_label">Nome da Sessão</string>
+    <string name="management_create_session_location_label">Local</string>
+    <string name="management_create_session_max_athletes_label">Máx. Atletas</string>
+    <string name="management_create_session_date_label">Data</string>
+    <string name="management_create_session_time_label">Hora</string>
+    <string name="management_create_session_date_placeholder">Escolher data</string>
+    <string name="management_create_session_time_placeholder">Escolher hora</string>
+</resources>

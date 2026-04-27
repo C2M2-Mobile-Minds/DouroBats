@@ -19,15 +19,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import org.koin.compose.koinInject
+import org.koin.core.qualifier.named
+import pt.dourobats.app.core.navigation.FeatureGraph
 import pt.dourobats.app.core.navigation.NavigationEvent
 import pt.dourobats.app.core.navigation.NavigationManager
 import pt.dourobats.app.features.home.HomeRoute
-import pt.dourobats.app.features.home.homeGraph
 import pt.dourobats.app.features.login.LoginRoute
 import pt.dourobats.app.features.login.api.model.AuthState
-import pt.dourobats.app.features.login.loginGraph
-import pt.dourobats.app.features.schedule.scheduleGraph
-import pt.dourobats.app.features.settings.settingsGraph
 import pt.dourobats.app.navigation.components.AppBottomNavBar
 import pt.dourobats.app.navigation.models.bottomNavItems
 
@@ -37,6 +35,12 @@ internal fun RootNavHost(
     navController: NavHostController = rememberNavController(),
     navigationManager: NavigationManager = koinInject(),
 ) {
+    val loginGraph: FeatureGraph = koinInject(named("login"))
+    val homeGraph: FeatureGraph = koinInject(named("home"))
+    val managementGraph: FeatureGraph = koinInject(named("management"))
+    val scheduleGraph: FeatureGraph = koinInject(named("schedule"))
+    val settingsGraph: FeatureGraph = koinInject(named("settings"))
+
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntry?.destination
     val startDestination = if (authState is AuthState.Authenticated) HomeRoute else LoginRoute
@@ -75,10 +79,11 @@ internal fun RootNavHost(
             enterTransition = { fadeIn(animationSpec = tween(300)) },
             exitTransition = { fadeOut(animationSpec = tween(300)) },
         ) {
-            loginGraph()
-            homeGraph()
-            scheduleGraph()
-            settingsGraph(navController)
+            loginGraph.register(this, navController)
+            homeGraph.register(this, navController)
+            managementGraph.register(this, navController)
+            scheduleGraph.register(this, navController)
+            settingsGraph.register(this, navController)
         }
     }
 }

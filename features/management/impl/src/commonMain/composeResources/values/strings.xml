@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Management Hub -->
+    <string name="management_hub_title">Club Management</string>
+    <string name="management_hub_create_session">Create New Session</string>
+    <string name="management_hub_create_session_desc">Schedule a practice or event</string>
+    <string name="management_hub_post_announcement">Post Announcement</string>
+    <string name="management_hub_post_announcement_desc">Broadcast to all members</string>
+    <string name="management_hub_checkin">Check-in Members</string>
+    <string name="management_hub_checkin_desc">Scan QR codes for attendance</string>
+    <!-- Create Session Screen -->
+    <string name="management_create_session_title">New Session</string>
+    <string name="management_create_session_save">SAVE</string>
+    <string name="management_create_session_section_details">Essential Details</string>
+    <string name="management_create_session_section_schedule">Schedule</string>
+    <string name="management_create_session_type_label">Session Type</string>
+    <string name="management_create_session_type_category">Session Category</string>
+    <string name="management_create_session_type_practice">Practice</string>
+    <string name="management_create_session_type_match">Match</string>
+    <string name="management_create_session_type_event">Event</string>
+    <string name="management_create_session_type_meeting">Meeting</string>
+    <string name="management_create_session_type_tournament">Tournament</string>
+    <string name="management_create_session_type_social">Social</string>
+    <string name="management_create_session_type_tryout">Tryout</string>
+    <string name="management_create_session_name_label">Session Name</string>
+    <string name="management_create_session_location_label">Location</string>
+    <string name="management_create_session_max_athletes_label">Max Athletes</string>
+    <string name="management_create_session_date_label">Date</string>
+    <string name="management_create_session_time_label">Time</string>
+    <string name="management_create_session_date_placeholder">Pick a date</string>
+    <string name="management_create_session_time_placeholder">Pick a time</string>
+</resources>

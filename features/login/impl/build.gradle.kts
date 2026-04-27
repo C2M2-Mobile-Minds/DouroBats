@@ -14,6 +14,7 @@ kotlin {
             api(projects.features.login.api)
             implementation(projects.core.data)
             implementation(projects.core.common)
+            implementation(projects.core.navigation)
             implementation(projects.core.ui)
             implementation(projects.core.localization)
             implementation(projects.features.settings.api)

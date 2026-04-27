@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Management Hub -->
+    <string name="management_hub_title">Gestión del Club</string>
+    <string name="management_hub_create_session">Crear Nueva Sesión</string>
+    <string name="management_hub_create_session_desc">Programar un entrenamiento o evento</string>
+    <string name="management_hub_post_announcement">Publicar Anuncio</string>
+    <string name="management_hub_post_announcement_desc">Enviar mensaje a todos los miembros</string>
+    <string name="management_hub_checkin">Registro de Asistencia</string>
+    <string name="management_hub_checkin_desc">Escanear códigos QR para asistencia</string>
+    <!-- Create Session Screen -->
+    <string name="management_create_session_title">Nueva Sesión</string>
+    <string name="management_create_session_save">GUARDAR</string>
+    <string name="management_create_session_section_details">Detalles Esenciales</string>
+    <string name="management_create_session_section_schedule">Horario</string>
+    <string name="management_create_session_type_label">Tipo de Sesión</string>
+    <string name="management_create_session_type_category">Categoría de Sesión</string>
+    <string name="management_create_session_type_practice">Entrenamiento</string>
+    <string name="management_create_session_type_match">Partido</string>
+    <string name="management_create_session_type_event">Evento</string>
+    <string name="management_create_session_type_meeting">Reunión</string>
+    <string name="management_create_session_type_tournament">Torneo</string>
+    <string name="management_create_session_type_social">Social</string>
+    <string name="management_create_session_type_tryout">Selección</string>
+    <string name="management_create_session_name_label">Nombre de la Sesión</string>
+    <string name="management_create_session_location_label">Ubicación</string>
+    <string name="management_create_session_max_athletes_label">Máx. Atletas</string>
+    <string name="management_create_session_date_label">Fecha</string>
+    <string name="management_create_session_time_label">Hora</string>
+    <string name="management_create_session_date_placeholder">Elegir fecha</string>
+    <string name="management_create_session_time_placeholder">Elegir hora</string>
+</resources>

@@ -2,7 +2,10 @@ package pt.dourobats.app.features.login.di
 
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.viewModel
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
+import pt.dourobats.app.core.navigation.FeatureGraph
+import pt.dourobats.app.features.login.LoginGraph
 import pt.dourobats.app.features.login.api.usecase.InvalidateSessionUseCase
 import pt.dourobats.app.features.login.api.usecase.LogoutUseCase
 import pt.dourobats.app.features.login.api.usecase.ObserveAuthStateUseCase
@@ -20,6 +23,7 @@ import pt.dourobats.app.features.login.usecase.RequestLoginCodeUseCaseImpl
 import pt.dourobats.app.features.login.usecase.VerifyLoginCodeUseCaseImpl
 
 val loginModule = module {
+    single<FeatureGraph>(named("login")) { LoginGraph() }
     single<AuthRepository> { AuthRepositoryImpl(dataStore = get(), logger = get()) }
 
     factory<RequestLoginCodeUseCase> { RequestLoginCodeUseCaseImpl(get()) }
