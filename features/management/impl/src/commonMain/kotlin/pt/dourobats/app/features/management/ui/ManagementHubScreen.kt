@@ -7,7 +7,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.EditCalendar
-import androidx.compose.material.icons.filled.HowToReg
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,8 +16,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dourobats.features.management.generated.resources.Res
-import dourobats.features.management.generated.resources.management_hub_checkin
-import dourobats.features.management.generated.resources.management_hub_checkin_desc
 import dourobats.features.management.generated.resources.management_hub_create_session
 import dourobats.features.management.generated.resources.management_hub_create_session_desc
 import dourobats.features.management.generated.resources.management_hub_post_announcement
@@ -98,18 +95,6 @@ internal fun ManagementHubScreen(
                         icon = Icons.Default.Campaign,
                         color = MaterialTheme.colorScheme.tertiary,
                         onClick = { onAction(ManagementAction.PostAnnouncementRequested) },
-                    )
-                    HorizontalDivider(
-                        modifier = Modifier.padding(horizontal = spacing.standard),
-                        thickness = 0.5.dp,
-                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
-                    )
-                    ManagementRow(
-                        title = stringResource(Res.string.management_hub_checkin),
-                        subtitle = stringResource(Res.string.management_hub_checkin_desc),
-                        icon = Icons.Default.HowToReg,
-                        color = MaterialTheme.colorScheme.primary,
-                        onClick = { onAction(ManagementAction.CheckInRequested) },
                     )
                 }
             }

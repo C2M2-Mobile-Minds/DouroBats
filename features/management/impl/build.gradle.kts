@@ -21,6 +21,7 @@ kotlin {
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.androidx.navigation.compose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation(projects.features.venues.api)
         }
     }
 }

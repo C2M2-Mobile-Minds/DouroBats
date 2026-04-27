@@ -6,8 +6,6 @@
     <string name="management_hub_create_session_desc">Schedule a practice or event</string>
     <string name="management_hub_post_announcement">Post Announcement</string>
     <string name="management_hub_post_announcement_desc">Broadcast to all members</string>
-    <string name="management_hub_checkin">Check-in Members</string>
-    <string name="management_hub_checkin_desc">Scan QR codes for attendance</string>
     <!-- Create Session Screen -->
     <string name="management_create_session_title">New Session</string>
     <string name="management_create_session_save">SAVE</string>
@@ -21,7 +19,6 @@
     <string name="management_create_session_type_meeting">Meeting</string>
     <string name="management_create_session_type_tournament">Tournament</string>
     <string name="management_create_session_type_social">Social</string>
-    <string name="management_create_session_type_tryout">Tryout</string>
     <string name="management_create_session_name_label">Session Name</string>
     <string name="management_create_session_location_label">Location</string>
     <string name="management_create_session_max_athletes_label">Max Athletes</string>
@@ -29,4 +26,35 @@
     <string name="management_create_session_time_label">Time</string>
     <string name="management_create_session_date_placeholder">Pick a date</string>
     <string name="management_create_session_time_placeholder">Pick a time</string>
+    <!-- Create Session — Venue & Validation -->
+    <string name="management_create_session_venue_label">Location</string>
+    <string name="management_create_session_venue_placeholder">Select a venue</string>
+    <string name="management_create_session_venue_required">Please select a venue</string>
+    <string name="management_create_session_venue_empty">No venues available</string>
+    <string name="management_create_session_name_required">Session name is required</string>
+    <string name="management_create_session_date_required">Please select a date</string>
+    <string name="management_create_session_time_required">Please select a time</string>
+    <string name="management_create_session_success">Session created successfully</string>
+    <string name="management_create_session_view">VIEW</string>
+    <string name="management_create_session_max_athletes_optional">Max Athletes (Optional)</string>
+    <!-- Create Session — Level, Coach, Duration -->
+    <string name="management_create_session_level_section">Target Level</string>
+    <string name="management_create_session_level_beginner">Beginner</string>
+    <string name="management_create_session_level_intermediate">Intermediate</string>
+    <string name="management_create_session_level_advanced">Advanced</string>
+    <string name="management_create_session_level_all">All Levels</string>
+    <string name="management_create_session_level_required">Please select a target level</string>
+    <string name="management_create_session_coach_label">Coach</string>
+    <string name="management_create_session_duration_section">Duration</string>
+    <string name="management_create_session_duration_required">Please select a duration</string>
+    <!-- Create Session — Templates -->
+    <string name="management_create_session_templates_section">Quick Start</string>
+    <string name="management_create_session_save_as_template">Save as Template</string>
+    <string name="management_create_session_save_as_template_desc">Reuse these settings for future sessions</string>
+    <string name="management_create_session_template_name_label">Template Name (e.g. Monday Advanced)</string>
+    <string name="management_create_session_template_name_required">Template name is required</string>
+    <!-- Create Session — Observations -->
+    <string name="management_create_session_obs_section">Observations</string>
+    <string name="management_create_session_obs_label">Obs. (Optional)</string>
+    <string name="management_create_session_obs_placeholder">e.g. Bring your equipment, wear blue jersey…</string>
 </resources>

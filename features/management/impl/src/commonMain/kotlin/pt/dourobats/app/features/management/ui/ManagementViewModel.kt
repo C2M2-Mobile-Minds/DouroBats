@@ -20,8 +20,6 @@ internal class ManagementViewModel : ViewModel() {
                     _effects.send(ManagementEffect.NavigateToCreateSession)
                 ManagementAction.PostAnnouncementRequested ->
                     _effects.send(ManagementEffect.NavigateToAnnouncement)
-                ManagementAction.CheckInRequested ->
-                    _effects.send(ManagementEffect.NavigateToCheckIn)
                 ManagementAction.Dismiss ->
                     _effects.send(ManagementEffect.Back)
             }
