@@ -14,6 +14,7 @@ kotlin {
             api(projects.features.schedule.api)
             implementation(projects.features.venues.api)
             implementation(projects.core.common)
+            implementation(projects.core.navigation)
             implementation(projects.core.ui)
             implementation(projects.core.localization)
             implementation(libs.koin.core)

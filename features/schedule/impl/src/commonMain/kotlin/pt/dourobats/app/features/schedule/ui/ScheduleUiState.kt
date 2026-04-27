@@ -24,7 +24,7 @@ internal data class ScheduleUiState(
 /**
  * Calendar view mode enum.
  */
-enum class CalendarViewMode {
+internal enum class CalendarViewMode {
     WEEK,
     MONTH
 }

@@ -1,8 +1,11 @@
 package pt.dourobats.app.features.schedule.di
 
 import org.koin.core.module.dsl.*
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import pt.dourobats.app.core.common.isDebug
+import pt.dourobats.app.core.navigation.FeatureGraph
+import pt.dourobats.app.features.schedule.ScheduleGraph
 import pt.dourobats.app.features.schedule.api.usecase.BookSessionUseCase
 import pt.dourobats.app.features.schedule.api.usecase.CancelBookingUseCase
 import pt.dourobats.app.features.schedule.api.usecase.GetAllSessionsUseCase
@@ -22,6 +25,7 @@ import pt.dourobats.app.features.schedule.usecase.GetAvailableSessionsUseCaseImp
 import pt.dourobats.app.features.schedule.usecase.GetUserBookedSessionsUseCaseImpl
 
 val scheduleModule = module {
+    single<FeatureGraph>(named("schedule")) { ScheduleGraph() }
     single<ScheduleNavigation> { ScheduleNavigationImpl() }
     single<TrainingRepository> { if (isDebug) FakeTrainingRepository() else TrainingRepositoryImpl() }
     factory { SessionUiMapper(get(), get()) }

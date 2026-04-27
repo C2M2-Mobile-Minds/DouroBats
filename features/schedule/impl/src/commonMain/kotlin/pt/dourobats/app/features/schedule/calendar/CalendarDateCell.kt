@@ -1,9 +1,7 @@
 package pt.dourobats.app.features.schedule.calendar
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -57,10 +55,19 @@ internal fun CalendarDateCell(
         color = backgroundColor,
         tonalElevation = if (isToday && !isSelected) 2.dp else 0.dp,
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+        Box(
+            modifier = Modifier.padding(vertical = 4.dp),
+            contentAlignment = Alignment.Center,
         ) {
+            // Day number — always at the exact center, unaffected by label or dot
+            Text(
+                text = date.dayOfMonth.toString(),
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = if (isSelected || isToday) FontWeight.Bold else FontWeight.Medium,
+                color = textColor,
+                textAlign = TextAlign.Center,
+            )
+            // "Today" label pinned to top — never shifts the number
             if (isToday) {
                 Text(
                     text = todayLabel,
@@ -69,19 +76,14 @@ internal fun CalendarDateCell(
                             else MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 8.sp,
                     fontWeight = FontWeight.Medium,
+                    modifier = Modifier.align(Alignment.TopCenter),
                 )
             }
-            Text(
-                text = date.dayOfMonth.toString(),
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = if (isSelected || isToday) FontWeight.Bold else FontWeight.Medium,
-                color = textColor,
-                textAlign = TextAlign.Center,
-            )
+            // Session dot pinned to bottom — never shifts the number
             if (hasSession) {
                 Box(
                     modifier = Modifier
-                        .padding(top = 4.dp)
+                        .align(Alignment.BottomCenter)
                         .size(4.dp)
                         .background(
                             color = if (isSelected) textColor else MaterialTheme.colorScheme.primary,
